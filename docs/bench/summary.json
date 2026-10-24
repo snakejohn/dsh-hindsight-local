@@ -1,0 +1,107 @@
+{
+  "model": "deepseek-flash",
+  "base_url": "https://api.deepseek.com",
+  "pricing_idle_cny_per_m": {
+    "cache_hit": 0.02,
+    "cache_miss": 1.0,
+    "output": 4.0
+  },
+  "license_note": "LoCoMo (snap-research/locomo) — GitHub license \"Other\"/LICENSE.txt; used for non-commercial eval only",
+  "plan": [
+    {
+      "bank": "locomo-conv-26",
+      "turns": 419,
+      "sessions": 19,
+      "memories": 341
+    },
+    {
+      "bank": "locomo-conv-30",
+      "turns": 369,
+      "sessions": 19,
+      "memories": 220
+    },
+    {
+      "bank": "locomo-conv-41",
+      "turns": 204,
+      "sessions": 10,
+      "memories": 147
+    }
+  ],
+  "total_turns": 992,
+  "retain": {
+    "ok": 48,
+    "fail": 0,
+    "rate_limit": 0,
+    "disconnect": 0,
+    "total_cost": 0.8436664400000002,
+    "tag": "flash"
+  },
+  "usage_totals": {
+    "input": 422249,
+    "output": 56403,
+    "cached": 377472,
+    "thoughts": 141432
+  },
+  "cost_from_usage_cny": 0.8436664400000002,
+  "balance_before": 100.7,
+  "balance_after": 98.34,
+  "balance_delta_cny": 2.36,
+  "long_msg": {
+    "code": 200,
+    "dt": 7.598779678344727,
+    "usage": {
+      "input_tokens": 11724,
+      "output_tokens": 1498,
+      "total_tokens": 13222,
+      "cached_tokens": 9216,
+      "thoughts_tokens": 755
+    },
+    "success": true,
+    "err": null
+  },
+  "recall_latency": [
+    {
+      "label": "locomo-conv-26 memories≈341",
+      "n": 20,
+      "p50": 3.996294617652893,
+      "p95": 4.921254372596741,
+      "mean": 4.09410982131958
+    },
+    {
+      "label": "locomo-conv-30 memories≈220",
+      "n": 20,
+      "p50": 3.3960317373275757,
+      "p95": 3.7653665184974674,
+      "mean": 3.4782967567443848
+    },
+    {
+      "label": "locomo-conv-41 memories≈147",
+      "n": 20,
+      "p50": 2.8167643547058105,
+      "p95": 3.307890129089355,
+      "mean": 2.8756376624107363
+    }
+  ],
+  "token_savings": {
+    "bank": "locomo-conv-26",
+    "full_history_chars": 63165,
+    "full_history_tokens_est": 15791,
+    "recall_inject_chars": 9512,
+    "recall_inject_tokens_est": 2378,
+    "save_ratio": 0.8494,
+    "note": "token counts estimated (CJK 1.5c/tok, latin 4c/tok); not provider tokenizer"
+  },
+  "qa": {
+    "n": 50,
+    "hit_rate": 0.94,
+    "temporal_n": 36,
+    "temporal_hit_rate": 0.9722222222222222,
+    "other_n": 14,
+    "other_hit_rate": 0.8571428571428571,
+    "avg_recall_chars": 9548.58
+  },
+  "chunk_defaults": {
+    "HINDSIGHT_API_RETAIN_CHUNK_SIZE": 1500,
+    "HINDSIGHT_API_RETAIN_MAX_COMPLETION_TOKENS": 8000
+  }
+}

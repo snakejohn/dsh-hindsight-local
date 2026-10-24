@@ -1,0 +1,13 @@
+{
+  "code": 200,
+  "dt": 7.598779678344727,
+  "usage": {
+    "input_tokens": 11724,
+    "output_tokens": 1498,
+    "total_tokens": 13222,
+    "cached_tokens": 9216,
+    "thoughts_tokens": 755
+  },
+  "success": true,
+  "err": null
+}

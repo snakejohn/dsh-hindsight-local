@@ -1,0 +1,9 @@
+{
+  "bank": "locomo-conv-26",
+  "full_history_chars": 63165,
+  "full_history_tokens_est": 15791,
+  "recall_inject_chars": 9512,
+  "recall_inject_tokens_est": 2378,
+  "save_ratio": 0.8494,
+  "note": "token counts estimated (CJK 1.5c/tok, latin 4c/tok); not provider tokenizer"
+}

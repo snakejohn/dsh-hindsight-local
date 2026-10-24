@@ -1,0 +1,11 @@
+{
+  "ok": 48,
+  "fail": 0,
+  "rate_limit": 0,
+  "disconnect": 0,
+  "total_cost": 0.8436664400000002,
+  "errors": [],
+  "tag": "flash",
+  "cost_sum": 0.84366644,
+  "latency_samples": 48
+}

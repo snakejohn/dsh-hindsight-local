@@ -1,0 +1,361 @@
+{
+  "n": 50,
+  "hit_rate": 0.94,
+  "temporal_n": 36,
+  "temporal_hit_rate": 0.9722222222222222,
+  "other_n": 14,
+  "other_hit_rate": 0.8571428571428571,
+  "avg_recall_chars": 9548.58,
+  "details": [
+    {
+      "q": "When did Caroline go to the LGBTQ support group?",
+      "answer": "7 May 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 35
+    },
+    {
+      "q": "When did Melanie paint a sunrise?",
+      "answer": 2022,
+      "category": 2,
+      "hit": true,
+      "n_results": 42
+    },
+    {
+      "q": "When did Melanie run a charity race?",
+      "answer": "The sunday before 25 May 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 42
+    },
+    {
+      "q": "When is Melanie planning on going camping?",
+      "answer": "June 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 43
+    },
+    {
+      "q": "When did Caroline give a speech at a school?",
+      "answer": "The week before 9 June 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 32
+    },
+    {
+      "q": "When did Caroline meet up with her friends, family, and mentors?",
+      "answer": "The week before 9 June 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 36
+    },
+    {
+      "q": "How long has Caroline had her current group of friends for?",
+      "answer": "4 years",
+      "category": 2,
+      "hit": true,
+      "n_results": 38
+    },
+    {
+      "q": "How long ago was Caroline's 18th birthday?",
+      "answer": "10 years ago",
+      "category": 2,
+      "hit": true,
+      "n_results": 31
+    },
+    {
+      "q": "When did Melanie sign up for a pottery class?",
+      "answer": "2 July 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 40
+    },
+    {
+      "q": "When is Caroline going to the transgender conference?",
+      "answer": "July 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 38
+    },
+    {
+      "q": "When did Melanie go to the museum?",
+      "answer": "5 July 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 39
+    },
+    {
+      "q": "When did Caroline have a picnic?",
+      "answer": "The week before 6 July 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 41
+    },
+    {
+      "q": "What books has Melanie read?",
+      "answer": "\"Nothing is Impossible\", \"Charlotte's Web\"",
+      "category": 1,
+      "hit": true,
+      "n_results": 50
+    },
+    {
+      "q": "Would Melanie likely enjoy the song \"The Four Seasons\" by Vivaldi?",
+      "answer": "Yes; it's classical music",
+      "category": 3,
+      "hit": true,
+      "n_results": 43
+    },
+    {
+      "q": "How did Melanie feel while watching the meteor shower?",
+      "answer": "in awe of the universe",
+      "category": 4,
+      "hit": true,
+      "n_results": 40
+    },
+    {
+      "q": "What instruments does Melanie play?",
+      "answer": "clarinet and violin",
+      "category": 1,
+      "hit": true,
+      "n_results": 50
+    },
+    {
+      "q": "What did Caroline find in her neighborhood during her walk?",
+      "answer": "a rainbow sidewalk",
+      "category": 4,
+      "hit": true,
+      "n_results": 37
+    },
+    {
+      "q": "Would Caroline still want to pursue counseling as a career if she hadn't received support growing up?",
+      "answer": "Likely no",
+      "category": 3,
+      "hit": false,
+      "n_results": 45
+    },
+    {
+      "q": "Where did Oliver hide his bone once?",
+      "answer": "In Melanie's slipper",
+      "category": 4,
+      "hit": true,
+      "n_results": 31
+    },
+    {
+      "q": "What events has Caroline participated in to help children?",
+      "answer": "Mentoring program, school speech",
+      "category": 1,
+      "hit": true,
+      "n_results": 39
+    },
+    {
+      "q": "When Jon has lost his job as a banker?",
+      "answer": "19 January, 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 28
+    },
+    {
+      "q": "When Gina has lost her job at Door Dash?",
+      "answer": "January, 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 27
+    },
+    {
+      "q": "When is Jon's group performing at a festival?",
+      "answer": "February, 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 40
+    },
+    {
+      "q": "When did Gina launch an ad campaign for her store?",
+      "answer": "29 January, 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 24
+    },
+    {
+      "q": "When was Jon in Paris?",
+      "answer": "28 January 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 41
+    },
+    {
+      "q": "When did Gina team up with a local artist for some cool designs?",
+      "answer": "February, 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 25
+    },
+    {
+      "q": "When did Gina get her tattoo?",
+      "answer": "A few years ago",
+      "category": 2,
+      "hit": true,
+      "n_results": 26
+    },
+    {
+      "q": "When did Jon start to go to the gym?",
+      "answer": "March, 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 23
+    },
+    {
+      "q": "When did Gina open her online clothing store?",
+      "answer": "16 March, 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 26
+    },
+    {
+      "q": "When did Jon start expanding his studio's social media presence?",
+      "answer": "April, 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 25
+    },
+    {
+      "q": "When did Jon host a dance competition?",
+      "answer": "May, 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 28
+    },
+    {
+      "q": "When did Jon go to a fair to get more exposure for his dance studio?",
+      "answer": "24 April, 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 22
+    },
+    {
+      "q": "How do Jon and Gina both like to destress?",
+      "answer": "by dancing",
+      "category": 4,
+      "hit": true,
+      "n_results": 25
+    },
+    {
+      "q": "What did Gina make a limited edition line of?",
+      "answer": "Hoodies",
+      "category": 4,
+      "hit": false,
+      "n_results": 26
+    },
+    {
+      "q": "What did Gina say about creating an experience for her customers?",
+      "answer": "making them want to come back",
+      "category": 4,
+      "hit": true,
+      "n_results": 30
+    },
+    {
+      "q": "Who did Maria have dinner with on May 3, 2023?",
+      "answer": "her mother",
+      "category": 2,
+      "hit": true,
+      "n_results": 44
+    },
+    {
+      "q": "When did Maria donate her car?",
+      "answer": "21 December 2022",
+      "category": 2,
+      "hit": true,
+      "n_results": 41
+    },
+    {
+      "q": "When did John join the online support group?",
+      "answer": "The week before 1 January 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 40
+    },
+    {
+      "q": "When did Maria go to the beach?",
+      "answer": "December 2022",
+      "category": 2,
+      "hit": true,
+      "n_results": 43
+    },
+    {
+      "q": "When did Maria meet Jean?",
+      "answer": "February 24, 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 40
+    },
+    {
+      "q": "When did Maria's grandmother pass away?",
+      "answer": "The week before 6 March 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 41
+    },
+    {
+      "q": "When did John get his degree?",
+      "answer": "The week before 2 April 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 41
+    },
+    {
+      "q": "When did John take a road trip to the Pacific Northwest?",
+      "answer": "2022",
+      "category": 2,
+      "hit": true,
+      "n_results": 41
+    },
+    {
+      "q": "When did John go to a convention with colleagues?",
+      "answer": "March 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 40
+    },
+    {
+      "q": "When did John start boot camp with his family?",
+      "answer": "April.2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 44
+    },
+    {
+      "q": "When did John have a party with veterans?",
+      "answer": "The Friday before 20 May 2023",
+      "category": 2,
+      "hit": true,
+      "n_results": 42
+    },
+    {
+      "q": "When did John get his dog Max?",
+      "answer": "In 2013",
+      "category": 2,
+      "hit": false,
+      "n_results": 40
+    },
+    {
+      "q": "What cause did the 5K charity run organized by John support?",
+      "answer": "veterans and their families",
+      "category": 4,
+      "hit": true,
+      "n_results": 47
+    },
+    {
+      "q": "What did Maria do to feel closer to a community and her faith?",
+      "answer": "joined a nearby church",
+      "category": 4,
+      "hit": true,
+      "n_results": 45
+    },
+    {
+      "q": "What activities does John's family enjoy doing together?",
+      "answer": "going for hikes, hanging out at the park, having picnics, playing board games, having movie nights",
+      "category": 4,
+      "hit": true,
+      "n_results": 53
+    }
+  ]
+}
