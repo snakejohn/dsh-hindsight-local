@@ -54,6 +54,10 @@ await test('小黑盒 article: every link is plain ASCII, images come from docs/
   const t = readFileSync(join(root, 'docs/小黑盒文章.md'), 'utf8')
   const urls = [...t.matchAll(/\]\((\S+?)\)/g)].map((m) => m[1]).concat([...t.matchAll(/<(https?:[^>]+)>/g)].map((m) => m[1]))
   assert.ok(urls.length > 20)
+  // 小黑盒 editor: H1-H3, paragraphs, bold, quotes, flat lists, images, links only
+  for (const [re, why] of [[/`/, 'code/backticks (use 「」)'], [/^ +\S/m, 'indented/nested blocks'], [/^#{4,}/m, 'H4+'], [/^-{3,}\s*$/m, 'horizontal rule'], [/<\/?[a-z][^>]*>/i, 'HTML'], [/\[\^/, 'footnote'], [/^>\s*([-*]|\d+\.)\s/m, 'list inside a quote']]) assert.ok(!re.test(t), `article uses ${why}`)
+  for (const l of t.split('\n')) if (/!\[/.test(l)) assert.match(l, /^!\[[^\]]*\]\([^)\s]+\.png\)$/, `image must be a PNG on its own line: ${l}`)
+  assert.ok(!/^\s*\|.*\|\s*$/m.test(t), '小黑盒 has no markdown tables: render them as images (scripts/render-tables.py)')
   for (const u of urls) assert.match(u, /^https:\/\/[A-Za-z0-9._~:/?#@!$&'*+,;=-]+$/, `not ASCII-safe (小黑盒「图片链接不合法」): ${u}`)
   const imgs = [...t.matchAll(/!\[[^\]]*\]\((\S+?)\)/g)].map((m) => m[1])
   const dir = join(root, 'docs/article-img')

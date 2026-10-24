@@ -16,7 +16,8 @@ npm test            # 全部测试（不需要真实密钥）
    - 设计和吉祥物来自 `scripts/make-banner.py` 与 `docs/images/mascot.png`。
    - 需要 Python 3 + Pillow（`pip install pillow`）和 Noto Sans CJK 字体（Debian/Ubuntu：`apt install fonts-noto-cjk`；其他系统可用 `--font-dir` 指定字体目录）。
    - 版本号同时写进 PNG 的文本块；`npm test` 会检查它和 `package.json` 一致，忘了这一步测试会失败。
-3. **小黑盒文章的图片**：`npm run release:assets` 会顺带运行 `npm run article:assets`，把文章用到的图复制成纯 ASCII 文件名 `docs/article-img/NN.png`（小黑盒不接受带 `%` 或中文的图片链接，会报「图片链接不合法」）。文章里所有链接都必须是纯 ASCII，`npm test` 会检查。
+3. **小黑盒文章的图片**：`npm run release:assets` 会顺带运行 `npm run article:assets`，把文章用到的图复制成纯 ASCII 文件名 `docs/article-img/NN.png`（小黑盒不接受带 `%` 或中文的图片链接，会报「图片链接不合法」）。文章里所有链接都必须是纯 ASCII，也不能用 Markdown 表格（小黑盒不支持）：表格做成图片，「状态颜色」表由 `scripts/render-tables.py` 生成，「记忆存在哪」表是 `docs/images/table-storage.png`。`npm test` 会检查。
+   小黑盒编辑器只支持：一到三级标题、段落、加粗、引用（「> 」）、单层列表、图片（单独一行，PNG）、链接。所以文章里不要用代码/反引号（路径和名字用「」括起来）、嵌套或缩进的内容、HTML、分隔线和脚注。外链发布后会按白名单过滤成纯文字，所以重要链接旁边都写出完整网址。需要用 Word 导入时：`npm run article:docx` 生成内嵌图片的 `小黑盒文章.docx`。
 4. **文档链接钉到新标签**：把 `docs/使用文档.md`、`docs/小黑盒文章.md`、`README.md` 里的 `cdn.jsdelivr.net/gh/snakejohn/dsh-hindsight-local@vX.Y.Z` 全部改成新版本（文章首图也一样，不要用 `@main`，jsDelivr 会缓存旧图）。`npm test` 同样会检查。
    文章的图片链接用 `npm run article:assets -- --ref vX.Y.Z` 一次改好。标签发出后又要改文章图片时（标签不能移动），先提交图片，再用 `--ref <那次提交的完整 sha>` 钉到提交上，推送后再提交文章。
 5. `npm test` 全部通过，检查暂存区里没有密钥。
