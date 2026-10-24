@@ -26,6 +26,8 @@ import { buildConfigSchema, loadSchemastery, plainConfig } from './lib/schema.js
 import { ROUTE_PATH, createRpcHandler, serveRpc } from './lib/rpc.js'
 import { resolveDshDefaultLlm } from './lib/host.js'
 import { requestReinstall } from './lib/lifecycle.js'
+import { retainEnv } from './lib/config.js'
+import { syncDotenv } from './lib/dotenv.js'
 
 export const name = 'dsh-hindsight-memory'
 /**
@@ -76,6 +78,11 @@ function scopedCtx(ctx) {
 function startGeneration(ctx, rawConfig, reason) {
   const { runtime, config } = createRuntime({ rawConfig, ctx })
   const logger = runtime.logger
+  // Every setting lives in the plugin-root .env too: mirror 「记住哪些内容」 on each generation.
+  try {
+    const r = syncDotenv(retainEnv(config))
+    if (r.error) logger.warn(`could not write .env: ${r.error}`)
+  } catch (e) { logger.warn(`could not write .env: ${errorMessage(e)}`) }
   logger.info(
     `plugin loaded (${reason}; setup=${config.setup} service=${config.service.base_url} mode=${config.service.mode} ` +
       `autostart=${config.service.autostart} recall=${config.recall.enabled} ` +

@@ -17,6 +17,8 @@ import {
   memoryResult
 } from './harness.mjs'
 import { apply } from '../index.js'
+// apply() mirrors settings into <plugin root>/.env: keep tests out of the checkout.
+process.env.DSH_HINDSIGHT_PLUGIN_ROOT ||= (await import('node:fs')).mkdtempSync((await import('node:path')).join((await import('node:os')).tmpdir(), 'hs-hooks-root-'))
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
