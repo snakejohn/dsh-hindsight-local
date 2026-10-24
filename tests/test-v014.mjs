@@ -3,7 +3,7 @@
  * Run: node tests/test-v014.mjs
  */
 import assert from 'node:assert/strict'
-import { mkdtempSync, readFileSync } from 'node:fs'
+import { mkdtempSync, readFileSync, readdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -44,8 +44,29 @@ await test('docs pin jsDelivr URLs to the current tag', () => {
   for (const f of ['README.md', 'docs/使用文档.md', 'docs/小黑盒文章.md']) {
     const t = readFileSync(join(root, f), 'utf8')
     const tags = [...t.matchAll(/cdn\.jsdelivr\.net\/gh\/[^@\s]+@([^/\s)]+)/g)].map((m) => m[1])
-    for (const tag of tags) assert.equal(tag, 'v' + version, `${f} still links @${tag}`)
+    // the article may also pin an exact commit (images added after the tag; tags never move)
+    const ok = (tag) => tag === 'v' + version || (f.includes('小黑盒') && /^[0-9a-f]{40}$/.test(tag))
+    for (const tag of tags) assert.ok(ok(tag), `${f} links @${tag}, expected @v${version}`)
   }
+})
+
+await test('小黑盒 article: every link is plain ASCII, images come from docs/article-img and match docs/images', () => {
+  const t = readFileSync(join(root, 'docs/小黑盒文章.md'), 'utf8')
+  const urls = [...t.matchAll(/\]\((\S+?)\)/g)].map((m) => m[1]).concat([...t.matchAll(/<(https?:[^>]+)>/g)].map((m) => m[1]))
+  assert.ok(urls.length > 20)
+  for (const u of urls) assert.match(u, /^https:\/\/[A-Za-z0-9._~:/?#@!$&'*+,;=-]+$/, `not ASCII-safe (小黑盒「图片链接不合法」): ${u}`)
+  const imgs = [...t.matchAll(/!\[[^\]]*\]\((\S+?)\)/g)].map((m) => m[1])
+  const dir = join(root, 'docs/article-img')
+  const files = readdirSync(dir)
+  const images = readdirSync(join(root, 'docs/images'))
+  for (const u of imgs) {
+    const m = /\/docs\/article-img\/([A-Za-z0-9._-]+)$/.exec(u)
+    assert.ok(m, `article image not under docs/article-img: ${u}`)
+    const n = /^(\d+)\.png$/.exec(m[1])
+    const src = n ? images.find((f) => f.startsWith(n[1] + '-')) : m[1]
+    assert.ok(readFileSync(join(dir, m[1])).equals(readFileSync(join(root, 'docs/images', src))), `${m[1]} is stale: npm run article:assets`)
+  }
+  assert.equal(files.length, imgs.length, 'docs/article-img has unused files: npm run article:assets')
 })
 
 await test('retainEnv: defaults and panel values become DSH_HINDSIGHT_RETAIN_* lines', () => {

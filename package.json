@@ -38,7 +38,8 @@
   "scripts": {
     "test": "node tests/run-all.mjs",
     "selftest": "node scripts/selftest.mjs",
-    "release:assets": "python3 scripts/make-banner.py"
+    "release:assets": "python3 scripts/make-banner.py && node scripts/article-assets.mjs",
+    "article:assets": "node scripts/article-assets.mjs"
   },
   "keywords": [
     "dsh",

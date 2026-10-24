@@ -1,5 +1,8 @@
 # 更新日志
 
+## 未发布
+- 修复：小黑盒发布文章时报「图片链接不合法」。文章的图片改用纯 ASCII 文件名 `docs/article-img/NN.png`（`npm run article:assets` 生成），链接里不再有 `%` 或中文；「使用文档」链接改成纯 ASCII 的文档目录地址。
+
 ## v0.1.4
 - 新增：「记住哪些内容」的设置和其他设置一样，同时保存到插件目录的 `.env`（`DSH_HINDSIGHT_RETAIN_*` 几行），每次保存设置都会按设置页重写。
 - 改动：首图和 GitHub 社交预览图上的版本号跟着版本走：新增 `scripts/make-banner.py`（`npm run release:assets`），按 `package.json` 的版本重画 `banner.png` 和 `cover.png`；吉祥物原图收进仓库 `docs/images/mascot.png`。
