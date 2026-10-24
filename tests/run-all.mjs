@@ -11,6 +11,7 @@ const here = dirname(fileURLToPath(import.meta.url))
 const files = [
   'test-timeline.mjs',
   'test-keys-dotenv.mjs',
+  'test-retry-status.mjs',
   'test-fixes.mjs',
   'test-config-bank.mjs',
   'test-lifecycle.mjs',

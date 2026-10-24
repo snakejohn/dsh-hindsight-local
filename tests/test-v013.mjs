@@ -17,7 +17,7 @@ const quiet = { info() {}, warn() {}, debug() {} }
 // --- reasons and backoff
 assert.equal(zhReason('RuntimeError: Fact extraction failed: 1/1 chunks failed. First failures: chunk 0: APIConnectionError: Connection error.'), '模型服务商限流或连不上')
 assert.equal(zhReason('Error code: 429 - rate limit'), '模型服务商限流')
-assert.equal(zhReason('AuthenticationError: Error code: 401'), '整理记忆的模型密钥不对')
+assert.equal(zhReason('AuthenticationError: Error code: 401'), '密钥无效或已失效')
 for (let a = 0; a < 6; a++) {
   const lo = backoffMs(a, { random: () => 0 }), hi = backoffMs(a, { random: () => 1 })
   assert.ok(lo < hi && lo >= Math.min(30 * 60000, 60000 * 2 ** a) * 0.75 - 1 && hi <= 30 * 60000 * 1.25)
