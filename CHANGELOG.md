@@ -1,6 +1,7 @@
 # 更新日志
 
 ## 未发布
+- 修复：API 密钥不再写进 dsh 的 `cordis.patch.yml`（以前面板保存时会把明文密钥存进配置文件）。现在密钥只存在插件目录的 `.env`（`DSH_HINDSIGHT_EMBEDDING_API_KEY` / `DSH_HINDSIGHT_RERANKER_API_KEY` / `DSH_HINDSIGHT_LLM_API_KEY` / `DSH_HINDSIGHT_API_KEY`）。已经写在配置文件里的密钥会在启动时自动搬进 `.env`（`.env` 里已有的不覆盖），打开一次设置页后从配置文件里删掉。
 - 改动：记忆库只按工作区分：每个工作区绑定唯一一个记忆库，几个工作区可以接入同一个库共用。移除「按什么分开记」（`bank.scope` 的 `preset` 按角色 / `session` 按对话）和 `DSH_HINDSIGHT_BANK_SCOPE`。旧设置会自动回退到按工作区、不报错；以前按角色/按对话建的记忆库和里面的记忆都还在，可在工作区设置里「接入已有库」继续用。按工作区自动建的库 ID 不变。
 - 修复：小黑盒发布文章时报「图片链接不合法」。文章的图片改用纯 ASCII 文件名 `docs/article-img/NN.png`（`npm run article:assets` 生成），链接里不再有 `%` 或中文；「使用文档」链接改成纯 ASCII 的文档目录地址；文章里的表格改成图片，排版只用小黑盒支持的格式（重要链接旁写出完整网址），另可生成 Word 版（npm run article:docx）。
 
