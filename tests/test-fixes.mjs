@@ -6,19 +6,15 @@ import { planPrune, executePrune } from '../lib/prune.js'
 import { buildRuntime, buildSession, appendTurn, createFakeAgent, createFakeClient, createFakeCtx } from './harness.mjs'
 
 const cfg = (bank) => ({ bank: { template: 'dsh-{slug}-{hash}', ...bank } })
-// 1. bank scope isolates role-play characters / sessions
+// 1. banks are per workspace only: preset/session never split a workspace
 {
   const w = '/home/u/rp'
   const a = resolveBankId({ workspacePath: w, config: cfg({ scope: 'preset' }), preset: 'alice' })
-  const b = resolveBankId({ workspacePath: w, config: cfg({ scope: 'preset' }), preset: 'bob' })
-  const ws = resolveBankId({ workspacePath: w, config: cfg({}), preset: 'alice' })
-  assert.notEqual(a.bankId, b.bankId)
-  assert.equal(ws.bankId, resolveBankId({ workspacePath: w, config: cfg({}), preset: 'bob' }).bankId)
-  const s1 = resolveBankId({ workspacePath: w, config: cfg({ scope: 'session' }), sessionId: 's1' })
-  const s2 = resolveBankId({ workspacePath: w, config: cfg({ scope: 'session' }), sessionId: 's2' })
-  assert.notEqual(s1.bankId, s2.bankId)
-  for (const id of [a.bankId, b.bankId, s1.bankId]) assert.match(id, /^[a-z0-9-]{1,64}$/)
-  console.log('PASS bank.scope preset/session isolation', a.bankId, b.bankId, s1.bankId)
+  const b = resolveBankId({ workspacePath: w, config: cfg({ scope: 'session' }), sessionId: 's1' })
+  const ws = resolveBankId({ workspacePath: w, config: cfg({}) })
+  assert.equal(a.bankId, ws.bankId); assert.equal(b.bankId, ws.bankId)
+  assert.equal(ws.rule, 'template:workspace')
+  console.log('PASS bank resolves by workspace only', ws.bankId)
 }
 // 2. provider-aware env
 {
