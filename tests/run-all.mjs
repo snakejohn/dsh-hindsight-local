@@ -10,6 +10,7 @@ import { dirname, join } from 'node:path'
 const here = dirname(fileURLToPath(import.meta.url))
 const files = [
   'test-timeline.mjs',
+  'test-keys-dotenv.mjs',
   'test-fixes.mjs',
   'test-config-bank.mjs',
   'test-lifecycle.mjs',

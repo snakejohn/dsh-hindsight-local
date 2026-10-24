@@ -668,7 +668,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         if (embModel) ops.push({ op: "set", path: ["embedding", "model"], value: embModel });
         if (rrModel) ops.push({ op: "set", path: ["reranker", "model"], value: rrModel });
         if (key.trim()) ops.push({ op: "set", path: ["embedding", "api_key"], value: key.trim() });
-        const ok = await form.mutate(ops);
+        const ok = await mutateKeys(form, api, ops);
         setBusy(false);
         if (ok) { setStarted(true); setKey(""); setLlmKey(""); setNonce(nonce + 1); }
         else setChk({ ok: false, what: "设置没有保存成功", how: "再点一次「一键开始」；还不行就重启 dsh。" });
@@ -718,6 +718,25 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
     }
 
     // ---- settings ----
+    // API keys are never written into dsh's plugin config (cordis.patch.yml): they go to the
+    // plugin .env through the saveKeys RPC, and any key left in the config is unset.
+    const KEY_PATHS = [["embedding", "api_key"], ["reranker", "api_key"], ["llm", "api_key"], ["service", "api_key"]];
+    // Unset only inside sections the saved config already has: unsetting under a missing section
+    // would make dsh write that section's defaults into cordis.patch.yml. (Secrets are redacted
+    // from the snapshot, so presence of the key itself cannot be checked.)
+    const keyUnsets = (form) => { const sn = form.getSnapshot() || {}; const u = (sn.user && typeof sn.user === "object") ? sn.user : (sn.value || {}); return KEY_PATHS.filter(([a]) => u[a] && typeof u[a] === "object").map((path) => ({ op: "unset", path })); };
+    async function mutateKeys(form, api, ops) {
+      const isKey = (o) => o.path[o.path.length - 1] === "api_key";
+      const keys = {};
+      for (const o of ops) if (o.op === "set" && isKey(o) && typeof o.value === "string" && o.value.trim()) keys[o.path.join(".")] = o.value.trim();
+      if (Object.keys(keys).length) {
+        const r = await api("saveKeys", { keys }).catch(() => null);
+        if (!r || !r.ok) return false;
+      }
+      const rest = ops.filter((o) => !isKey(o)).concat(keyUnsets(form));
+      if (!rest.length) return true;
+      return form.mutate(rest);
+    }
     function Settings(p) {
       const { t, api, form } = p;
       const snap = useSyncExternalStore(form.subscribe.bind(form), form.getSnapshot.bind(form), form.getSnapshot.bind(form));
@@ -729,6 +748,9 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const dshLlm = useRpc(api, "dshLlm", {}, []);
       // The redacted settings snapshot hides secrets; overview reports which keys are saved (booleans only).
       const ovS = useRpc(api, "overview", {}, [], 5000).value;
+      // Keys saved by older versions: once the server has copied them into .env, strip them from dsh's config.
+      const keysInPatch = !!(ovS && ovS.keysInPatch);
+      useEffect(() => { const u = keysInPatch ? keyUnsets(form) : []; if (u.length) Promise.resolve(form.mutate(u)).catch(() => {}); }, [keysInPatch]); // eslint-disable-line
       const [extraBanks, setExtraBanks] = useState([]);
       if (snap.status === "loading") return h("p", null, t("loading"));
       if (snap.status !== "ready") return h("p", null, t("unavailable"));
@@ -744,14 +766,14 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const isSecretSet = (path) => { if (path[path.length - 1] !== "api_key") return false; if (path[0] === "service") { const v = get(value, path); return typeof v === "string" && v.trim() !== "" && !/^(undefined|null)$/i.test(v.trim()); } return !!keyInfo(path[0]).set; };
       const clearKeys = async () => {
         if (!window.confirm(t("clearKeysAsk"))) return;
-        const ok = await form.mutate(["embedding", "reranker", "llm"].map((c) => ({ op: "unset", path: [c, "api_key"] })));
+        const u = keyUnsets(form); const ok = u.length ? await form.mutate(u) : true;
         await api("clearKeys", {}).catch(() => null);
         setEdits((e) => { const n = Object.assign({}, e); delete n["embedding.api_key"]; delete n["reranker.api_key"]; delete n["llm.api_key"]; return n; });
         setMsg(ok ? t("clearKeysDone") : t("failed"));
       };
       async function save() {
         const ops = Object.values(edits).filter((e) => e.v !== undefined && !(e.v === "" && /api_key$/.test(e.path[e.path.length - 1]))).map((e) => ({ op: "set", path: e.path, value: e.v }));
-        const ok = await form.mutate(ops);
+        const ok = await mutateKeys(form, api, ops);
         setMsg(ok ? t("saved") : t("failed"));
         if (ok) { setEdits({}); setWizard(false); }
       }
