@@ -27,7 +27,7 @@ import { ROUTE_PATH, createRpcHandler, serveRpc } from './lib/rpc.js'
 import { resolveDshDefaultLlm } from './lib/host.js'
 import { requestReinstall } from './lib/lifecycle.js'
 import { retainEnv } from './lib/config.js'
-import { syncDotenv } from './lib/dotenv.js'
+import { syncDotenv, writeDotenvKeys, inlineKeys } from './lib/dotenv.js'
 
 export const name = 'dsh-hindsight-memory'
 /**
@@ -76,8 +76,13 @@ function scopedCtx(ctx) {
 }
 
 function startGeneration(ctx, rawConfig, reason) {
+  // Migration: keys saved by older versions sit in dsh's cordis.patch.yml; copy them into the
+  // plugin .env (an existing .env key wins). The panel then strips them from the patch.
+  let migrated = { written: [], error: '' }
+  try { migrated = writeDotenvKeys(inlineKeys(rawConfig), { overwrite: false }) } catch { /* best effort */ }
   const { runtime, config } = createRuntime({ rawConfig, ctx })
   const logger = runtime.logger
+  if (migrated.written.length) logger.info(`moved API keys from plugin config into .env: ${migrated.written.join(', ')}`)
   // Every setting lives in the plugin-root .env too: mirror 「记住哪些内容」 on each generation.
   try {
     const r = syncDotenv(retainEnv(config))
