@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/images/banner.png" alt="dsh Hindsight 本地记忆插件" width="100%">
+
 # 🧠 dsh-hindsight-memory
 
 **让 DeepSeek Harness（dsh）里的 AI 记住你们聊过的事：换个对话、隔几天再问，它都还记得。**
