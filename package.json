@@ -1,0 +1,58 @@
+{
+  "name": "dsh-hindsight-memory",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "长期记忆：让 dsh 记住你们聊过的事（本地 Hindsight，三步设置，一键部署）",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./web/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-ui-plugin-manager"
+      ]
+    }
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "web",
+    "cordis.patch.yml",
+    "README.md",
+    ".env.example",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node tests/run-all.mjs",
+    "selftest": "node scripts/selftest.mjs"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "memory",
+    "hindsight",
+    "context-compression",
+    "recall",
+    "retain"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snakejohn/dsh-hindsight-local.git"
+  },
+  "homepage": "https://github.com/snakejohn/dsh-hindsight-local#readme"
+}

@@ -1,0 +1,86 @@
+# dsh-hindsight-memory —— bundle patch layer.
+# Mounts this plugin into the DSH profile tree.
+# Config values here are the persisted defaults; every key can also be overridden
+# through environment variables (see README "环境变量" table) or through the
+# external JSON config file (`config.file`).
+- insert:
+    - id: dsh-hindsight-memory
+      name: dsh-hindsight-memory
+      config:
+        setup: unset              # unset | existing (attach only) | local (slim + pg0, plugin starts it) — the web panel's wizard writes this
+        enabled: true
+        service:
+          mode: auto              # auto | attach | local | docker | process | compose (setup overrides)
+          base_url: http://127.0.0.1:8888
+          autostart: true
+          keep_alive_on_exit: false
+          local:                  # used when setup: local (mode: local)
+            runner: auto          # auto (venv -> uvx -> pip -> docker) | venv | uvx | pip | docker
+            venv_dir: ""          # empty = ~/.dsh-hindsight/venv
+            variant: auto         # auto | slim (no local models, ~500MB) | full
+            version: 1.1.0
+            port: 8888
+            database_url: pg0://dsh-hindsight
+            hf_endpoint: ""       # e.g. https://hf-mirror.com (full variant only)
+            install_timeout_ms: 1800000
+          health_path: /health
+          request_timeout_ms: 8000
+          startup_timeout_ms: 300000
+          retry_degraded_ms: 30000
+          retry_interval_ms: 1500
+          shutdown_grace_ms: 5000
+          docker:
+            container: hindsight
+            image: ghcr.io/vectorize-io/hindsight:latest
+            port: 8888
+            cp_port: 9999
+            restart_policy: unless-stopped
+            bind_host: 127.0.0.1
+            volume: hindsight-data
+            shm_size: 1g
+        bank:
+          default_bank: ''
+          name_template: 'dsh-{slug}-{hash}'
+          workspace_bank_mapping: {}
+          prefix_match: true
+        # 模型通道（仅当本插件自己拉起 Hindsight 时映射成服务端 env 生效）
+        embedding:
+          provider: ''
+          base_url: ''
+          api_key: ''
+          model: ''
+          dimensions: 0
+          batch_size: 0
+        reranker:
+          enabled: true
+          provider: ''
+          base_url: ''
+          api_key: ''
+          model: ''
+          top_n: 6
+          score_threshold: 0.25
+        llm:
+          provider: ''
+          base_url: ''
+          api_key: ''
+          model: ''
+          temperature: 0.2
+          max_tokens: 1024
+          context_window: 32768
+        recall:
+          enabled: true
+          budget: mid
+          max_tokens: 1200
+          max_chars: 4000
+          top_n: 6
+          score_threshold: 0.25
+        retain:
+          enabled: true
+          async: true
+          max_turns_per_batch: 8
+        prune:
+          enabled: false
+          keep_recent_turns: 6
+          trigger_after_turns: 12
+        logging:
+          level: info

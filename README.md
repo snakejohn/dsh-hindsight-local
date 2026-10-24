@@ -1,0 +1,398 @@
+# dsh-hindsight-memory
+
+> 📖 **第一次用？先看 [小白使用文档（带截图）](docs/使用文档.md)** · [下载最新版](https://github.com/snakejohn/dsh-hindsight-local/releases)
+
+把本地 [Hindsight](https://github.com/vectorize-io/hindsight) 向量记忆服务接进 DeepSeek Harness (dsh)：
+**对话自动归档 → 按需召回 → 折叠旧历史**，用长期记忆换上下文 Token。
+
+- **零外部依赖**：只用 Node 内置模块（本地目录安装的插件解析不到 profile 里的 `@deepseek-ai/*`，所以刻意不 import 任何包）。
+- **绝不阻塞对话**：服务缺失、超时、限流、报错一律降级为「无记忆」，只打一条 warning。
+- **不改会话日志**：裁剪走官方 `ctx.compaction.compactRegion()`，历史折叠成 summary 节点，rewind / replay 仍然可用。
+
+---
+
+## 零基础上手（先看这里）
+
+这个插件让 dsh 里的 AI **记住你们聊过的事**：下次聊天时，它会自动想起相关的内容。
+
+### 三步开始
+1. **装插件**：在 dsh 左侧点「Plugins」→ 找到「dsh-hindsight-memory」→ 打开开关。
+2. **拿一个密钥**：打开 <https://cloud.siliconflow.cn> 注册登录（新用户有免费额度）→ 左侧「API 密钥」→「新建密钥」→ 复制那串 `sk-` 开头的字。
+3. **粘贴并一键开始**：回到插件设置页，把密钥粘到「② 粘贴密钥」。面板会**自动检查密钥能不能用**，显示 ✓ 后点「一键开始」。
+
+第一次准备大约需要 3–10 分钟（要下载程序）。**不用打开命令行**：电脑上没有 Python 也没关系，插件会自动下载一个小工具（uv），再用它下载 Python 3.12。默认走国内镜像（清华 / 阿里云 / npmmirror），下载更快。
+
+### 「整理记忆的模型」是什么？
+它负责把聊天内容整理成一条条好找的记忆。**默认和 dsh 用同一个模型**（比如 DeepSeek）。插件拿不到 dsh 自己保存的密钥时，面板会写明是哪个模型，你再把它的密钥粘一次就行；不粘也能用，只是先保存原话、不做整理。
+
+### 左边那个小圆点
+dsh 左下角会多一个状态卡片，点它可以直接打开插件的状态页：
+
+| 颜色 | 文字 | 意思 |
+|---|---|---|
+| 🟢 | 记忆正常 | 一切正常 |
+| 🟡 | 正在准备 / 模型被限流 | 正在下载、启动；或者模型太忙，稍后会自动重试，要记的内容已排队不会丢 |
+| ⚪ | 需要设置 | 还没填密钥，点它去设置 |
+| 🔴 | 出问题了 | 鼠标悬停或点开能看到「发生了什么 + 怎么做」，并有「重试」按钮 |
+
+卡片上还显示当前用的记忆库、等待记住的条数、上次记住 / 上次回忆的时间。
+
+> ⚠️ 目前只在 Linux 上完整测试过，Windows / macOS 还没有真机验证。
+
+### 出问题怎么办
+- 面板会用大白话写清楚 **发生了什么、怎么做**，大多数情况点「重试」即可。
+- 还不行：在「高级设置 → 状态」里点「检查一下」/「重新启动」/「重新安装」。
+- 需要求助时，把 `~/.dsh-hindsight/logs/` 文件夹里的 `hindsight.log`、`install.log` 发给帮你的人（Windows 是 `C:\Users\你的用户名\.dsh-hindsight\logs\`）。日志里不会出现你的密钥。
+
+### 想自己换模型？
+点「高级设置（一般不用改）」：三个模型（理解文字、排序、整理记忆）都能各自选服务商和模型，选服务商后地址自动填好，填好密钥后可以点「获取模型」拉取列表。硅基流动的 `XingChenAGI/Xing4.0-29B` 作为「整理记忆」的可选预设保留。
+
+---
+
+
+## 1. 目录结构
+
+```
+dsh-hindsight-memory/
+├── index.js              # 插件入口：apply(ctx, config)，挂 Hook + ctx.effect 启动/关闭
+├── cordis.patch.yml      # bundle patch：把插件 insert 进 profile 树，并内置默认配置
+├── package.json          # name / dsh.bundle.patch / 零 dependencies
+├── lib/
+│   ├── config.js         # 默认值 → 外部 JSON → 内联配置 → 环境变量（先文件后内联，与环境变量表）
+│   ├── log.js            # 无依赖日志（文件轮转 + 镜像到 dsh logger）
+│   ├── http.js           # fetch 封装：JSON、硬超时、可 abort、HttpError
+│   ├── client.js         # Hindsight REST 客户端（health/version/banks/config/retain/recall）
+│   ├── lifecycle.js      # 健康检查 → 拉起（docker/compose/process）→ 等就绪 → 优雅关闭
+│   ├── bank.js           # 工作区路径 → bank_id 路由（default/mapping/前缀/模板）
+│   ├── transcript.js     # session 事件 → turn 文本（过滤自己注入的消息，防回灌）
+│   ├── recall.js         # 召回请求构造 + 结果过滤/排序/字符预算 → 注入消息
+│   ├── prune.js          # 裁剪区间规划 + 调 compaction.compactRegion 执行
+│   └── runtime.js        # 运行时编排：状态机、Hook 回调、统计、flush/shutdown
+├── scripts/selftest.mjs  # 手动自检：打印配置 / bank 路由 / health / retain / recall
+└── tests/                # 可离线运行的测试（含真实服务集成测试）
+    ├── harness.mjs       # fake ctx / fake session / fake agent / fake client
+    ├── test-config-bank.mjs
+    ├── test-lifecycle.mjs
+    ├── test-hooks.mjs
+    ├── test-integration.mjs
+    └── run-all.mjs
+```
+
+## 2. 挂载的 dsh Hook
+
+| Hook | 模式 | 用法 |
+| --- | --- | --- |
+| `agent/created` | serial | 记录会话 → 工作区 → bank 路由，预热 bank、恢复 retain 游标（整段 try/catch，绝不 fail creation） |
+| `agent/pre-step` | waterfall（`prepend: true`） | `await next()` 拿到 `{kind:'enter', messages}` 后，用用户输入 recall，把记忆块作为一条合成 user 消息追加进去 |
+| `agent/turn-stopping` | serial | **同步返回**，把 retain 丢进后台任务（`async: true`），并按 turn 数规划 prune |
+| `agent/status` | emit | `status === 'idle'` 时执行已规划的 prune（`agent.runMaintenance()` 拿独占槽） |
+| `agent/disposed` | emit | 丢弃该会话的运行时状态 |
+| `ctx.effect(...)` | 插件生命周期 | 启动时 `ensureReady()`（不 await），卸载时 flush + 关闭自己拉起的服务 |
+
+`ctx.inject(['compaction'], …)` 绑定裁剪引擎；拿不到就只关掉裁剪，其余功能照常。
+
+### 召回注入长这样
+
+```
+<memory-context bank="dsh-projectname-1a2b3c4d">
+Recalled long-term memory for this workspace. Background only: it can be stale or
+incomplete — verify against the current conversation before relying on it.
+- [world] (0.91) 该工作区的部署脚本是 deploy.sh，参数为 --workspace。
+</memory-context>
+```
+
+注入消息带 `source.kind = 'plugin:dsh-hindsight-memory'`：DSH 侧不会把它算作人类输入，
+插件自己在 retain 时也会过滤掉它，**不会出现「记忆召回 → 又被写回记忆」的回灌放大**。
+
+## 3. 配置 Schema
+
+所有键都有默认值，可写在 `cordis.patch.yml` 的 `config:` 里、写进外部 JSON（`config.file` 或
+`DSH_HINDSIGHT_CONFIG_FILE`），也可用环境变量覆盖（优先级：**环境变量 > 内联 config > 外部 JSON > 默认值**）。
+校验失败只丢一条 warning 并把该字段回退默认值，不会抛错。
+
+### 3.1 服务与启动
+
+| 键 | 默认 | 说明 |
+| --- | --- | --- |
+| `service.mode` | `auto` | `auto`/`attach`/`docker`/`compose`/`process`。`attach` 只连接、绝不拉起 |
+| `service.base_url` | `http://127.0.0.1:8888` | REST 地址（尾斜杠自动去掉） |
+| `service.api_prefix` | `/v1/default` | bank 级端点前缀 |
+| `service.health_path` / `version_path` | `/health` / `/version` | 探活与版本路径（反代前缀不一致时改这里，客户端会实际使用） |
+| `service.api_key` | `''` | 非空时发 `Authorization: Bearer …` |
+| `service.autostart` | `true` | 探活失败是否尝试拉起 |
+| `service.keep_alive_on_exit` | `false` | 退出时保留服务（常驻） |
+| `service.request_timeout_ms` | `8000` | 普通请求超时 |
+| `service.health_timeout_ms` | `2500` | 探活超时（要短，避免拖慢启动） |
+| `service.startup_timeout_ms` | `60000` | 拉起后等就绪的总时长 |
+| `service.retry_interval_ms` | `1500` | 就绪轮询间隔 |
+| `service.shutdown_grace_ms` | `5000` | SIGTERM→SIGKILL / `docker stop -t` 宽限 |
+| `service.docker.container` | `hindsight` | 容器名（先 inspect，存在则 start，不存在则 run） |
+| `service.docker.image` | `ghcr.io/vectorize-io/hindsight:latest` | 镜像 |
+| `service.docker.port` / `cp_port` | `8888` / `9999` | 宿主机端口 → 容器 8888(REST) / 9999(CP) |
+| `service.docker.restart_policy` | `unless-stopped` | `docker run --restart` |
+| `service.docker.compose_file` / `compose_service` | `''` / `hindsight` | `compose` 模式用 |
+| `service.docker.network` / `extra_args` / `extra_env` | – | 透传给 `docker run`；**密钥值只经子进程 env 传递，argv 里只有 `-e KEY` 名字** |
+| `service.process.command` / `args` / `cwd` / `env` / `detached` | – | `process` 模式（spawn 本地进程） |
+| `service.env_extra` | `{}` | 追加给自建服务的环境变量 |
+
+### 3.2 Bank 路由
+
+| 键 | 默认 | 说明 |
+| --- | --- | --- |
+| `bank.default_bank` | `''` | 非空则**所有**工作区共用一个 bank（最高优先级） |
+| `bank.workspace_bank_mapping` | `{}` | `{"/srv/projects/alpha": "alpha-bank", …}`，精确路径或目录前缀（最长前缀优先） |
+| `bank.name_template` | `dsh-{slug}-{hash}` | 未命中映射时的命名模板；支持 `{slug}` `{basename}` `{hash}` `{workspace}` |
+| `bank.prefix_match` | `true` | 是否启用目录前缀匹配（子目录共享父工作区记忆） |
+| `bank.ensure_on_use` | `true` | 首次读写前 `PUT` bank（新库不然全 404） |
+| `bank.mission` / `bank.background` | `''` | 建 bank 时的 mission/background 透传 |
+
+示例：让两个工作区共用同一份记忆
+
+```yaml
+bank:
+  workspace_bank_mapping:
+    /vol2/@appshare/deepseek.harness/home/proj-a: team-memory
+    /vol2/@appshare/deepseek.harness/home/proj-b: team-memory
+```
+
+### 3.3 Embedding / Reranker / LLM
+
+这三个块对应 **Hindsight 服务端**的模型通道（服务端的 `HINDSIGHT_API_EMBEDDINGS_*`、
+`HINDSIGHT_API_RERANKER_COHERE_*`、`HINDSIGHT_API_LLM_*`）。插件在**自己拉起服务**时把它们映射成 env
+传给容器/进程；在 `attach` 模式下它们不生效（服务端已按自己的 env 跑，插件无法远程改模型），
+此时 `reranker.top_n` / `recall.score_threshold` 由插件在客户端二次过滤。
+
+| 键 | 默认 |
+| --- | --- |
+| `embedding.provider` / `base_url` / `api_key` / `model` / `dimensions` / `batch_size` | `''` / `''` / `''` / `''` / `0` / `0` |
+| `reranker.enabled` / `provider` / `base_url` / `api_key` / `model` / `top_n` / `score_threshold` | `true` / `''` / `''` / `''` / `''` / `6` / `0.25` |
+| `llm.provider` / `base_url` / `api_key` / `model` / `temperature` / `max_tokens` / `context_window` | `''` / `''` / `''` / `''` / `0.2` / `1024` / `32768` |
+
+### 3.4 召回 / 归档 / 裁剪
+
+| 键 | 默认 | 说明 |
+| --- | --- | --- |
+| `recall.enabled` | `true` | 关闭后不再注入记忆 |
+| `recall.budget` | `mid` | `low`/`mid`/`high`，透传 `RecallRequest.budget` |
+| `recall.max_tokens` | `1200` | 服务端召回预算 |
+| `recall.max_chars` | `4000` | 注入块的硬字符上限 |
+| `recall.top_n` | `6` | 客户端二次截断条数 |
+| `recall.score_threshold` | `0.25` | 低于该 `scores.final` 的结果丢弃（0 关闭） |
+| `recall.types` / `tags` / `tags_match` | `[]` / `[]` / `any` | 透传类型与标签过滤 |
+| `recall.min_prompt_chars` | `8` | 太短的输入（`ok`/`/help`）不召回 |
+| `recall.timeout_ms` | `6000` | 召回超时（超时即跳过本步） |
+| `recall.cache_ms` | `60000` | 同一 prompt 的结果复用窗口 |
+| `recall.cooldown_ms` | `60000` | 召回失败后的退避窗口，**按 bank 计**（一个 bank 429 不影响其他工作区） |
+| `recall.max_query_chars` | `2000` | 查询文本截断 |
+| `retain.enabled` | `true` | |
+| `retain.async` | `true` | 交给服务端异步抽取（推荐） |
+| `retain.max_turns_per_batch` | `8` | 每次请求的 turn 数 |
+| `retain.min_turn_chars` | `24` | 太短的 turn 不入库 |
+| `retain.include_tool_calls` / `max_tool_chars` | `true` / `400` | 是否把工具调用/结果带进记忆 |
+| `retain.retain_assistant` / `tags` | `true` / `[]` | |
+| `retain.flush_timeout_ms` | `8000` | 退出时等待在途 retain 的上限 |
+| `retain.state_dir` | `~/.dsh-hindsight/state` | retain 游标目录（重启/resume 后不重发历史）；置空则只在内存记账 |
+| `prune.enabled` / `mode` | `true` / `auto` | `auto` = 有 compaction 引擎就裁剪 |
+| `prune.keep_recent_turns` | `6` | 最近 N 轮原文保留 |
+| `prune.trigger_after_turns` | `12` | 超过 N 轮才动手 |
+| `prune.min_prune_turns` | `2` | 单次至少折叠 N 轮（防空转） |
+| `logging.level` / `file` / `console` | `info` / `~/.dsh-hindsight/plugin.log` / `false` | |
+
+### 3.5 环境变量覆盖（节选，全表见 `lib/config.js` 的 `ENV_MAP`）
+
+```
+DSH_HINDSIGHT_ENABLED / DSH_HINDSIGHT_CONFIG_FILE
+DSH_HINDSIGHT_SERVICE_MODE / DSH_HINDSIGHT_BASE_URL / DSH_HINDSIGHT_API_KEY / DSH_HINDSIGHT_AUTOSTART
+DSH_HINDSIGHT_KEEP_ALIVE / DSH_HINDSIGHT_REQUEST_TIMEOUT_MS / DSH_HINDSIGHT_STARTUP_TIMEOUT_MS
+DSH_HINDSIGHT_DOCKER_CONTAINER / DSH_HINDSIGHT_DOCKER_IMAGE / DSH_HINDSIGHT_DOCKER_PORT
+DSH_HINDSIGHT_PROCESS_COMMAND / DSH_HINDSIGHT_PROCESS_ARGS / DSH_HINDSIGHT_PROCESS_CWD
+DSH_HINDSIGHT_BANK_DEFAULT / DSH_HINDSIGHT_BANK_TEMPLATE / DSH_HINDSIGHT_BANK_MAPPING(JSON)
+DSH_HINDSIGHT_EMBEDDING_{PROVIDER,BASE_URL,API_KEY,MODEL,DIMENSIONS,BATCH_SIZE}
+DSH_HINDSIGHT_RERANKER_{PROVIDER,BASE_URL,API_KEY,MODEL,TOP_N,SCORE_THRESHOLD}
+DSH_HINDSIGHT_LLM_{PROVIDER,BASE_URL,API_KEY,MODEL,TEMPERATURE,MAX_TOKENS,CONTEXT_WINDOW}
+DSH_HINDSIGHT_RECALL_{ENABLED,BUDGET,MAX_TOKENS,TOP_N,SCORE_THRESHOLD,TIMEOUT_MS,TYPES}
+DSH_HINDSIGHT_RETAIN_{ENABLED,ASYNC,MAX_TURNS}
+DSH_HINDSIGHT_PRUNE_{ENABLED,TRIGGER_TURNS} / DSH_HINDSIGHT_KEEP_RECENT_TURNS
+DSH_HINDSIGHT_LOG_LEVEL / DSH_HINDSIGHT_LOG_FILE
+```
+
+## 4. 安装到 dsh
+
+插件目录：`/vol2/@appshare/deepseek.harness/home/hindsight/dsh-hindsight-memory`
+
+```bash
+# 1) 让 profile 能解析到包（与本地插件同样的做法：符号链接）
+ln -sfn "/vol2/@appshare/deepseek.harness/home/hindsight/dsh-hindsight-memory" \
+        "/vol2/@appshare/deepseek.harness/dsh-data/profiles/web/node_modules/dsh-hindsight-memory"
+
+# 2) 让 bundle patch 生效：把包名加入 profile 的 dsh.profile.bundles，或在 dsh 插件管理器里安装本地目录
+#    （cordis.patch.yml 已包含 insert 条目，默认配置也在里面）
+```
+
+重启 dsh 后，日志 `~/.dsh-hindsight/plugin.log` 应出现：
+
+```
+[memory] plugin loaded (service=http://127.0.0.1:8888 mode=auto autostart=true recall=true retain=true prune=true)
+[memory] Hindsight attached at http://127.0.0.1:8888 (startup)
+[memory] Hindsight api_version=1.1.0
+[memory] workspace bank: /path/to/cwd -> dsh-cwdname-xxxxxxxx (template)
+```
+
+## 5. 本地验证
+
+```bash
+cd /vol2/@appshare/deepseek.harness/home/hindsight/dsh-hindsight-memory
+
+npm test                       # 全部测试（无服务时集成测试自动 SKIP）
+node tests/run-all.mjs         # 同上，逐文件汇总
+node scripts/selftest.mjs      # 对着真实服务打印 配置/bank 路由/health/retain/recall
+node scripts/selftest.mjs --base-url http://127.0.0.1:8888 --workspace /srv/app
+DSH_TEST_HINDSIGHT_URL=http://127.0.0.1:8888 node tests/test-integration.mjs
+```
+
+单文件也能直接跑：`node tests/test-config-bank.mjs`、`test-lifecycle.mjs`、`test-hooks.mjs`。
+测试只用 `node:assert`，不需要任何依赖；生命周期测试用 fake runner，不会真的动容器，
+只有 `process` 模式那条会用 `node -e setInterval` 真实 spawn 并验证 SIGTERM 回收。
+
+`tests/run-all.mjs` 当前基线：**5 个文件 / 57 项**（config-bank 11、lifecycle 11、client-http 7、hooks 19、integration 9）。
+第二轮 review 后新增的回归用例覆盖：上游 `decide()` 抛错降级、`enabled:false` 全程静默、`agent/created`
+替身事件、dispose 定时器不复活会话、并发 turn-stopping 单飞、游标持久化、裁剪不落在 tool 节点、
+docker argv 无明文密钥、启动中 stop 回收容器、health/version 路径、银行 upsert 缓存过期与 force。
+
+## 6. 降级语义（重要）
+
+| 场景 | 行为 |
+| --- | --- |
+| 服务没启动且 `autostart=false` | 一条 warning，`state=degraded`，retain/recall 直接跳过 |
+| 拉起命令失败（docker 无权限等） | 记录 `docker run: …` 原因，继续无记忆运行 |
+| 就绪超时 | `server never became healthy within Xms`，继续无记忆运行 |
+| recall 5xx/429/超时 | 不注入、计 `recallsFailed`、**冷却 60s**，同一会话只 warn 一次 |
+| retain 失败 | 打 warning、计 `retainsFailed`，不影响下一轮 |
+| compactRegion 抛错 | 打 warning、计 `prunesFailed`，回到 dsh 原生 compaction 行为 |
+| 没有 compaction 引擎 | 只关裁剪，召回/归档照常 |
+
+可观测性：`apply()` 返回 `{ runtime, stats() }`；`stats()` 给出
+`{recalls, recallsFailed, injections, retains, retainsFailed, prunes, prunesFailed, service}`。
+
+## 7. 边界与已知限制
+
+0. **`enabled: false` 是真开关**：不探活、不拉起服务、不发送任何会话内容、不改写可见历史。
+1. **模型通道归属服务端**：`embedding`/`reranker`/`llm` 是 Hindsight 进程级 env；`attach` 模式下插件改不了。
+   bank 级只有行为开关（`enable_reranking`、`recall_max_tokens`…），可用 `PATCH /banks/{id}/config` 调。
+2. **召回质量取决于服务端**：上游 embedding 通道额度耗尽时服务端返回 500（`pool_exhausted`），
+   此时 recall 结果为空/报错，插件按降级处理——这不是插件故障。
+3. **裁剪依赖 compaction 引擎**：`mode: auto` 时若该 profile 未挂载 compaction（或引擎无 `compactRegion`），
+   裁剪自动让位，只保留召回/归档。
+4. **bank 名与路径绑定**：工作区迁移目录会得到新 bank（模板含 `{hash}`）；要复用旧记忆就写 `workspace_bank_mapping`。
+5. **子代理会话跳过**：`session.header.origin === 'subagent'` 的会话不召回、不归档，避免污染主记忆。
+6. **dsh 重启后 turn 计数从日志重建**：retain 以事件日志里的 turn 数为准（幂等，重复调用只会补差异）。
+
+## 8. 参考
+
+- Hindsight 官方仓库：`vectorize-io/hindsight`（REST：`/health`、`/version`、`/v1/default/banks/{id}`、`…/memories`、`…/memories/recall`、`…/config`）
+- 官方 dsh 记忆适配：`@vectorize-io/hindsight-coding-agents`（Hook 选择与注入消息写法参考其 dsh 入口）
+
+## 修复版新增（review 2026-10-24）
+
+- `bank.scope`: `workspace`（默认，同目录共享）| `preset`（每个角色/agentPreset 一个 bank，角色扮演推荐）| `session`。环境变量 `DSH_HINDSIGHT_BANK_SCOPE`。
+- 时间感知 `time.*`：`timezone`（默认系统时区，`DSH_HINDSIGHT_TIMEZONE`）、`window_minutes`、`window_boost`、`inject_now`。
+  - retain：`MemoryItem.timestamp` = 原消息事件时间（带时区偏移），正文逐行写 `[2026-10-24 周六 07:03 (Asia/Hong_Kong)] USER（用户本人）/角色「X」(ASSISTANT)`。
+  - recall：发送 `query_timestamp`（当前本地时间）；插件自行把“早上7点/昨天下午/3天前/7am”解析成时间窗（Hindsight 自带解析只到“天”，且裸“7点”解析不出），窗口内记忆 ★ 标记并加权置顶；注入块带每条记忆时间与当前本地时间。
+- 补录：Hindsight 未就绪时写下的轮次不推进游标；后端就绪后自动 flush 所有活跃会话。
+- 回灌 `backfill.*`（默认开）：通过官方 `sessionPersistence` 服务 list/open('read') 读取 `$DSH_HOME/sessions/<cwd>/<session>/session.vN.jsonl.zstd`，按会话游标文件 + 确定性 document_id 去重，跳过子 agent 会话；`max_sessions`、`since`、`pause_ms`。
+- Docker：默认 `-p 127.0.0.1:...`、`-v hindsight-data:/home/hindsight/.pg0`、`--shm-size 1g`；`prune.enabled` 默认 false。
+- 离线测试：`node tests/run-all.mjs`；`node tests/mock-hindsight.mjs 18888` 起一个按 openapi 字段校验的 mock，可配 `DSH_TEST_HINDSIGHT_URL=http://127.0.0.1:18888 node tests/test-integration.mjs`。
+
+### 推荐免费/本地模型配置（示例，key 走环境变量，不要写进 yml）
+```
+DSH_HINDSIGHT_EMBEDDING_PROVIDER=local   DSH_HINDSIGHT_EMBEDDING_MODEL=BAAI/bge-m3
+DSH_HINDSIGHT_RERANKER_PROVIDER=local    DSH_HINDSIGHT_RERANKER_MODEL=BAAI/bge-reranker-v2-m3
+DSH_HINDSIGHT_LLM_PROVIDER=deepseek      DSH_HINDSIGHT_LLM_MODEL=deepseek-chat  DSH_HINDSIGHT_LLM_API_KEY=$DEEPSEEK_API_KEY
+DSH_HINDSIGHT_BANK_SCOPE=preset          DSH_HINDSIGHT_TIMEZONE=Asia/Hong_Kong
+```
+
+
+## 9. 设置面板与首次设置向导
+
+### dsh 面板机制（读源码确认）
+- Host（`@deepseek-ai/dsh-settings`）只认插件 runtime 上的 `Config`（schemastery，鸭子类型 `'toJSON' in schema`），
+  且**只暴露 `.volatile()` 节点下的字段**；命名空间 = profile 条目 id（本插件 `dsh-hindsight-memory`）。
+  `role('secret')` 字段远程读取时被脱敏。
+- 写入：客户端 `ctx.configForms.get(ns).mutate([{op:'set',path,value}])` → `settings.mutate` → 写回当前 profile 的
+  `cordis.patch.yml`（就是 `DSH_HOME/profiles/<profile>/cordis.patch.yml` 里本条目的 `config`）。Home 级 patch 或 CLI overlay
+  覆盖了同一字段时，Host 拒绝写入。
+- volatile 字段变化 → loader 发 `loader/volatile-update`，不重挂载；本插件收到后**停掉旧运行时、按新配置重建**。
+- dsh 当前**没有发布通用的自动表单**（`autoGenerate` 字段存在但无客户端消费），所以本插件自带一个 web 客户端：
+  `web/client.js`，手写的 `window.__ModuleLoader__.load(...)` 包，只 `require('react')`（shell 共享模块表），
+  无需构建、无需安装任何 `@deepseek-ai/*`。挂在插槽 `plugins.bundle.config`（插件详情页）和
+  `plugins.bundle.activation`（在列表里启用后弹出的“去设置/稍后”）。
+- **只有 web/desktop 有面板**；TUI 没有，TUI 用户继续用 `cordis.patch.yml` / 外部 JSON / 环境变量。
+
+### 为什么本地目录安装也能用 schema
+`@deepseek-ai/schemastery` 是 `@deepseek-ai/dsh` 的直接依赖。`lib/schema.js` 依次尝试
+`DSH_HINDSIGHT_SCHEMASTERY`（显式文件）→ 以 `realpath(process.argv[1])`（dsh 入口）/ `process.execPath` / cwd /
+插件自身为基准 `createRequire().resolve('@deepseek-ai/schemastery/package.json')`，再导入 `lib/index.mjs`
+（或源码检出时的 `src/index.ts`）。拿到的是 dsh 自己那一份实例。Schema 不带默认值（默认值仍由 `lib/config.js`
+负责，外部 JSON 不会被 schema 默认值盖掉），provider 字段是自由字符串。
+注意：loader 用 default export 作 runtime，所以 `Config` 同时挂在 `apply.Config` 上（漏了这个面板就不出现，实测踩过）。
+
+### 向导
+`setup` 字段：`unset`（首次）→ 面板显示两张卡片：
+- **已配置 Hindsight** → `setup: existing`：只填 Base URL、API key / tenant key（secret，留空不改）、API 前缀；
+  强制 `mode=attach`、`autostart=false`，插件不启动任何进程。
+- **未配置（本地部署）** → `setup: local`：部署方式 / 包变体 / 端口，加 embedding（必填）、reranker（空=rrf）、
+  抽取 LLM（空=none，只存原文）。
+两种都可编辑 bank 路由：`default_bank`、`scope`、`workspace_bank_mapping` 表（多个工作区可指向同一 bank）、召回/写入/回填/时区。
+随时点“重新选择”切换。
+
+### 本地部署（`setup: local`，所有系统同一路径，Windows 为默认场景）
+依据 Hindsight 官方文档 `hindsight-docs/docs/developer/installation.md`：slim 镜像/包约 500MB、不含本地模型、
+需外部 embedding 与 reranker；Windows 完整支持（含 pg0 内置 Postgres）；Windows 推荐 `pip install hindsight-api`，
+想省内存用 `hindsight-api-slim`。`hindsight-api-slim` 的 extra `embedded-db` = `pg0-embedded`（PyPI 有 win_amd64 wheel）。
+**端口是 8888**（`DEFAULT_PORT`）；8889 是 worker 的 metrics 端口，不是 API。
+
+`runner: auto` 顺序：
+1. **venv**（默认）：找 Python ≥3.11（Windows: `py -3.12/-3.13/-3.11`、`python`；其他: `python3.12/3.13/3.11`、`python3`），
+   在 `~/.dsh-hindsight/venv` 建 venv，`pip install "hindsight-api-slim[embedded-db]==1.1.0"`（首次几分钟，装完写标记不重复装），
+   以子进程启动 `hindsight-api --host 127.0.0.1 --port 8888`，环境变量由插件配置生成
+   （`HINDSIGHT_API_DATABASE_URL=pg0://dsh-hindsight`，reranker 空→`rrf`，LLM 空→`none`），等 `/health`；
+   dsh 退出时停子进程并 `pg0.stop()`（否则内置 postgres 会残留）。
+2. **uvx**：`uvx --python 3.12 --from "hindsight-api-slim[embedded-db]==1.1.0" hindsight-api ...`
+3. **pip**：PATH 上已有 `hindsight-api`。
+4. **docker**：`ghcr.io/vectorize-io/hindsight:1.1.0-slim`（Linux/macOS 有 Docker 时的备选）。
+embedding/reranker 选 `local`/空 时自动切 full 包（会下载本地模型，内存 2GB+，国内可填 `hf_endpoint`）。
+DeepSeek 没有 embeddings 接口，embedding 需要别家（OpenAI 兼容、SiliconFlow、Cohere、TEI 等）。
+
+### 实测（Linux 盒子，无真实 key）
+- `pip install hindsight-api-slim[embedded-db]==1.1.0` + pg0 + mock embedding + reranker rrf + LLM none：healthy，RSS ≈ 540MB，
+  retain/recall 通，`test-integration.mjs` 对真服务通过。
+- 插件 `setup: local, runner: venv` 全流程：建 venv → pip 安装 → 起服务 44s healthy（≈553MB）→ 退出后子进程与 postgres 均停止。
+- 真实 dsh web（本仓库源码构建，`dsh plugin --profile web add <本目录>`）+ 无头 Chrome：插件详情页出现向导，
+  选“已配置” → 填 Base URL、默认 bank、映射 → 保存，`profiles/web/cordis.patch.yml` 写入 `setup: existing` 与映射，
+  日志 `plugin loaded (settings-updated; setup=existing ... mode=attach autostart=false)`，无重启。
+- **Windows 未实机运行**（只做了单测里的 win32 路径/候选解释器规划）。
+
+### 限制
+- 面板只在 web/desktop；TUI 无。解析不到 schemastery（非常规安装）时无面板，日志可用 `DSH_HINDSIGHT_DEBUG_SCHEMA=1` 排查，
+  或用 `DSH_HINDSIGHT_SCHEMASTERY=<.../schemastery/lib/index.mjs>` 指定。
+- 向导是自定义 UI + `setup` 联合类型实现，不是 Host 的动态表单；没有自定义客户端的宿主看不到向导。
+- Home patch / CLI overlay 覆盖的字段面板写不进去（Host 拒绝）；环境变量仍在最后覆盖，`setup: local` 会覆盖 base_url。
+- 首次本地部署需联网装包，耗时数分钟；装包过程中退出 dsh 下次会重装。
+- 需要真实 key 才能验证：LLM 事实抽取（`llm.provider` 非 none）、远程 embedding/reranker 质量、DeepSeek 对话本身。
+
+
+## 10. 技术附录：一键部署、.env、日志、限流
+
+- **配置链路**：面板保存 → `cordis.patch.yml` → 插件重载 → 生成插件根目录的 `.env`（`HINDSIGHT_API_*`，UTF-8 无 BOM，特殊值加引号，权限 0600）→ 以插件根目录为 cwd 启动 Hindsight，并把解析后的 `.env` 注入子进程环境。
+  - 为什么 cwd 必须是插件根目录：hindsight-api 启动时会执行 `load_dotenv(find_dotenv(usecwd=True), override=True)`，会从 cwd 往上找 `.env` 并**覆盖**进程环境；如果 cwd 是用户工作区，工作区里的 `.env` 会把配置顶掉。
+  - 可以手改 `.env`；面板留空的密钥不会覆盖文件里的密钥；面板「状态」页回显 `.env`（密钥打码）。`.env.example` 是样例；`.env` 已在 `.gitignore`，不进 zip，升级时保留。
+  - 每次启动在 `plugin.log` 记一行打码后的配置摘要：`Hindsight config: embeddings=[openai BAAI/bge-m3 … key (已设置)] reranker=[siliconflow …] llm=[…]`。
+- **启动前检查**：理解文字的模型必须是远程的且有密钥；排序模型必须明确（Hindsight 1.1.0 不接受 `none`，插件自动映射为 `rrf`）；整理模型缺密钥时回退为只存原话（`none`）并在面板提示。不满足就**不启动**，给中文原因。
+- **未设置（setup=unset）+ 自动模式**：不会尝试启动，只提示一次；失败重试使用指数退避（30 s 起，翻倍，最多 10 分钟），重复日志去重。
+- **一键部署步骤**：检查设置 → 准备运行环境（找 Python ≥3.11；没有就下载 uv 独立可执行文件到 `~/.dsh-hindsight/bin`，源依次为你设置的镜像 / 清华 / 阿里云 / PyPI，再 `uv python install 3.12`，Python 本体走 npmmirror 镜像，装在 `~/.dsh-hindsight/python`）→ pip 安装 `hindsight-api-slim`（默认清华镜像，可在高级设置改 `pip_index_url`）→ 启动（pg0 内置数据库）→ `/health`。
+- **日志**：`~/.dsh-hindsight/logs/`（可用 `DSH_HINDSIGHT_LOG_DIR` 改）：`hindsight.log`（子进程 stdout/stderr）、`install.log`（下载/pip）。子进程退出时最后 30 行写进 plugin.log 和面板，并给中文解释。
+- **限流（HTTP 429 / quota）**：写入记忆时遇到限流，按 2 s → 8 s → 32 s 退避重试；仍失败则保留游标，下一轮自动重写，内容不丢。左侧状态显示「模型被限流」。
+- **左侧状态卡片**：注册在 dsh 官方的 `sidebar.footer.action` 槽位（左栏底部、设置按钮上方），不改 dsh 源码；服务端通过同一个 owner-only 路由 `api/dsh-hindsight` 的长轮询（最多挂起 25 s，状态一变就返回）推送更新；点击调用 dsh 的 `pluginNavigation.openBundle` 打开本插件页面并切到「状态」。
+- **默认模型**：理解文字 `BAAI/bge-m3`（1024 维，provider `openai` + 硅基流动 base URL）、排序 `BAAI/bge-reranker-v2-m3`（provider `siliconflow`），两者共用一个硅基流动密钥；整理记忆默认跟随 dsh。
+- **时区提醒**：Hindsight 自带的「某一天」过滤按 UTC 计算（例如北京时间早上 7 点会落在前一天 UTC）。插件在发起回忆时用本地时区自己计算时间窗口，语义检索也会补上，但直接调用 Hindsight API 时需要注意。
+- **平台验证情况（v0.1.0）**：Linux 上已用真实硅基流动密钥端到端验证。**Windows / macOS 尚未经过真机验证**：针对 Windows 的处理（uv 的 Windows 版下载、中文路径、`tasklist` 查内存、端口占用提示、GBK/UTF-8）都是按代码编写并经单元测试，遇到问题请附上 `~/.dsh-hindsight/logs/` 提交 issue。
