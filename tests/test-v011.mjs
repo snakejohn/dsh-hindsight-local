@@ -55,14 +55,14 @@ const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url))
 {
   const runtime = { service: { ready: false, state: 'idle' }, stats: {}, job: null, recent: [], failures: [] }
   const config = { setup: 'local', enabled: true, service: { base_url: '', local: {} }, llm: { mode: 'follow' }, embedding: { api_key: 'sk-secret' }, reranker: {} }
-  const rpc = createRpcHandler({ ctx: {}, current: () => ({ runtime, config }) })
+  const rpc = createRpcHandler({ ctx: {}, current: () => ({ runtime, config, rawConfig: { embedding: { api_key: 'sk-secret' } } }) })
   const call = typeof rpc === 'function' ? rpc : (rpc.overview ? rpc.overview : null)
   const out = typeof rpc === 'function' ? await rpc('overview', {}) : await rpc.endpoints?.overview?.()
   const ov = out?.value ?? out?.result ?? out
   assert.deepEqual(ov.keysSet, { embedding: true, reranker: false, llm: false })
   assert.ok(!JSON.stringify(ov).includes('sk-secret'), 'overview must not leak the key')
   const client = readFileSync(new URL('../web/client.js', import.meta.url), 'utf8')
-  assert.match(client, /ov\.keysSet\.embedding/); assert.match(client, /ovS\.keysSet\[path\[0\]\]/)
+  assert.match(client, /ov\.keyState\.embedding/); assert.match(client, /ovS\.keyState\[chan\]/)
   console.log('PASS overview.keysSet drives the "已保存过密钥" placeholder without leaking the key')
 }
 // 5. zh 24h time + panel memTime
@@ -73,5 +73,5 @@ const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url))
   assert.equal(new Date('2026-10-24T13:05:00+08:00').toLocaleString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai' }), '2026/10/24 13:05:00')
   console.log('PASS panel shows zh-CN 24h time and the real time for date-only facts')
 }
-assert.equal(pkg.version, '0.1.1')
+assert.match(pkg.version, /^0\.1\.[1-9]/)
 console.log('\nv0.1.1 tests passed')

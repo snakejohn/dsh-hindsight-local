@@ -29,7 +29,7 @@ window.__ModuleLoader__.load({
       shareKey: "留空 = 和上面用同一个密钥", deployTitle: "准备进度", step_config: "检查设置", step_python: "准备运行环境", step_install: "下载记忆程序", step_start: "启动", step_health: "检查是否正常",
       port: "端口", pid: "PID", mem: "内存", logTail: "运行记录（给技术支持看）", installTail: "下载记录", logDir: "记录保存位置", envFile: "设置文件（.env）", checkConn: "检查一下", redeploy: "重新安装", restart: "重新启动", connOk: "一切正常", connBad: "连不上", hintT: "怎么办",
       rechoose: "重新选择", save: "保存", saved: "已保存，正在按新设置重新准备", failed: "保存没有成功，请再点一次保存；还不行就重启 dsh", unsaved: "有未保存的修改",
-      conn: "连接", baseUrl: "Base URL", apiKey: "API Key", apiPrefix: "API 前缀", secretSet: "已设置（留空不修改）",
+      conn: "连接", baseUrl: "Base URL", apiKey: "API Key", apiPrefix: "API 前缀", secretSet: "已设置（留空不修改）", keyUnset: "未设置", keyUseDsh: "使用 dsh 的密钥", keySrc: "来源", src_dotenv: "本插件的 .env", "src_plugin-config": "dsh 插件配置", src_env: "系统环境变量", src_dsh: "dsh 的密钥", clearKeys: "清除密钥", clearKeysAsk: "确定清除已保存的密钥吗？会同时清掉本插件 .env 和 dsh 插件配置里的密钥（不影响 dsh 自己的模型密钥）。", clearKeysDone: "已清除密钥", modelsLoading: "正在获取模型…", modelsCount: "共 {n} 个可选模型，也可以直接输入模型名", modelsNone: "还没有获取到模型列表，可以直接输入模型名", modelsManual: "仍可在上面手动输入模型名", modelSearch: "搜索或输入模型名", modelPick: "选择或输入模型", proxy: "代理", proxyAuto: "自动", proxyOff: "不用代理", proxyCustom: "自定义地址", proxyFoot: "「自动」跟随系统代理，并自动去掉 httpx 无法识别的地址（如 [::1]）。启动报 Invalid port 时可选「不用代理」。", sModels: "模型（一般不用改）",
       deploy: "本地部署", runner: "安装方式", variant: "版本", port: "端口", cp: "同时启动 Control Plane", cpHint: "官方后台 UI（npm @vectorize-io/hindsight-control-plane，端口 9999，需要 Node/npx，首次运行需联网下载约 80MB）",
       emb: "理解文字的模型", embFoot: "用来理解每句话的意思，找回相关的记忆。必须设置。", dim: "向量维度", dimFoot: "向量维度：模型把一句话变成多少个数字。bge-m3 是 1024，一般不用改。换模型或迁移时必须和原来一致，不一致时插件会拦下来并提示，不会弄坏已有记忆。", rr: "排序模型", rrFoot: "把找回的记忆按相关程度排好。选 rrf 表示不用模型。", llm: "整理记忆的模型",
       preset: "服务商", provider: "接口类型", model: "模型", fetchModels: "获取模型", modelsN: "个模型", modelsErr: "获取模型失败",
@@ -57,7 +57,7 @@ window.__ModuleLoader__.load({
 .hs26{--hs-bg:rgba(255,255,255,.62);--hs-bg2:rgba(255,255,255,.38);--hs-line:rgba(60,60,67,.14);--hs-text:#1c1c1e;--hs-sub:rgba(60,60,67,.62);--hs-tint:#0a84ff;--hs-green:#30d158;--hs-red:#ff453a;--hs-orange:#ff9f0a;--hs-fill:rgba(120,120,128,.14);--hs-shadow:0 8px 32px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.7);
 font:15px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;color:var(--hs-text);padding:14px;border-radius:28px;
 background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60%),radial-gradient(100% 70% at 100% 100%,rgba(191,90,242,.12),transparent 60%);-webkit-font-smoothing:antialiased}
-@media (prefers-color-scheme:dark){.hs26{--hs-bg:rgba(44,44,46,.55);--hs-bg2:rgba(58,58,60,.4);--hs-line:rgba(84,84,88,.45);--hs-text:#f2f2f7;--hs-sub:rgba(235,235,245,.6);--hs-fill:rgba(120,120,128,.28);--hs-shadow:0 8px 32px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08)}}
+.hs26.dk{--hs-bg:rgba(44,44,46,.55);--hs-bg2:rgba(58,58,60,.4);--hs-line:rgba(84,84,88,.45);--hs-text:#f2f2f7;--hs-sub:rgba(235,235,245,.6);--hs-fill:rgba(120,120,128,.28);--hs-shadow:0 8px 32px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08)}
 .hs26 *{box-sizing:border-box}
 .hs26 .glass{background:var(--hs-bg);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,.22);box-shadow:var(--hs-shadow)}
 .hs26 .hdr{font-size:13px;text-transform:uppercase;letter-spacing:.02em;color:var(--hs-sub);margin:22px 18px 7px}
@@ -84,7 +84,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
 .hs26 .btn.small{padding:6px 13px;font-size:13px}
 .hs26 .pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--hs-fill);color:var(--hs-sub);white-space:nowrap}
 .hs26 .pill.ok{background:rgba(48,209,88,.18);color:#248a3d}.hs26 .pill.bad{background:rgba(255,69,58,.16);color:#d70015}.hs26 .pill.warn{background:rgba(255,159,10,.18);color:#c93400}
-@media (prefers-color-scheme:dark){.hs26 .pill.ok{color:#30d158}.hs26 .pill.bad{color:#ff6961}.hs26 .pill.warn{color:#ffb340}}
+.hs26.dk .pill.ok{color:#30d158}.hs26.dk .pill.bad{color:#ff6961}.hs26.dk .pill.warn{color:#ffb340}
 .hs26 .card{border-radius:26px;padding:18px;margin:10px 0;cursor:pointer;transition:transform .2s}
 .hs26 .card:hover{transform:translateY(-2px)}
 .hs26 .sub{font-size:12.5px;color:var(--hs-sub)}
@@ -113,6 +113,26 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
 .hs26 .warnbox{border-radius:20px;padding:12px 16px;margin-top:10px;background:rgba(255,159,10,.14);font-size:13.5px}
 .hs26 .mem{display:block}.hs26 .mem .t{color:var(--hs-text);white-space:pre-wrap;word-break:break-word}
 .hs26 a{color:var(--hs-tint);text-decoration:none;font-weight:600}
+.hs-pick{font:inherit;display:inline-flex;align-items:center;justify-content:flex-end;gap:6px;max-width:100%;min-width:0;border:0;background:transparent;color:var(--hs-tint);cursor:pointer;padding:6px 10px;margin:-2px -10px -2px 0;border-radius:12px;transition:background .2s,transform .12s}
+.hs-pick:hover{background:var(--hs-fill)}.hs-pick:active{transform:scale(.97)}.hs-pick[disabled]{opacity:.45;cursor:default}
+.hs-pick:focus-visible{outline:2px solid var(--hs-tint);outline-offset:1px}
+.hs-pick .tx{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hs-pick .tx.ph{color:var(--hs-sub)}
+.hs-pick svg{flex:0 0 auto;opacity:.75}
+.hs26.hs-pop{position:fixed;display:flex;flex-direction:column;padding:6px;border-radius:22px;background:rgba(252,252,254,.74);backdrop-filter:blur(40px) saturate(190%);-webkit-backdrop-filter:blur(40px) saturate(190%);border:1px solid rgba(255,255,255,.55);box-shadow:0 22px 60px rgba(0,0,0,.22),0 2px 8px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.7);animation:hsPop .2s cubic-bezier(.2,.9,.3,1.15);transform-origin:top right;z-index:2147483000;overflow:hidden}
+.hs26.hs-pop:focus{outline:none}
+.hs26.hs-pop.up{transform-origin:bottom right}
+.hs26.hs-pop.dk{background:rgba(38,38,42,.76);border-color:rgba(255,255,255,.12);box-shadow:0 22px 60px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08)}
+.hs-pop-list{overflow-y:auto;overscroll-behavior:contain;flex:1 1 auto;min-height:0}
+.hs-opt{display:flex;align-items:center;gap:8px;padding:9px 12px 9px 8px;border-radius:13px;cursor:pointer;color:var(--hs-text);transition:background .12s;user-select:none}
+.hs-opt.act{background:var(--hs-fill)}.hs-opt:active{background:rgba(120,120,128,.3);transform:scale(.99)}
+.hs-opt .ck{width:18px;color:var(--hs-tint);font-weight:700;text-align:center;flex:0 0 auto}
+.hs-opt .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hs-opt.sel .tx{font-weight:600}.hs-opt.custom .tx{color:var(--hs-tint)}
+.hs26.hs-pop .hs-pop-search{padding:2px 2px 6px}
+.hs26.hs-pop .hs-pop-search input{width:100%;font:inherit;font-size:14px;border:0;outline:0;border-radius:12px;padding:8px 12px;background:var(--hs-fill);color:var(--hs-text);text-align:left}
+.hs-pop-empty{padding:14px 12px;color:var(--hs-sub);font-size:13px;text-align:center}
+.hs26 .keysrc{font-size:12px;color:var(--hs-sub);white-space:nowrap}
+@keyframes hsPop{from{opacity:0;transform:scale(.94) translateY(-4px)}to{opacity:1;transform:none}}
 @keyframes hsIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.hs26 *{animation:none!important;transition:none!important}}`;
     function useStyle() {
@@ -163,18 +183,152 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
     const Switch = (p) => h("button", { className: "sw", role: "switch", "aria-checked": !!p.value, "aria-label": p.label, onClick: () => p.onChange(!p.value) });
     const Seg = (p) => h("div", { className: "seg", role: "group", "aria-label": p.label }, p.options.map((o) => h("button", { key: o.value, "aria-pressed": p.value === o.value, onClick: () => p.onChange(o.value) }, o.label)));
     const Text = (p) => h("input", { type: p.type || "text", value: p.value == null ? "" : p.value, placeholder: p.placeholder, list: p.list, "aria-label": p.label, onChange: (e) => p.onChange(p.type === "number" ? (e.target.value === "" ? undefined : Number(e.target.value)) : e.target.value) });
-    const Select = (p) => h("select", { value: p.value == null ? "" : p.value, "aria-label": p.label, onChange: (e) => p.onChange(e.target.value) }, p.options.map((o) => typeof o === "string" ? h("option", { key: o, value: o }, o || "—") : h("option", { key: o.value, value: o.value }, o.label)));
+    let ReactDOM = null;
+    try { ReactDOM = require("react-dom"); } catch (_) { ReactDOM = null; }
+    // dsh toggles body[data-ds-dark-theme] (ui-theme boot-theme.ts); the OS setting only applies
+    // when dsh has not chosen (no data-ds-theme-source), e.g. outside the dsh shell.
+    function isDark() {
+      if (typeof document === "undefined" || !document.body) return false;
+      if (document.body.hasAttribute("data-ds-dark-theme")) return true;
+      if (document.documentElement.dataset && document.documentElement.dataset.dsThemeSource) return false;
+      return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+    function useDark() {
+      const [d, setD] = useState(isDark);
+      useEffect(() => {
+        const up = () => setD(isDark());
+        const mo = new MutationObserver(up);
+        mo.observe(document.body, { attributes: true, attributeFilter: ["data-ds-dark-theme"] });
+        mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-ds-theme-source"] });
+        const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+        if (mq && mq.addEventListener) mq.addEventListener("change", up);
+        return () => { mo.disconnect(); if (mq && mq.removeEventListener) mq.removeEventListener("change", up); };
+      }, []);
+      return d;
+    }
+    const Chevrons = () => h("svg", { width: 9, height: 14, viewBox: "0 0 9 14", "aria-hidden": true }, h("path", { d: "M1 5l3.5-3.5L8 5M1 9l3.5 3.5L8 9", fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round" }));
+    // iOS 26 pop-up button: a Liquid Glass menu rendered into document.body (portal, fixed
+    // position) so no ancestor overflow/z-index/backdrop-filter can clip it.
+    function Picker(p) {
+      const [open, setOpen] = useState(false);
+      const [q, setQ] = useState("");
+      const [act, setAct] = useState(0);
+      const [pos, setPos] = useState(null);
+      const btn = useRef(null);
+      const pop = useRef(null);
+      const inp = useRef(null);
+      const dark = useDark();
+      const opts = (p.options || []).map((o) => typeof o === "string" ? { value: o, label: o || "—" } : o);
+      const ql = q.trim().toLowerCase();
+      const shown = ql ? opts.filter((o) => String(o.label).toLowerCase().indexOf(ql) >= 0 || String(o.value).toLowerCase().indexOf(ql) >= 0) : opts;
+      const canCustom = p.custom && ql && !opts.some((o) => String(o.value).toLowerCase() === ql);
+      const items = canCustom ? shown.concat([{ value: q.trim(), label: "使用「" + q.trim() + "」", custom: true }]) : shown;
+      const curOpt = opts.find((o) => o.value === p.value);
+      const place = () => {
+        if (!btn.current) return;
+        const r = btn.current.getBoundingClientRect();
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const w = Math.min(Math.max(r.width + 20, p.search ? 300 : 220), vw - 16);
+        const left = Math.min(Math.max(8, r.right + 10 - w), vw - w - 8);
+        const below = vh - r.bottom - 14, above = r.top - 14;
+        const up = below < 240 && above > below;
+        setPos({ left, width: w, top: up ? undefined : r.bottom + 6, bottom: up ? vh - r.top + 6 : undefined, maxHeight: Math.max(120, Math.min(380, up ? above : below)), up });
+      };
+      const show = () => { if (p.disabled) return; place(); setQ(""); setAct(Math.max(0, opts.findIndex((o) => o.value === p.value))); setOpen(true); if (p.onOpen) p.onOpen(); };
+      const close = (focus) => { setOpen(false); if (focus && btn.current) btn.current.focus(); };
+      const choose = (o) => { p.onChange(o.value); close(true); };
+      useEffect(() => {
+        if (!open) return undefined;
+        const onDown = (e) => { if ((pop.current && pop.current.contains(e.target)) || (btn.current && btn.current.contains(e.target))) return; close(false); };
+        const onMove = (e) => { if (pop.current && e && e.target && pop.current.contains(e.target)) return; place(); };
+        document.addEventListener("mousedown", onDown, true);
+        document.addEventListener("touchstart", onDown, true);
+        window.addEventListener("resize", onMove);
+        window.addEventListener("scroll", onMove, true);
+        const id = setTimeout(() => { const el = inp.current || pop.current; if (el) el.focus(); }, 0);
+        return () => { clearTimeout(id); document.removeEventListener("mousedown", onDown, true); document.removeEventListener("touchstart", onDown, true); window.removeEventListener("resize", onMove); window.removeEventListener("scroll", onMove, true); };
+      }, [open]); // eslint-disable-line
+      useEffect(() => { if (open && pop.current) { const el = pop.current.querySelector('[data-i="' + act + '"]'); if (el && el.scrollIntoView) el.scrollIntoView({ block: "nearest" }); } }, [act, open]);
+      const onKey = (e) => {
+        if (!open) { if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter" || e.key === " ") { e.preventDefault(); show(); } return; }
+        if (e.key === "ArrowDown") { e.preventDefault(); setAct((a) => Math.min(items.length - 1, a + 1)); }
+        else if (e.key === "ArrowUp") { e.preventDefault(); setAct((a) => Math.max(0, a - 1)); }
+        else if (e.key === "Home") { e.preventDefault(); setAct(0); }
+        else if (e.key === "End") { e.preventDefault(); setAct(items.length - 1); }
+        else if (e.key === "Enter") { e.preventDefault(); if (items[act]) choose(items[act]); else if (p.custom && q.trim()) choose({ value: q.trim() }); }
+        else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(true); }
+        else if (e.key === "Tab") close(false);
+      };
+      const label = curOpt ? curOpt.label : p.value ? String(p.value) : (p.placeholder || "—");
+      const menu = open && pos ? h("div", { ref: pop, className: "hs26 hs-pop" + (dark ? " dk" : "") + (pos.up ? " up" : ""), role: "listbox", "aria-label": p.label, tabIndex: -1, onKeyDown: onKey, style: { left: pos.left, width: pos.width, top: pos.top, bottom: pos.bottom, maxHeight: pos.maxHeight } },
+        p.search ? h("div", { className: "hs-pop-search" }, h("input", { ref: inp, type: "search", value: q, placeholder: p.searchPh || "搜索", "aria-label": p.label + " 搜索", autoComplete: "off", spellCheck: false, onChange: (e) => { setQ(e.target.value); setAct(0); } })) : null,
+        h("div", { className: "hs-pop-list" },
+          p.loading && !items.length ? h("div", { className: "hs-pop-empty" }, p.loadingText || "正在获取模型…") : null,
+          items.map((o, i) => h("div", { key: (o.custom ? "c:" : "o:") + o.value, "data-i": i, role: "option", "aria-selected": o.value === p.value, className: "hs-opt" + (i === act ? " act" : "") + (o.value === p.value && !o.custom ? " sel" : "") + (o.custom ? " custom" : ""), onMouseEnter: () => setAct(i), onMouseDown: (e) => e.preventDefault(), onClick: () => choose(o) },
+            h("span", { className: "ck" }, o.value === p.value && !o.custom ? "✓" : ""), h("span", { className: "tx", title: String(o.label) }, o.label))),
+          !p.loading && !items.length ? h("div", { className: "hs-pop-empty" }, p.emptyText || "没有匹配的选项") : null)) : null;
+      return h(React.Fragment, null,
+        h("button", { ref: btn, type: "button", className: "hs-pick" + (open ? " open" : ""), "aria-haspopup": "listbox", "aria-expanded": open, "aria-label": p.label, disabled: p.disabled, onClick: () => (open ? close(false) : show()), onKeyDown: onKey },
+          h("span", { className: "tx" + (curOpt || p.value ? "" : " ph") }, label), h(Chevrons)),
+        menu ? (ReactDOM && ReactDOM.createPortal && typeof document !== "undefined" ? ReactDOM.createPortal(menu, document.body) : menu) : null);
+    }
+    const Select = (p) => h(Picker, p);
+
+    // ---- key source + model list (shared by the advanced channels and the three-step page) ----
+    // Only where a key comes from is shown, never the key.
+    function keyText(t, info, chan) {
+      if (!info) return t("keyUnset");
+      if (info.source === "dsh") return t("keyUseDsh");
+      if (info.set) return t("secretSet").replace("（", "（" + t("keySrc") + "：" + (info.sources || [info.source]).map((x) => t("src_" + x)).join(" + ") + "；");
+      if (info.source === "shared") return t("shareKey");
+      return t("keyUnset");
+    }
+    // Fetch ~0.5 s after the key/endpoint changes, with the key just typed (server side: no CORS).
+    function useModels(api, { chan, preset, provider, baseUrl, keyDraft, hasKey, enabled }) {
+      const [models, setModels] = useState({});
+      const seq = useRef(0);
+      const load = () => {
+        if (!baseUrl) return;
+        const n = ++seq.current;
+        setModels((m) => ({ list: m.list, loading: true }));
+        api("models", { channel: chan, preset, provider: provider || "", base_url: baseUrl, api_key: (keyDraft || "").trim() })
+          .then((v) => n === seq.current && setModels({ list: v.models || [], note: v.note }), (e) => n === seq.current && setModels({ error: String(e.message || e) }));
+      };
+      useEffect(() => {
+        if (enabled === false || !baseUrl || !((keyDraft || "").trim() || hasKey || /localhost|127\.0\.0\.1/.test(baseUrl))) return undefined;
+        const timer = setTimeout(load, 500);
+        return () => clearTimeout(timer);
+      }, [keyDraft, baseUrl, preset, hasKey, enabled]); // eslint-disable-line
+      return [models, load];
+    }
+    function ModelPicker(p) {
+      const { t, chan, value, onChange, models } = p;
+      const list = models.list || [];
+      return h(Picker, { label: chan + " model", value: value || "", onChange, search: true, custom: true, searchPh: t("modelSearch"), placeholder: t("modelPick"), loading: !!models.loading, loadingText: t("modelsLoading"),
+        options: (value && list.indexOf(value) < 0 ? [value] : []).concat(list).map((m) => ({ value: m, label: m })),
+        emptyText: models.error ? models.error + "；" + t("modelsManual") : t("modelsNone") });
+    }
+    function ModelStatus(p) {
+      const { t, models } = p;
+      if (models.loading) return h("div", { className: "row sub", role: "status" }, t("modelsLoading"));
+      if (models.error) return h("div", { className: "row sub", role: "alert", style: { color: "var(--hs-red)" } }, t("modelsErr") + "：" + models.error + "。" + t("modelsManual"));
+      if (models.list) return h("div", { className: "row sub" }, models.list.length ? t("modelsCount").replace("{n}", models.list.length) : (models.note ? t("modelsNone") : t("modelsNone")));
+      return null;
+    }
 
     // ---- provider channel (preset -> base URL auto-fill, model list) ----
     function Channel(p) {
-      const { t, api, chan, cur, set, isSecretSet, presets, title, foot, extraTop } = p;
-      const base = [chan];
+      const { t, api, chan, cur, set, keyInfo, presets, title, foot, extraTop } = p;
       const list = presets ? Object.keys(presets[chan] || {}) : [];
       const preset = cur([chan, "preset"]) || "";
       const baseUrl = cur([chan, "base_url"]) || "";
-      const keyDraft = p.edits[chan + ".api_key"] ? p.edits[chan + ".api_key"].v : "";
-      const [models, setModels] = useState({});
+      const ownDraft = p.edits[chan + ".api_key"] ? p.edits[chan + ".api_key"].v : "";
+      // A channel on the embedding host with no key of its own borrows the embedding key (as on save).
+      const embDraft = chan !== "embedding" && hostOf(baseUrl) && hostOf(baseUrl) === hostOf(cur(["embedding", "base_url"])) && p.edits["embedding.api_key"] ? p.edits["embedding.api_key"].v : "";
+      const keyDraft = ownDraft;
+      const info = keyInfo ? keyInfo(chan) : null;
       const touched = useRef(false);
+      const [models, load] = useModels(api, { chan, preset, provider: cur([chan, "provider"]), baseUrl, keyDraft: ownDraft || embDraft, hasKey: !!(info && (info.set || info.source === "shared" || info.source === "dsh")) });
       const pick = (name) => {
         set([chan, "preset"])(name);
         const pr = presets && presets[chan] && presets[chan][name];
@@ -182,34 +336,19 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         set([chan, "provider"])(pr.provider);
         // Auto-fill the URL unless the user typed their own one.
         if (!touched.current || !baseUrl) set([chan, "base_url"])(pr.base_url);
-        if (!cur([chan, "model"]) && pr.model) set([chan, "model"])(pr.model);
+        if (pr.model) set([chan, "model"])(pr.model);
       };
-      const load = () => {
-        if (!baseUrl) return;
-        setModels({ loading: true });
-        api("models", { channel: chan, preset, provider: cur([chan, "provider"]) || "", base_url: baseUrl, api_key: keyDraft })
-          .then((v) => setModels({ list: v.models || [], note: v.note }), (e) => setModels({ error: String(e.message || e) }));
-      };
-      // Fetch as soon as a key is present (typed, or already saved) and the endpoint is known.
-      useEffect(() => {
-        if (!baseUrl || !(keyDraft || isSecretSet(base.concat("api_key")) || /localhost|127\.0\.0\.1/.test(baseUrl))) return;
-        const timer = setTimeout(load, 600);
-        return () => clearTimeout(timer);
-      }, [keyDraft, baseUrl, preset]); // eslint-disable-line
-      const dl = "hs-models-" + chan;
       return h(Group, { title, foot },
         extraTop,
-        h(Row, { label: t("preset") }, h(Select, { label: chan + " preset", value: preset, onChange: pick, options: [{ value: "", label: "—" }].concat(list.map((n) => ({ value: n, label: n }))) })),
+        h(Row, { label: t("preset") }, h(Picker, { label: chan + " preset", value: preset, onChange: pick, placeholder: "—", options: [{ value: "", label: "—" }].concat(list.map((n) => ({ value: n, label: n }))) })),
         h(Row, { label: t("provider") }, h(Text, { label: chan + " provider", value: cur([chan, "provider"]), onChange: set([chan, "provider"]) })),
         h(Row, { label: t("baseUrl") }, h(Text, { label: chan + " base_url", value: baseUrl, placeholder: "https://…", onChange: (v) => { touched.current = true; set([chan, "base_url"])(v); } })),
-        h(Row, { label: t("apiKey") }, h(Text, { type: "password", label: chan + " api_key", value: keyDraft, placeholder: isSecretSet(base.concat("api_key")) ? t("secretSet") : (chan !== "embedding" && hostOf(baseUrl) && hostOf(baseUrl) === hostOf(cur(["embedding", "base_url"])) ? t("shareKey") : "sk-…"), onChange: set([chan, "api_key"]) })),
+        h(Row, { label: t("apiKey") }, h(Text, { type: "password", label: chan + " api_key", value: keyDraft, placeholder: keyText(t, info, chan), onChange: set([chan, "api_key"]) })),
         h(Row, { label: t("model") },
-          h(Text, { label: chan + " model", list: dl, value: cur([chan, "model"]), onChange: set([chan, "model"]) }),
-          models.list && models.list.length ? h(Select, { label: chan + " model list", value: "", onChange: (v) => v && set([chan, "model"])(v), options: [{ value: "", label: models.list.length + " " + t("modelsN") }].concat(models.list.map((m) => ({ value: m, label: m }))) }) : null,
-          h("datalist", { id: dl }, (models.list || []).map((m) => h("option", { key: m, value: m }))),
-          h("button", { className: "btn ghost small", onClick: load, disabled: !baseUrl }, models.loading ? "…" : t("fetchModels"))),
-        chan === "embedding" ? h(Row, { label: t("dim") }, h(Text, { type: "number", label: "embedding expected_dim", value: cur(["embedding", "expected_dim"]), placeholder: "1024", onChange: set(["embedding", "expected_dim"]) })) : null,
-        models.error ? h("div", { className: "row sub", style: { color: "var(--hs-red)" } }, t("modelsErr") + ": " + models.error) : null);
+          h(ModelPicker, { t, chan, value: cur([chan, "model"]), onChange: set([chan, "model"]), models }),
+          h("button", { className: "btn ghost small", onClick: load, disabled: !baseUrl || models.loading, "aria-label": t("fetchModels") }, models.loading ? "…" : "↻")),
+        h(ModelStatus, { t, models }),
+        chan === "embedding" ? h(Row, { label: t("dim") }, h(Text, { type: "number", label: "embedding expected_dim", value: cur(["embedding", "expected_dim"]), placeholder: "1024", onChange: set(["embedding", "expected_dim"]) })) : null);
     }
 
     // ---- workspace mapping + manual retain ----
@@ -368,9 +507,10 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const open = () => { window.__hsOpenTab = "status"; window.dispatchEvent(new CustomEvent("hs-open-tab", { detail: "status" })); p.openPlugin && p.openPlugin(); };
       const tip = ["Hindsight：" + s.text, s.reason, s.bank ? "记忆库：" + s.bank : "", "等待记住：" + (s.pending || 0), "上次记住：" + ago(s.lastRetain), "上次回忆：" + ago(s.lastRecall)].filter(Boolean).join("\n");
       const dot = h("span", { className: "hs-dot" + (s.level === "yellow" ? " pulse" : ""), style: { background: color, boxShadow: "0 0 0 3px color-mix(in srgb, " + color + " 22%, transparent)" } });
-      if (!p.wide) return h("button", { className: "hs26 hs-side mini glass", title: tip, "aria-label": tip, onClick: open }, dot);
+      const dkc = useDark() ? " dk" : "";
+      if (!p.wide) return h("button", { className: "hs26 hs-side mini glass" + dkc, title: tip, "aria-label": tip, onClick: open }, dot);
       const pr = s.progress;
-      return h("button", { className: "hs26 hs-side glass", title: tip, "aria-label": "Hindsight " + s.text, onClick: open },
+      return h("button", { className: "hs26 hs-side glass" + dkc, title: tip, "aria-label": "Hindsight " + s.text, onClick: open },
         h("div", { className: "hs-side-top" }, dot, h("span", { className: "hs-side-t" }, s.text), s.pending ? h("span", { className: "pill warn" }, s.pending + " 条待记住") : null),
         pr ? h("div", { className: "bar", style: { margin: "6px 0 2px" } }, h("i", { style: { width: Math.round(100 * pr.done / Math.max(1, pr.total)) + "%" } })) : null,
         s.reason ? h("div", { className: "hs-side-sub", style: { color: s.level === "red" ? "var(--hs-red)" : undefined } }, s.reason) : null,
@@ -380,8 +520,11 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
     // ---- 小白模式：选服务商 → 粘贴密钥（自动检测） → 一键开始 ----
     const Q = (p) => h("span", { className: "qm", title: p.tip, "aria-label": p.tip, tabIndex: 0 }, "?");
     function Simple(p) {
-      const { t, api, form, isSecretSet, defaults } = p;
+      const { t, api, form, isSecretSet, defaults, keyInfo } = p;
       const [key, setKey] = useState("");
+      const D0 = defaults || {};
+      const [embModel, setEmbModel] = useState("");
+      const [rrModel, setRrModel] = useState("");
       const [llmKey, setLlmKey] = useState("");
       const dl = useRpc(api, "dshLlm", {}, []).value;
       const llmMode = p.llmMode || "follow";
@@ -390,7 +533,11 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const [started, setStarted] = useState(false);
       const [nonce, setNonce] = useState(0);
       const ov = useRpc(api, "overview", {}, [nonce], 3000).value;
-      const hasSaved = isSecretSet(["embedding", "api_key"]) || !!(ov && ov.keysSet && ov.keysSet.embedding);
+      const embInfo = (ov && ov.keyState && ov.keyState.embedding) || (keyInfo ? keyInfo("embedding") : null);
+      const hasSaved = !!(embInfo && embInfo.set);
+      const sfBase = (D0.embedding && D0.embedding.base_url) || "https://api.siliconflow.cn/v1";
+      const [embModels] = useModels(api, { chan: "embedding", preset: "siliconflow", provider: (D0.embedding && D0.embedding.provider) || "openai", baseUrl: sfBase, keyDraft: key, hasKey: hasSaved });
+      const [rrModels] = useModels(api, { chan: "reranker", preset: "siliconflow", provider: "siliconflow", baseUrl: (D0.reranker && D0.reranker.base_url) || sfBase, keyDraft: key, hasKey: hasSaved });
       const check = (k) => { setChk({ checking: true }); api("checkKey", { api_key: k }).then(setChk, (e) => setChk({ ok: false, what: "检查时出错", how: "点「重试」再试一次。", detail: String(e.message || e) })); };
       useEffect(() => { if (!key.trim()) { setChk(null); return; } const id = setTimeout(() => check(key), 700); return () => clearTimeout(id); }, [key]);
       async function go() {
@@ -399,6 +546,8 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         const ops = [{ op: "set", path: ["setup"], value: "local" }];
         if (llmKey.trim() && dl && dl.llm) { ops.push({ op: "set", path: ["llm", "mode"], value: "custom" }, { op: "set", path: ["llm", "preset"], value: "" }, { op: "set", path: ["llm", "provider"], value: dl.llm.provider || "openai" }, { op: "set", path: ["llm", "base_url"], value: dl.llm.base_url || "" }, { op: "set", path: ["llm", "model"], value: dl.llm.model || "" }, { op: "set", path: ["llm", "api_key"], value: llmKey.trim() }); }
         for (const c of ["embedding", "reranker"]) for (const f of ["preset", "provider", "base_url", "model"]) if (D[c] && D[c][f]) ops.push({ op: "set", path: [c, f], value: D[c][f] });
+        if (embModel) ops.push({ op: "set", path: ["embedding", "model"], value: embModel });
+        if (rrModel) ops.push({ op: "set", path: ["reranker", "model"], value: rrModel });
         if (key.trim()) ops.push({ op: "set", path: ["embedding", "api_key"], value: key.trim() });
         const ok = await form.mutate(ops);
         setBusy(false);
@@ -418,14 +567,19 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
           h("div", { className: "row col" },
             h("span", { className: "lbl" }, t("s2"), " ", h(Q, { tip: t("s2help") })),
             h("input", { type: "password", value: key, placeholder: hasSaved ? t("keySaved") : t("keyPh"), "aria-label": t("s2"), onChange: (e) => setKey(e.target.value), autoComplete: "off" }),
+            h("div", { className: "keysrc", "data-testid": "key-state" }, hasSaved ? keyText(t, embInfo, "embedding") : t("keyUnset")),
             h("div", { className: "sub" }, t("s2help")),
             chk ? (chk.checking ? h("div", { className: "sub" }, t("keyChecking"))
               : chk.ok ? h("div", { className: "okbox" }, t("keyOk") + (chk.balance != null ? "（余额 ¥" + chk.balance + "）" : ""))
               : h(Guide, { t, what: chk.what, how: chk.how, onRetry: () => check(key) })) : null),
+          (key.trim() || hasSaved) ? h(React.Fragment, null,
+            h("div", { className: "row" }, h("span", { className: "lbl" }, t("emb")), h("div", { className: "val" }, h(ModelPicker, { t, chan: "embedding", value: embModel || (D0.embedding && D0.embedding.model) || "", onChange: setEmbModel, models: embModels }))),
+            h("div", { className: "row" }, h("span", { className: "lbl" }, t("rr")), h("div", { className: "val" }, h(ModelPicker, { t, chan: "reranker", value: rrModel || (D0.reranker && D0.reranker.model) || "", onChange: setRrModel, models: rrModels }))),
+            h(ModelStatus, { t, models: embModels.loading || embModels.error ? embModels : rrModels.loading || rrModels.error ? rrModels : embModels })) : null,
           llmMode === "follow" ? h("div", { className: "row col" },
             h("span", { className: "lbl" }, t("sLlm"), " ", h(Q, { tip: t("sLlmTip") })),
             !dl ? h("div", { className: "sub" }, t("loading"))
-              : dl.ok ? h("div", { className: "okbox" }, t("sLlmOk") + (dl.llm ? "：" + dl.llm.model : ""))
+              : dl.ok ? h("div", { className: "okbox" }, t("sLlmOk") + (dl.llm ? "：" + dl.llm.model : "") + " · " + t("keyUseDsh"))
               : h(React.Fragment, null,
                 h("div", { className: "sub" }, t("sLlmNeed").replace("{m}", dl.llm ? dl.llm.model + "（" + (hostOf(dl.llm.base_url) || dl.llm.provider) + "）" : "dsh 默认模型")),
                 h("input", { type: "password", value: llmKey, placeholder: t("sLlmPh"), "aria-label": t("sLlm"), onChange: (e) => setLlmKey(e.target.value), autoComplete: "off" }))) : null,
@@ -465,7 +619,17 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       // Channel fields fall back to the plugin's built-in defaults (SiliconFlow) as pre-filled values.
       const cur = (path) => { if (key(path) in edits) return edits[key(path)].v; const v = get(value, path); return (v === undefined || v === "") && path.length === 2 && defaults[path[0]] && path[1] !== "api_key" ? defaults[path[0]][path[1]] : v; };
       const set = (path) => (v) => setEdits((e) => Object.assign({}, e, { [key(path)]: { path, v } }));
-      const isSecretSet = (path) => { const v = get(value, path); if (v !== undefined && v !== "") return true; return path[path.length - 1] === "api_key" && !!(ovS && ovS.keysSet && ovS.keysSet[path[0]]); };
+      // Each key field is judged on its own, from the plugin's own sources only (see lib/keystate.js):
+      // a follow-dsh LLM or a reranker borrowing the embedding key is not "已设置".
+      const keyInfo = (chan) => (ovS && ovS.keyState && ovS.keyState[chan]) || { set: false, source: "" };
+      const isSecretSet = (path) => { if (path[path.length - 1] !== "api_key") return false; if (path[0] === "service") { const v = get(value, path); return typeof v === "string" && v.trim() !== "" && !/^(undefined|null)$/i.test(v.trim()); } return !!keyInfo(path[0]).set; };
+      const clearKeys = async () => {
+        if (!window.confirm(t("clearKeysAsk"))) return;
+        const ok = await form.mutate(["embedding", "reranker", "llm"].map((c) => ({ op: "unset", path: [c, "api_key"] })));
+        await api("clearKeys", {}).catch(() => null);
+        setEdits((e) => { const n = Object.assign({}, e); delete n["embedding.api_key"]; delete n["reranker.api_key"]; delete n["llm.api_key"]; return n; });
+        setMsg(ok ? t("clearKeysDone") : t("failed"));
+      };
       async function save() {
         const ops = Object.values(edits).filter((e) => e.v !== undefined && !(e.v === "" && /api_key$/.test(e.path[e.path.length - 1]))).map((e) => ({ op: "set", path: e.path, value: e.v }));
         const ok = await form.mutate(ops);
@@ -490,11 +654,11 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const dl = dshLlm.value;
       const llmTop = h(React.Fragment, null,
         h(Row, { label: "" }, h(Seg, { label: "llm mode", value: llmMode, onChange: set(["llm", "mode"]), options: [{ value: "follow", label: t("follow") }, { value: "custom", label: t("custom") }, { value: "none", label: t("none") }] })));
-      const chanProps = { t, api, cur, set, isSecretSet, presets, edits };
+      const chanProps = { t, api, cur, set, isSecretSet, keyInfo, presets, edits };
       // Picking "local" in the wizard is saved by 一键开始 itself; only advanced edits need the save bar.
       const dirty = Object.keys(edits).filter((k) => !(k === "setup" && setup === "local")).length > 0;
       return h("div", null,
-        setup === "local" ? h(Simple, { t, api, form, isSecretSet, defaults, llmMode }) : null,
+        setup === "local" ? h(Simple, { t, api, form, isSecretSet, keyInfo, defaults, llmMode, presets }) : null,
         h("details", { className: "adv", open: setup !== "local" },
         h("summary", null, t("advanced")),
         h(Group, { title: setup === "existing" ? t("conn") : t("deploy") },
@@ -507,7 +671,11 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
             h(Row, { label: t("runner") }, h(Seg, { label: "runner", value: cur(["service", "local", "runner"]) || "auto", onChange: set(["service", "local", "runner"]), options: ["auto", "venv", "uvx", "docker"].map((v) => ({ value: v, label: v })) })),
             h(Row, { label: t("variant") }, h(Seg, { label: "variant", value: cur(["service", "local", "variant"]) || "auto", onChange: set(["service", "local", "variant"]), options: ["auto", "slim", "full"].map((v) => ({ value: v, label: v })) })),
             h(Row, { label: t("port") }, h(Text, { type: "number", label: "port", value: cur(["service", "local", "port"]), placeholder: "8888", onChange: set(["service", "local", "port"]) })),
-            h(Row, { label: t("cp") }, h(Switch, { label: "control plane", value: cur(["service", "local", "control_plane", "enabled"]) === true, onChange: set(["service", "local", "control_plane", "enabled"]) })))),
+            h(Row, { label: t("cp") }, h(Switch, { label: "control plane", value: cur(["service", "local", "control_plane", "enabled"]) === true, onChange: set(["service", "local", "control_plane", "enabled"]) })),
+            h(Row, { label: t("proxy") }, h(Seg, { label: "proxy", value: cur(["service", "proxy", "mode"]) || "auto", onChange: set(["service", "proxy", "mode"]), options: [{ value: "auto", label: t("proxyAuto") }, { value: "off", label: t("proxyOff") }, { value: "custom", label: t("proxyCustom") }] })),
+            (cur(["service", "proxy", "mode"]) || "auto") === "custom" ? h(Row, { label: t("proxy") + " URL" }, h(Text, { label: "proxy url", value: cur(["service", "proxy", "url"]), placeholder: "http://127.0.0.1:7890", onChange: set(["service", "proxy", "url"]) })) : null,
+            h(Row, { label: t("clearKeys") }, h("button", { className: "btn ghost small", onClick: clearKeys }, t("clearKeys"))))),
+        setup === "local" ? h("div", { className: "foot" }, t("proxyFoot")) : null,
         setup === "local" ? h("div", { className: "foot" }, t("localHint") + " " + t("cpHint")) : null,
         setup === "local" ? h(Channel, Object.assign({ chan: "embedding", title: t("emb"), foot: t("embFoot") + " " + t("dimFoot") }, chanProps)) : null,
         setup === "local" ? h(Channel, Object.assign({ chan: "reranker", title: t("rr"), foot: t("rrFoot") }, chanProps)) : null,
@@ -535,20 +703,22 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
 
     function Panel(props) {
       useStyle();
+      const dark = useDark();
       const t = props.t || ((k) => zh[k] || k);
       const [tab, setTab] = useState(() => { const w = typeof window !== "undefined" && window.__hsOpenTab; if (w) window.__hsOpenTab = ""; return w || "settings"; });
       useEffect(() => { const on = (e) => setTab(e.detail || "status"); window.addEventListener("hs-open-tab", on); return () => window.removeEventListener("hs-open-tab", on); }, []);
       if (props.view === "summary") return t("summary");
       const api = props.hsApi || makeApi(null);
-      return h("div", { className: "hs26" },
+      return h("div", { className: "hs26" + (dark ? " dk" : "") },
         h("div", { className: "tabs" }, h(Seg, { label: "tabs", value: tab, onChange: setTab, options: [{ value: "settings", label: t("tabSettings") }, { value: "status", label: t("tabStatus") }] })),
         tab === "settings" ? h(Settings, { t, api, form: props.hsForm }) : h(Status, { t, api }));
     }
 
     function Activation(props) {
+      const dkA = useDark();
       useStyle();
       const t = props.t || ((k) => zh[k] || k);
-      return h("div", { className: "hs26" }, h("div", { className: "card glass" }, h("p", null, t("activation")),
+      return h("div", { className: "hs26" + (dkA ? " dk" : "") }, h("div", { className: "card glass" }, h("p", null, t("activation")),
         h("div", { style: { display: "flex", gap: 10 } }, h("button", { className: "btn small", onClick: props.onOpenDetails }, t("openDetails")), h("button", { className: "btn ghost small", onClick: props.onDismiss }, t("later")))));
     }
 

@@ -102,7 +102,7 @@ await ok('web client bundle registers through __ModuleLoader__ with platform mod
   const asked = []
   const fakeReact = { createElement: () => null, useState: (v) => [v, () => {}], useSyncExternalStore: () => ({}), useEffect: () => {}, useMemo: (f) => f(), useCallback: (f) => f }
   const mod = loaded.factory((name) => { asked.push(name); return fakeReact })
-  assert.ok(asked.every((n) => ['react', 'react/jsx-runtime'].includes(n)), asked.join(','))
+  assert.ok(asked.every((n) => ['react', 'react/jsx-runtime', 'react-dom'].includes(n)), asked.join(','))
   assert.ok(Array.isArray(mod.inject) && mod.inject.includes('configForms'))
   const slots = []; const ctx = { slots: { inject: (n, cb) => { slots.push([n]); cb() }, register: (...a) => { slots.push(a) ; return () => {} } }, locale: { extend: () => {}, register: () => {}, t: (k) => k }, configForms: { get: () => ({ getSnapshot: () => ({ status: 'loading' }), subscribe: () => () => {} }) }, effect: (f) => f(), on: () => {} }
   mod.apply(ctx)

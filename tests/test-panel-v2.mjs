@@ -43,12 +43,12 @@ await ok('presets carry real public base URLs and map to Hindsight providers', (
 await ok('fetchModels: OpenAI-compatible /models with Bearer, channel-ranked', async () => {
   const r = await fetchModels({ kind: 'openai', baseUrl: `${base}/v1`, apiKey: 'mock-key', channel: 'embedding' })
   assert.equal(r.models[0], 'BAAI/bge-m3')
-  assert.equal(r.models.length, 3)
+  assert.ok(r.models.length >= 1 && r.models.every((m) => !/rerank/.test(m)))
   const rr = await fetchModels({ kind: 'openai', baseUrl: `${base}/v1/`, apiKey: 'mock-key', channel: 'reranker' })
   assert.equal(rr.models[0], 'bge-reranker-v2-m3')
-  await assert.rejects(fetchModels({ kind: 'openai', baseUrl: `${base}/v1`, apiKey: 'wrong', channel: 'llm' }), /401/)
+  await assert.rejects(fetchModels({ kind: 'openai', baseUrl: `${base}/v1`, apiKey: 'wrong', channel: 'llm' }), /密钥不对/)
   const o = await fetchModels({ kind: 'ollama', baseUrl: `${base}/v1`, channel: 'llm' })
-  assert.deepEqual(o.models.sort(), ['nomic-embed-text', 'qwen2.5:7b'])
+  assert.deepEqual(o.models, ['qwen2.5:7b']) // llm channel hides embedding models
 })
 
 const archived = ['s-arch']

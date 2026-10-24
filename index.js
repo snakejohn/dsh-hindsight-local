@@ -84,7 +84,7 @@ function startGeneration(ctx, rawConfig, reason) {
   // conversation data anywhere, and must not touch model-visible history.
   if (!config.enabled) {
     logger.info('plugin disabled by config (enabled=false); DSH runs with its native context only')
-    return { runtime, config, stop: async () => {} }
+    return { runtime, config, rawConfig, stop: async () => {} }
   }
   const scope = scopedCtx(ctx)
   runtime.attach(scope.ctx)
@@ -96,6 +96,7 @@ function startGeneration(ctx, rawConfig, reason) {
   return {
     runtime,
     config,
+    rawConfig,
     async stop() {
       scope.dispose()
       await runtime.shutdown()
