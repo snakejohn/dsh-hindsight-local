@@ -1,6 +1,6 @@
 {
   "name": "dsh-hindsight-memory",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "长期记忆：让 dsh 记住你们聊过的事（本地 Hindsight，三步设置，一键部署）",

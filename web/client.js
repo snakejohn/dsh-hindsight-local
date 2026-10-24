@@ -126,7 +126,10 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
     }
 
     const get = (obj, path) => path.reduce((v, k) => (v == null ? undefined : v[k]), obj);
-    const fmtTime = (v) => { if (!v) return ""; const d = new Date(v); return isNaN(d) ? String(v) : d.toLocaleString(); };
+    const fmtTime = (v) => { if (!v) return ""; const d = new Date(v); return isNaN(d) ? String(v) : d.toLocaleString("zh-CN", { hour12: false }); };
+    // Hindsight stores a date-only "When" as UTC midnight; show the real turn time instead of "08:00".
+    const utcMidnight = (v) => /T00:00:00(\.0\d{0,5})?(Z|\+00:00)$/.test(String(v || ""));
+    const memTime = (m) => { const v = m.date || m.occurred_start || m.mentioned_at; return utcMidnight(v) && m.mentioned_at ? m.mentioned_at : v; };
 
     // ---- server channel ----
     // Exact owner-only route the plugin registers via connection.fetch.register; the page's
@@ -305,7 +308,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
           h(Row, { label: "🔍" }, h("input", { type: "search", value: q, placeholder: t("search"), "aria-label": t("search"), onChange: (e) => setQ(e.target.value), style: { textAlign: "left" } })),
           mem && mem.error ? h("div", { className: "row sub" }, mem.error) : null,
           ((mem && mem.items) || []).map((m) => h("div", { className: "row mem", key: m.id },
-            h("div", { className: "sub" }, fmtTime(m.date || m.mentioned_at || m.occurred_start), m.fact_type ? " · " + m.fact_type : ""),
+            h("div", { className: "sub" }, fmtTime(memTime(m)), m.fact_type ? " · " + m.fact_type : ""),
             h("div", { className: "t" }, m.text))),
           mem && mem.items && !mem.items.length ? h("div", { className: "row sub" }, t("empty")) : null));
     }
@@ -386,7 +389,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const [started, setStarted] = useState(false);
       const [nonce, setNonce] = useState(0);
       const ov = useRpc(api, "overview", {}, [nonce], 3000).value;
-      const hasSaved = isSecretSet(["embedding", "api_key"]);
+      const hasSaved = isSecretSet(["embedding", "api_key"]) || !!(ov && ov.keysSet && ov.keysSet.embedding);
       const check = (k) => { setChk({ checking: true }); api("checkKey", { api_key: k }).then(setChk, (e) => setChk({ ok: false, what: "检查时出错", how: "点「重试」再试一次。", detail: String(e.message || e) })); };
       useEffect(() => { if (!key.trim()) { setChk(null); return; } const id = setTimeout(() => check(key), 700); return () => clearTimeout(id); }, [key]);
       async function go() {
@@ -450,6 +453,8 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const presets = useRpc(api, "presets", {}, []).value;
       const banksR = useRpc(api, "banks", {}, []);
       const dshLlm = useRpc(api, "dshLlm", {}, []);
+      // The redacted settings snapshot hides secrets; overview reports which keys are saved (booleans only).
+      const ovS = useRpc(api, "overview", {}, [], 5000).value;
       const [extraBanks, setExtraBanks] = useState([]);
       if (snap.status === "loading") return h("p", null, t("loading"));
       if (snap.status !== "ready") return h("p", null, t("unavailable"));
@@ -459,7 +464,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       // Channel fields fall back to the plugin's built-in defaults (SiliconFlow) as pre-filled values.
       const cur = (path) => { if (key(path) in edits) return edits[key(path)].v; const v = get(value, path); return (v === undefined || v === "") && path.length === 2 && defaults[path[0]] && path[1] !== "api_key" ? defaults[path[0]][path[1]] : v; };
       const set = (path) => (v) => setEdits((e) => Object.assign({}, e, { [key(path)]: { path, v } }));
-      const isSecretSet = (path) => { const v = get(value, path); return v !== undefined && v !== ""; };
+      const isSecretSet = (path) => { const v = get(value, path); if (v !== undefined && v !== "") return true; return path[path.length - 1] === "api_key" && !!(ovS && ovS.keysSet && ovS.keysSet[path[0]]); };
       async function save() {
         const ops = Object.values(edits).filter((e) => e.v !== undefined && !(e.v === "" && /api_key$/.test(e.path[e.path.length - 1]))).map((e) => ({ op: "set", path: e.path, value: e.v }));
         const ok = await form.mutate(ops);
