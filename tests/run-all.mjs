@@ -19,6 +19,7 @@ const files = [
   'test-panel-v2.mjs',
   'test-dotenv-deploy.mjs', 'test-sidebar.mjs',
   'test-v011.mjs',
+  'test-dimension.mjs',
   'test-integration.mjs'
 ]
 

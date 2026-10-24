@@ -31,7 +31,7 @@ window.__ModuleLoader__.load({
       rechoose: "重新选择", save: "保存", saved: "已保存，正在按新设置重新准备", failed: "保存没有成功，请再点一次保存；还不行就重启 dsh", unsaved: "有未保存的修改",
       conn: "连接", baseUrl: "Base URL", apiKey: "API Key", apiPrefix: "API 前缀", secretSet: "已设置（留空不修改）",
       deploy: "本地部署", runner: "安装方式", variant: "版本", port: "端口", cp: "同时启动 Control Plane", cpHint: "官方后台 UI（npm @vectorize-io/hindsight-control-plane，端口 9999，需要 Node/npx，首次运行需联网下载约 80MB）",
-      emb: "理解文字的模型", embFoot: "用来理解每句话的意思，找回相关的记忆。必须设置。", rr: "排序模型", rrFoot: "把找回的记忆按相关程度排好。选 rrf 表示不用模型。", llm: "整理记忆的模型",
+      emb: "理解文字的模型", embFoot: "用来理解每句话的意思，找回相关的记忆。必须设置。", dim: "向量维度", dimFoot: "向量维度：模型把一句话变成多少个数字。bge-m3 是 1024，一般不用改。换模型或迁移时必须和原来一致，不一致时插件会拦下来并提示，不会弄坏已有记忆。", rr: "排序模型", rrFoot: "把找回的记忆按相关程度排好。选 rrf 表示不用模型。", llm: "整理记忆的模型",
       preset: "服务商", provider: "接口类型", model: "模型", fetchModels: "获取模型", modelsN: "个模型", modelsErr: "获取模型失败",
       follow: "和 dsh 用同一个", custom: "自己指定", none: "不整理",
       followOk: "使用 dsh 默认模型", followNoKey: "dsh 的模型还没有密钥，所以暂时只保存原话、不做整理。", followInfo: "密钥来自", followOnlyLocal: "只对装在本机的记忆服务有效。", noneFoot: "不整理，只原样保存对话。",
@@ -208,6 +208,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
           models.list && models.list.length ? h(Select, { label: chan + " model list", value: "", onChange: (v) => v && set([chan, "model"])(v), options: [{ value: "", label: models.list.length + " " + t("modelsN") }].concat(models.list.map((m) => ({ value: m, label: m }))) }) : null,
           h("datalist", { id: dl }, (models.list || []).map((m) => h("option", { key: m, value: m }))),
           h("button", { className: "btn ghost small", onClick: load, disabled: !baseUrl }, models.loading ? "…" : t("fetchModels"))),
+        chan === "embedding" ? h(Row, { label: t("dim") }, h(Text, { type: "number", label: "embedding expected_dim", value: cur(["embedding", "expected_dim"]), placeholder: "1024", onChange: set(["embedding", "expected_dim"]) })) : null,
         models.error ? h("div", { className: "row sub", style: { color: "var(--hs-red)" } }, t("modelsErr") + ": " + models.error) : null);
     }
 
@@ -508,7 +509,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
             h(Row, { label: t("port") }, h(Text, { type: "number", label: "port", value: cur(["service", "local", "port"]), placeholder: "8888", onChange: set(["service", "local", "port"]) })),
             h(Row, { label: t("cp") }, h(Switch, { label: "control plane", value: cur(["service", "local", "control_plane", "enabled"]) === true, onChange: set(["service", "local", "control_plane", "enabled"]) })))),
         setup === "local" ? h("div", { className: "foot" }, t("localHint") + " " + t("cpHint")) : null,
-        setup === "local" ? h(Channel, Object.assign({ chan: "embedding", title: t("emb"), foot: t("embFoot") }, chanProps)) : null,
+        setup === "local" ? h(Channel, Object.assign({ chan: "embedding", title: t("emb"), foot: t("embFoot") + " " + t("dimFoot") }, chanProps)) : null,
         setup === "local" ? h(Channel, Object.assign({ chan: "reranker", title: t("rr"), foot: t("rrFoot") }, chanProps)) : null,
         llmMode === "custom" && setup === "local" ? h(Channel, Object.assign({ chan: "llm", title: t("llm"), extraTop: llmTop }, chanProps))
           : h(Group, { title: t("llm"), foot: llmMode === "none" ? t("noneFoot") : setup !== "local" ? t("followOnlyLocal") : null },
