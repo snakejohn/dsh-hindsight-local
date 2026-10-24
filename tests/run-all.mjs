@@ -13,6 +13,8 @@ const files = [
   'test-keys-dotenv.mjs',
   'test-retry-status.mjs',
   'test-nonascii-home.mjs',
+  'test-macos.mjs',
+  'test-no-double-retain.mjs',
   'test-sidebar-card.mjs',
   'test-fixes.mjs',
   'test-config-bank.mjs',
