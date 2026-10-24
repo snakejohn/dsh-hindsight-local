@@ -128,12 +128,16 @@ async function applyLlmMode(ctx, runtime, config) {
   if (r.ok) {
     // A loopback gateway only dsh can use (Tauri: cline-pass on 127.0.0.1) would make every
     // async retain fail extraction in Hindsight; fall back to raw chunks and say so instead.
+    // Warn only: a relay that refuses under load (ClinePass 429s seen as "Connection error")
+    // recovers, so falling back to raw chunks would lose extraction for good. Throttling +
+    // retries (lib/ops.js, 同时处理数) handle the transient case.
     const probe = await probeLlmReachable(r.llm.base_url, { fetchImpl: runtime.fetchImpl })
-    if (!probe.ok) Object.assign(r, { ok: false, reason: probe.reason })
+    if (!probe.ok) r.warning = probe.reason
   }
   if (r.ok) {
     Object.assign(llm, { provider: r.llm.provider, base_url: r.llm.base_url, model: r.llm.model, api_key: r.llm.api_key })
-    runtime.llmStatus = { mode: 'follow', effective: `${r.llm.provider}/${r.llm.model}`, dshProvider: r.dshProvider, keyRef: r.keyRef, keySource: r.keySource }
+    runtime.llmStatus = { mode: 'follow', effective: `${r.llm.provider}/${r.llm.model}`, dshProvider: r.dshProvider, keyRef: r.keyRef, keySource: r.keySource, warning: r.warning || '' }
+    if (r.warning) runtime.logger.warn(`extraction LLM: ${r.warning}`)
   } else {
     Object.assign(llm, { provider: '', api_key: '' })
     runtime.llmStatus = { mode: 'follow', effective: 'none', fallback: true, reason: r.reason, suggested: r.llm ? { provider: r.llm.provider, base_url: r.llm.base_url, model: r.llm.model } : null, keyRef: r.keyRef }

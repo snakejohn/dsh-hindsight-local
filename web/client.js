@@ -35,12 +35,12 @@ window.__ModuleLoader__.load({
       preset: "服务商", provider: "接口类型", model: "模型", fetchModels: "获取模型", modelsN: "个模型", modelsErr: "获取模型失败",
       follow: "和 dsh 用同一个", custom: "自己指定", none: "不整理",
       followOk: "使用 dsh 默认模型", followNoKey: "dsh 的模型还没有密钥，所以暂时只保存原话、不做整理。", followInfo: "密钥来自", followOnlyLocal: "只对装在本机的记忆服务有效。", noneFoot: "不整理，只原样保存对话。",
-      bank: "记忆库", defaultBank: "所有工作区共用一个记忆库", noDefault: "（不共用：每个工作区各记各的）", newBank: "新建记忆库…", newBankPrompt: "给新记忆库起个名字（英文/数字）", scope: "按什么分开记",
+      bank: "记忆库", ownBank: "新建库", ownAuto: "新建库（自动命名）", ownNamed: "新建库，自己起名…", joinBank: "接入已有库", usedBy: "已被使用：", legacyShared: "旧版设置：所有工作区共用这个库。换成「每个工作区各选一个库」请点清除。", clear: "清除", defaultBank: "所有工作区共用一个记忆库", noDefault: "（不共用：每个工作区各记各的）", newBank: "新建记忆库…", newBankPrompt: "给新记忆库起个名字（中文也可以）", scope: "按什么分开记",
       ws: "工作区", wsFoot: "对话数不含已归档的对话；归档的对话不会被记住。", sessions: "个对话", archivedN: "个已归档", unmapped: "（默认路由）", addPath: "手动添加路径", path: "工作区文件夹", bankId: "记忆库名字", remove: "删除", noWs: "dsh 未提供工作区服务，可手动添加路径。",
-      retainNow: "现在就记住", retainSel: "记住这个工作区的对话", retainAll: "记住全部对话（不含已归档）", retainHint: "已经记住过的内容不会重复记。", running: "进行中", done: "完成",
-      other: "其他", recall: "聊天时自动回忆", retain: "自动记住对话", backfill: "启动时把以前的对话也记住", timezone: "时区", topN: "每次最多回忆几条",
+      importQ: "要导入以前的对话吗？", importText: "装好后只会自动记住新的聊天。以前的对话可以在下面「现在就记住」里选一个工作区或单个对话导入：会一段一段慢慢整理，已经记过的不会重复。", importGo: "去选择", importNo: "不用了", pickOne: "选择单个对话", pickHide: "收起", retainPicked: "记住选中的对话", recorded: "已记过", noSessions: "没有找到对话", retainNow: "现在就记住", retainSel: "记住这个工作区的对话", retainAll: "记住全部对话（不含已归档）", retainHint: "已经记住过的内容不会重复记。", running: "进行中", done: "完成",
+      other: "其他", rcTitle: "记住哪些内容", rcFoot: "只影响以后新记的内容，已经记住的不会改。", rcUser: "我说的话", rcUserH: "你发给 AI 的消息。", rcAsst: "AI 的回复", rcAsstH: "AI 回给你的正文。", rcTool: "工具调用内容", rcToolH: "AI 读文件、搜网页等工具的输入和结果，通常又长又杂，默认不记。", rcToolMax: "每条工具内容最多保留几个字", rcReason: "AI 的思考过程", rcReasonH: "模型的推理草稿，会截断后再记，默认不记。", rcSys: "系统提示", rcSysH: "角色设定等系统提示，只在它变化时记一次，默认不记。", rcArch: "已归档的对话", rcArchH: "打开后，归档的对话也会被记住和导入。", rcSub: "子代理的对话", rcSubH: "AI 自己派出去干活的子任务对话，默认不记。", rcMin: "最短字数", rcMinH: "一轮对话太短就不记（默认 24，中文一个字算 2）。", rcInj: "插件自己插入的记忆", rcInjH: "回忆时插进对话的记忆块永远不会再被记一遍，否则会越记越多、自己重复自己。", rcAlwaysOff: "永远不记", recall: "聊天时自动回忆", retain: "自动记住对话", backfill: "启动时把以前的对话也记住", timezone: "时区", topN: "每次最多回忆几条",
       health: "记忆服务", state: "状态", version: "版本", openCp: "打开官方管理后台", banks: "记忆库", memories: "条记忆", docs: "段对话",
-      job: "记住进度", pendingTip: "已交给记忆服务、还在整理中（需要整理记忆的模型能连上）", failedTip: "整理失败的条数：多半是整理记忆的模型连不上或密钥不对，看 hindsight.log", jobTip: "✓ 已交给记忆服务（后台还要整理，实际条数看上面的记忆库） · ↷ 跳过（已记过/子任务） · 🗄 已归档 · ✗ 提交失败", recent: "最近记住的", failures: "没记住的", empty: "暂无", browse: "看看记住了什么", search: "搜索记忆", llmFallback: "整理记忆的模型暂时不可用，目前只保存原话",
+      feedback: "反馈问题", exportLogs: "导出日志", exported: "已导出（密钥已隐藏）：", openIssue: "去提问题 ↗", feedbackFoot: "遇到问题：先点「导出日志」，再点「去提问题」，把导出的文件拖进问题表单。导出时会自动隐藏密钥，上传前也请再看一眼。", job: "记住进度", pendingTip: "已交给记忆服务、还在整理中（需要整理记忆的模型能连上）", failedTip: "整理失败的条数：多半是整理记忆的模型连不上或密钥不对，看 hindsight.log", jobTip: "已提交：交给记忆服务的对话 · 完成：真的整理好写进记忆库 · 处理中：排队或正在整理 · 失败：整理没成功（会自动重试） · ↷ 跳过（已记过/子任务） · 🗄 已归档", submitted: "已提交", opsDone: "完成", opsProc: "处理中", opsFail: "失败", retryFailed: "重试失败项", retrying: "已重新排队 {n} 项", conc: "同时处理数", concHint: "同时整理几段对话（1-4）。免费模型或中转服务请保持 1，否则容易被限流。", recent: "最近记住的", failures: "没记住的", empty: "暂无", browse: "看看记住了什么", browseSum: "共 {n} 条记忆，{b} 个记忆库", browseOpen: "展开看看", collapse: "收起", loadMore: "加载更多", shownOf: "已显示 {a} / {b} 条", hideMem: "隐藏内容", tapShow: "点一下显示", search: "搜索记忆", llmFallback: "整理记忆的模型暂时不可用，目前只保存原话",
       loading: "正在读取配置…", unavailable: "设置页面没有加载出来，请重启 dsh 再试。", noRpc: "插件还没连上，请稍等或重启 dsh",
       sLlm: "整理记忆的模型", sLlmTip: "它负责把聊天内容整理成一条条好找的记忆。默认和 dsh 用同一个模型，不用另外设置。",
       sLlmOk: "和 dsh 用同一个模型 ✓", sLlmNeed: "默认用 dsh 正在用的 {m}。插件拿不到 dsh 保存的密钥，请把这个模型的密钥也粘贴一次（不填也能用，只是先只保存原话、不做整理）。", sLlmPh: "粘贴 dsh 模型的密钥（可选）",
@@ -126,7 +126,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
 .hs-opt{display:flex;align-items:center;gap:8px;padding:9px 12px 9px 8px;border-radius:13px;cursor:pointer;color:var(--hs-text);transition:background .12s;user-select:none}
 .hs-opt.act{background:var(--hs-fill)}.hs-opt:active{background:rgba(120,120,128,.3);transform:scale(.99)}
 .hs-opt .ck{width:18px;color:var(--hs-tint);font-weight:700;text-align:center;flex:0 0 auto}
-.hs-opt .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hs-opt .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hs26 .mem .t.blur{filter:blur(6px);cursor:pointer;user-select:none}.hs-opt .osub{display:block;font-size:11px;color:var(--hs-sub);overflow:hidden;text-overflow:ellipsis}
 .hs-opt.sel .tx{font-weight:600}.hs-opt.custom .tx{color:var(--hs-tint)}
 .hs26.hs-pop .hs-pop-search{padding:2px 2px 6px}
 .hs26.hs-pop .hs-pop-search input{width:100%;font:inherit;font-size:14px;border:0;outline:0;border-radius:12px;padding:8px 12px;background:var(--hs-fill);color:var(--hs-text);text-align:left}
@@ -228,7 +228,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         if (!btn.current) return;
         const r = btn.current.getBoundingClientRect();
         const vw = window.innerWidth, vh = window.innerHeight;
-        const w = Math.min(Math.max(r.width + 20, p.search ? 300 : 220), vw - 16);
+        const w = Math.min(Math.max(r.width + 20, p.minWidth || (p.search ? 300 : 220)), vw - 16);
         const left = Math.min(Math.max(8, r.right + 10 - w), vw - w - 8);
         const below = vh - r.bottom - 14, above = r.top - 14;
         const up = below < 240 && above > below;
@@ -245,7 +245,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         document.addEventListener("touchstart", onDown, true);
         window.addEventListener("resize", onMove);
         window.addEventListener("scroll", onMove, true);
-        const id = setTimeout(() => { const el = inp.current || pop.current; if (el) el.focus(); }, 0);
+        const id = setTimeout(() => { const el = inp.current || pop.current; if (el) el.focus({ preventScroll: true }); }, 0);
         return () => { clearTimeout(id); document.removeEventListener("mousedown", onDown, true); document.removeEventListener("touchstart", onDown, true); window.removeEventListener("resize", onMove); window.removeEventListener("scroll", onMove, true); };
       }, [open]); // eslint-disable-line
       useEffect(() => { if (open && pop.current) { const el = pop.current.querySelector('[data-i="' + act + '"]'); if (el && el.scrollIntoView) el.scrollIntoView({ block: "nearest" }); } }, [act, open]);
@@ -265,7 +265,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         h("div", { className: "hs-pop-list" },
           p.loading && !items.length ? h("div", { className: "hs-pop-empty" }, p.loadingText || "正在获取模型…") : null,
           items.map((o, i) => h("div", { key: (o.custom ? "c:" : "o:") + o.value, "data-i": i, role: "option", "aria-selected": o.value === p.value, className: "hs-opt" + (i === act ? " act" : "") + (o.value === p.value && !o.custom ? " sel" : "") + (o.custom ? " custom" : ""), onMouseEnter: () => setAct(i), onMouseDown: (e) => e.preventDefault(), onClick: () => choose(o) },
-            h("span", { className: "ck" }, o.value === p.value && !o.custom ? "✓" : ""), h("span", { className: "tx", title: String(o.label) }, o.label))),
+            h("span", { className: "ck" }, o.value === p.value && !o.custom ? "✓" : ""), o.sub ? h("span", { className: "tx", title: String(o.label) + " · " + o.sub }, o.label, h("span", { className: "osub" }, o.sub)) : h("span", { className: "tx", title: String(o.label) }, o.label))),
           !p.loading && !items.length ? h("div", { className: "hs-pop-empty" }, p.emptyText || "没有匹配的选项") : null)) : null;
       return h(React.Fragment, null,
         h("button", { ref: btn, type: "button", className: "hs-pick" + (open ? " open" : ""), "aria-haspopup": "listbox", "aria-expanded": open, "aria-label": p.label, disabled: p.disabled, onClick: () => (open ? close(false) : show()), onKeyDown: onKey },
@@ -357,21 +357,45 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const ws = useRpc(api, "workspaces", {}, []);
       const [sel, setSel] = useState({});
       const [job, setJob] = useState(null);
+      const [ops, setOps] = useState(null);
       const [poll, setPoll] = useState(false);
+      const [prompt, setPrompt] = useState(false);
+      const [picker, setPicker] = useState(null);
+      const [pick, setPick] = useState({});
+      useEffect(() => { api("overview").then((o) => { setPrompt(!!o.importPrompt); setOps(o.ops || null); if (o.job) setJob(o.job); }, () => {}); }, []); // eslint-disable-line
       useEffect(() => {
         if (!poll) return;
-        const timer = setInterval(() => api("overview").then((o) => { setJob(o.job); if (!o.job || !o.job.running) setPoll(false); }, () => setPoll(false)), 800);
+        const timer = setInterval(() => api("overview").then((o) => { setJob(o.job); setOps(o.ops || null); if ((!o.job || !o.job.running) && !(o.ops && o.ops.processing)) setPoll(false); }, () => setPoll(false)), 1500);
         return () => clearInterval(timer);
       }, [poll]); // eslint-disable-line
       const list = (ws.value && ws.value.workspaces) || [];
       const known = new Set(list.map((w) => w.path));
       const manual = Object.keys(mapping).filter((k) => !known.has(k));
-      const bankSel = (path) => h(Select, { label: "bank for " + path, value: mapping[path] || "", options: [{ value: "", label: t("unmapped") }].concat(bankOptions(mapping[path])).concat([{ value: "__new", label: t("newBank") }]),
-        onChange: (v) => { if (v === "__new") { const id = askNewBank(); if (id) setMapping(Object.assign({}, mapping, { [path]: id })); return; } const n = Object.assign({}, mapping); if (v) n[path] = v; else delete n[path]; setMapping(n); } });
-      const start = (filter) => api("retainNow", filter).then((r) => { setJob(r.job || r); setPoll(true); }, (e) => setJob({ error: String(e.message || e) }));
+      const remote = p.remoteBanks || [];
+      const usersOf = (bank) => list.filter((w) => w.bank === bank).map((w) => w.title || w.path.split(/[\\/]/).pop());
+      const bankSel = (path, auto) => {
+        if (p.legacyShared) return h("span", { className: "pill" }, p.legacyShared);
+        const cur0 = mapping[path] || "";
+        const opts = [{ value: "", label: t("ownAuto") + (auto ? " · " + auto : "") }];
+        if (cur0 && !remote.includes(cur0)) opts.push({ value: cur0, label: t("ownBank") + " · " + cur0 });
+        opts.push({ value: "__named", label: t("ownNamed") });
+        remote.forEach((b) => { const u = usersOf(b); const nm = (p.remoteNames || {})[b]; opts.push({ value: b, label: t("joinBank") + " · " + (nm || b), sub: [nm ? b : "", u.length ? t("usedBy") + u.join("、") : ""].filter(Boolean).join(" · ") }); });
+        return h(Select, { label: "bank for " + path, search: true, minWidth: 380, value: cur0, options: opts,
+          onChange: (v) => { if (v === "__named") { const id = askNewBank(); if (id) setMapping(Object.assign({}, mapping, { [path]: id })); return; } const n = Object.assign({}, mapping); if (v) n[path] = v; else delete n[path]; setMapping(n); } });
+      };
+      const start = (filter) => { setPrompt(false); return api("retainNow", filter).then((r) => { setJob(r.job || r); setPoll(true); }, (e) => setJob({ error: String(e.message || e) })); };
       const chosen = Object.keys(sel).filter((k) => sel[k]);
+      const picked = Object.keys(pick).filter((k) => pick[k]);
+      const openPicker = () => { if (picker) { setPicker(null); return; } setPicker({ loading: true }); api("sessions", { workspace: chosen.length === 1 ? chosen[0] : "" }).then((r) => setPicker({ list: r.sessions || [] }), (e) => setPicker({ error: String(e.message || e) })); };
+      const goImport = () => { const el = document.getElementById("hs-retain-now"); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "center" }); };
       const pct = job && job.total ? Math.round((job.done / job.total) * 100) : 0;
       return h(React.Fragment, null,
+        prompt ? h("div", { className: "warnbox", role: "note" },
+          h("div", { style: { fontWeight: 600, marginBottom: 4 } }, t("importQ")),
+          h("div", { className: "sub", style: { marginBottom: 8 } }, t("importText")),
+          h("div", { className: "row", style: { gap: 8 } },
+            h("button", { className: "btn small", onClick: goImport }, t("importGo")),
+            h("button", { className: "btn ghost small", onClick: () => { setPrompt(false); api("dismissImport", {}).catch(() => {}); } }, t("importNo")))) : null,
         h(Group, { title: t("ws"), foot: t("wsFoot") },
           ws.loading ? h("div", { className: "row sub" }, "…") : null,
           ws.value && !ws.value.available ? h("div", { className: "row sub" }, t("noWs")) : null,
@@ -381,29 +405,123 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
             h("div", { style: { flex: 1, minWidth: 0 } }, h("div", null, w.title || w.path.split(/[\\/]/).pop()), h("div", { className: "sub mono", style: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, w.path)),
             h("span", { className: "pill" }, w.sessions + " " + t("sessions")),
             w.archived ? h("span", { className: "pill", title: t("archivedN") }, w.archived + " " + t("archivedN")) : null,
-            bankSel(w.path))),
+            bankSel(w.path, w.autoBank))),
           manual.map((path, i) => h("div", { className: "row", key: "m" + i },
             h("input", { type: "text", style: { textAlign: "left" }, value: path, "aria-label": t("path"), placeholder: t("path"), onChange: (e) => { const n = {}; Object.keys(mapping).forEach((k) => { n[k === path ? e.target.value : k] = mapping[k]; }); setMapping(n); } }),
             bankSel(path),
             h("button", { className: "btn ghost small", onClick: () => { const n = Object.assign({}, mapping); delete n[path]; setMapping(n); } }, t("remove")))),
           h("div", { className: "row" }, h("button", { className: "btn ghost small", onClick: () => setMapping(Object.assign({}, mapping, { ["/path/" + (manual.length + 1)]: "" })) }, "+ " + t("addPath")))),
-        h(Group, { title: t("retainNow"), foot: t("retainHint") },
-          h("div", { className: "row" },
+        h("div", { id: "hs-retain-now" }, h(Group, { title: t("retainNow"), foot: t("retainHint") },
+          h("div", { className: "row", style: { flexWrap: "wrap", gap: 8 } },
             h("button", { className: "btn small", disabled: !chosen.length || (job && job.running), onClick: () => start({ workspaces: chosen }) }, t("retainSel") + (chosen.length ? " (" + chosen.length + ")" : "")),
+            h("button", { className: "btn ghost small", onClick: openPicker }, picker ? t("pickHide") : t("pickOne")),
             h("button", { className: "btn ghost small", disabled: job && job.running, onClick: () => start({}) }, t("retainAll"))),
-          job ? h(JobRow, { t, job, pct }) : null));
+          picker ? (picker.loading ? h("div", { className: "row sub" }, "…") : picker.error ? h("div", { className: "row sub" }, picker.error) : !(picker.list || []).length ? h("div", { className: "row sub" }, t("noSessions")) :
+            h(React.Fragment, null,
+              picker.list.map((s) => h("div", { className: "row", key: s.id },
+                h("button", { className: "chk", role: "checkbox", "aria-checked": !!pick[s.id], "aria-label": "select " + s.id, onClick: () => setPick(Object.assign({}, pick, { [s.id]: !pick[s.id] })) }, pick[s.id] ? "✓" : ""),
+                h("div", { style: { flex: 1, minWidth: 0 } }, h("div", { style: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, s.title || s.id), h("div", { className: "sub mono" }, fmtTime(s.createdAt) + " · " + (s.cwd || "").split(/[\\/]/).pop())),
+                s.retained ? h("span", { className: "pill ok" }, t("recorded")) : null)),
+              h("div", { className: "row" }, h("button", { className: "btn small", disabled: !picked.length || (job && job.running), onClick: () => start({ sessionIds: picked }) }, t("retainPicked") + (picked.length ? " (" + picked.length + ")" : ""))))) : null,
+          job ? h(JobRow, { t, job, pct, ops }) : null)));
     }
     function JobRow(p) {
       const { t, job } = p;
       if (job.error && !job.kind) return h("div", { className: "row sub", style: { color: "var(--hs-red)" } }, job.error);
       if (job.reason && !job.kind) return h("div", { className: "row sub" }, job.reason);
-      const pct = job.total ? Math.round((job.done / job.total) * 100) : (job.running ? 0 : 100);
+      const ops = p.ops || null;
+      // No import job this session: show Hindsight's own operation progress only.
+      const opsOnly = (!job.kind || job.kind === "ops") && !job.running && !job.total;
+      const opsTotal = ops ? (ops.completed || 0) + (ops.processing || 0) + (ops.failed || 0) : 0;
+      const pct = opsOnly ? (opsTotal ? Math.round(((ops.completed || 0) / opsTotal) * 100) : 100)
+        : job.total ? Math.round((job.done / job.total) * 100) : (job.running ? 0 : 100);
+      // "完成" only when Hindsight finished every submitted operation; until then "已提交".
+      const busy = job.running || (ops && ops.processing > 0);
+      const label = job.running ? t("running") : ops && ops.failed ? t("opsFail") : busy ? t("submitted") : t("done");
+      const cls = job.error || (ops && ops.failed) ? "bad" : busy ? "warn" : "ok";
+      const parts = opsOnly ? [] : [t("submitted") + " " + (job.scanned || 0)];
+      if (ops) parts.push(t("opsDone") + " " + (ops.completed || 0), t("opsProc") + " " + (ops.processing || 0), t("opsFail") + " " + ((ops.failed || 0) + (job.failed || 0)));
+      if (!opsOnly) parts.push("↷" + (job.skipped || 0), "🗄" + (job.archived || 0));
       return h("div", { className: "row", style: { flexWrap: "wrap" } },
-        h("span", { className: "pill " + (job.running ? "warn" : job.error ? "bad" : "ok") }, job.running ? t("running") : t("done")),
+        h("span", { className: "pill " + cls }, label),
         h("div", { className: "bar", "aria-label": "progress" }, h("i", { style: { width: pct + "%" } })),
-        h("span", { className: "sub", title: t("jobTip") }, (job.done || 0) + "/" + (job.total || 0) + " · ✓" + (job.scanned || 0) + " · ↷" + (job.skipped || 0) + " · 🗄" + (job.archived || 0) + " · ✗" + (job.failed || 0)),
+        h("span", { className: "sub", title: t("jobTip") }, (opsOnly ? "" : (job.done || 0) + "/" + (job.total || 0) + " · ") + parts.join(" · ")),
         job.current ? h("span", { className: "sub mono" }, job.current) : null,
         job.error ? h("span", { className: "sub", style: { color: "var(--hs-red)" } }, job.error) : null);
+    }
+
+    function OpsFailures(p) {
+      const { t, api, ops } = p;
+      const [msg, setMsg] = useState("");
+      const retry = () => api("retryFailed", {}).then((r) => { setMsg(t("retrying").replace("{n}", r.retried || 0)); p.reload && p.reload(); }, (e) => setMsg(String(e.message || e)));
+      return h(React.Fragment, null,
+        h("div", { className: "row", style: { flexWrap: "wrap" } },
+          h("span", { className: "pill bad" }, t("opsFail") + " " + ops.failed),
+          h("span", { className: "sub" }, ops.reason || ""),
+          h("button", { className: "btn small", onClick: retry }, t("retryFailed")),
+          msg ? h("span", { className: "sub" }, msg) : null),
+        (ops.failures || []).slice(0, 8).map((f) => h("div", { className: "row", key: f.id },
+          h("span", { className: "sub" }, fmtTime(f.at)),
+          h("div", { className: "val" }, h("span", { className: "mono" }, f.bank), h("span", { className: "pill bad" }, f.reason || ""), f.nextRetryAt ? h("span", { className: "sub" }, "↻ " + fmtTime(f.nextRetryAt)) : null))));
+    }
+
+    // "看看记住了什么": collapsed by default (counts only). Expanded it pages server-side
+    // (10 at a time) so a bank with hundreds of memories stays fast; optional privacy blur.
+    const PRIV_KEY = "dsh-hindsight.hideMemories";
+    const loadPriv = () => { try { return window.localStorage.getItem(PRIV_KEY) === "1"; } catch (_) { return false; } };
+    function Browse(p) {
+      const { t, api, banks, bank, setBank } = p;
+      const PAGE = 10;
+      const [open, setOpen] = useState(false);
+      const [q, setQ] = useState("");
+      const [items, setItems] = useState([]);
+      const [total, setTotal] = useState(0);
+      const [busy, setBusy] = useState(false);
+      const [err, setErr] = useState("");
+      const [hide, setHide] = useState(loadPriv);
+      const [shown, setShown] = useState({});
+      const seq = useRef(0);
+      const totalAll = banks.reduce((n, b) => n + ((b.stats && b.stats.total_nodes) || 0), 0);
+      useEffect(() => {
+        if (!open || bank || !banks.length) return;
+        setBank(banks.some((b) => b.id === p.lastBank) ? p.lastBank : banks[0].id);
+      }, [open, banks.length, p.lastBank]); // eslint-disable-line
+      const load = (offset) => {
+        const my = ++seq.current;
+        setBusy(true); setErr("");
+        return api("memories", { bank, q: q.trim(), limit: PAGE, offset }).then((v) => {
+          if (my !== seq.current) return;
+          setItems((prev) => offset ? prev.concat(v.items || []) : (v.items || []));
+          setTotal(v.total || 0); setBusy(false);
+        }, (e) => { if (my === seq.current) { setErr(String(e.message || e)); setBusy(false); } });
+      };
+      useEffect(() => {
+        if (!open || !bank) return undefined;
+        setItems([]); setShown({});
+        const timer = setTimeout(() => load(0), q ? 300 : 0);
+        return () => clearTimeout(timer);
+      }, [open, bank, q]); // eslint-disable-line
+      const togglePriv = () => { const v = !hide; setHide(v); setShown({}); try { window.localStorage.setItem(PRIV_KEY, v ? "1" : "0"); } catch (_) { /* storage off */ } };
+      if (!open) return h(Group, { title: t("browse") },
+        h("div", { className: "row" },
+          h("span", { className: "sub" }, banks.length ? t("browseSum").replace("{n}", totalAll).replace("{b}", banks.length) : t("empty")),
+          banks.length ? h("button", { className: "btn small", onClick: () => setOpen(true) }, t("browseOpen")) : null));
+      return h(Group, { title: t("browse") },
+        h(Row, { label: t("bank") }, h(Select, { label: "browse bank", value: bank, onChange: setBank, options: banks.map((b) => ({ value: b.id, label: bankLabel(b) + " · " + ((b.stats && b.stats.total_nodes) || 0) + " " + t("memories") })) })),
+        h(Row, { label: "🔍" }, h("input", { type: "search", value: q, placeholder: t("search"), "aria-label": t("search"), onChange: (e) => setQ(e.target.value), style: { textAlign: "left" } })),
+        h(Row, { label: t("hideMem") }, h(Switch, { value: hide, onChange: togglePriv, label: t("hideMem") })),
+        err ? h("div", { className: "row sub", style: { color: "var(--hs-red)" } }, err) : null,
+        items.map((m) => {
+          const blur = hide && !shown[m.id];
+          return h("div", { className: "row mem", key: m.id },
+            h("div", { className: "sub" }, fmtTime(memTime(m)), m.fact_type ? " · " + m.fact_type : ""),
+            h("div", { className: "t" + (blur ? " blur" : ""), title: blur ? t("tapShow") : undefined, onClick: blur ? () => setShown((s) => ({ ...s, [m.id]: true })) : undefined }, m.text));
+        }),
+        !busy && !err && !items.length ? h("div", { className: "row sub" }, t("empty")) : null,
+        h("div", { className: "row" },
+          h("span", { className: "sub" }, items.length ? t("shownOf").replace("{a}", items.length).replace("{b}", total) : ""),
+          items.length < total ? h("button", { className: "btn small", disabled: busy, onClick: () => load(items.length) }, busy ? "…" : t("loadMore")) : busy ? h("span", { className: "sub" }, "…") : null,
+          h("button", { className: "btn ghost small", onClick: () => setOpen(false) }, t("collapse"))));
     }
 
     // ---- status page ----
@@ -412,15 +530,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const ov = useRpc(api, "overview", {}, [], 3000);
       const banks = useRpc(api, "banks", {}, []);
       const [bank, setBank] = useState("");
-      const [q, setQ] = useState("");
-      const [mem, setMem] = useState(null);
       const bl = (banks.value && banks.value.banks) || [];
-      useEffect(() => { if (!bank && bl.length) setBank(bl[0].id); }, [bl.length]); // eslint-disable-line
-      useEffect(() => {
-        if (!bank) return;
-        const timer = setTimeout(() => api("memories", { bank, q, limit: 30 }).then((v) => setMem(v), (e) => setMem({ error: String(e.message || e) })), 300);
-        return () => clearTimeout(timer);
-      }, [bank, q]); // eslint-disable-line
       if (ov.error) return h(Group, { title: t("health") }, h("div", { className: "row sub" }, t("noRpc") + ": " + ov.error));
       const o = ov.value || {};
       const llm = o.llm || {};
@@ -437,21 +547,28 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         llm.fallback ? h("div", { className: "warnbox" }, "⚠︎ " + t("llmFallback") + (llm.reason ? "（" + llm.reason + "）" : "")) : null,
         h(Group, { title: t("banks") },
           bl.length ? bl.map((b) => h("div", { className: "row", key: b.id, style: { cursor: "pointer" }, onClick: () => setBank(b.id) },
-            h("span", { className: "lbl mono" }, b.id),
+            h("span", { className: "lbl" }, b.name && b.name !== b.id ? h(React.Fragment, null, b.name, h("span", { className: "sub mono", style: { display: "block", fontSize: 11, opacity: .6 } }, b.id)) : h("span", { className: "mono" }, b.id)),
             h("div", { className: "val" }, h("span", { className: "pill" + (bank === b.id ? " ok" : "") }, ((b.stats && b.stats.total_nodes) || 0) + " " + t("memories")), h("span", { className: "pill" }, ((b.stats && b.stats.total_documents) || 0) + " " + t("docs")),
               b.stats && b.stats.pending_operations ? h("span", { className: "pill warn", title: t("pendingTip") }, "⏳" + b.stats.pending_operations) : null,
               b.stats && b.stats.failed_operations ? h("span", { className: "pill bad", title: t("failedTip") }, "✗" + b.stats.failed_operations) : null))) : h("div", { className: "row sub" }, banks.loading ? "…" : t("empty"))),
-        h(Group, { title: t("job") }, o.job ? h(JobRow, { t, job: o.job }) : h("div", { className: "row sub" }, t("empty"))),
+        o.gateway && o.gateway.down ? h("div", { className: "warnbox" }, "⚠︎ " + o.gateway.reason) : null,
+        h(Group, { title: t("job") }, o.job ? h(JobRow, { t, job: o.job, ops: o.ops }) : o.ops && (o.ops.processing || o.ops.failed) ? h(JobRow, { t, job: { kind: "ops", running: false, done: 0, total: 0 }, ops: o.ops }) : h("div", { className: "row sub" }, t("empty")),
+          o.ops && o.ops.failed ? h(OpsFailures, { t, api, ops: o.ops, reload: ov.reload }) : null),
         h(Group, { title: t("recent") }, (o.recent || []).length ? o.recent.map((r, i) => h("div", { className: "row", key: i }, h("span", { className: "sub" }, fmtTime(r.at)), h("div", { className: "val" }, h("span", { className: "mono" }, r.bank), h("span", { className: "pill" }, (r.turns || 0) + " turns")))) : h("div", { className: "row sub" }, t("empty"))),
         h(Group, { title: t("failures") }, (o.failures || []).length ? o.failures.map((r, i) => h("div", { className: "row", key: i }, h("span", { className: "sub" }, fmtTime(r.at)), h("div", { className: "val" }, h("span", { className: "mono" }, r.bank), h("span", { className: "pill bad", title: r.error }, String(r.error || "").slice(0, 60))))) : h("div", { className: "row sub" }, t("empty"))),
-        h(Group, { title: t("browse") },
-          h(Row, { label: "Bank" }, h(Select, { label: "browse bank", value: bank, onChange: setBank, options: bl.map((b) => ({ value: b.id, label: b.id })) })),
-          h(Row, { label: "🔍" }, h("input", { type: "search", value: q, placeholder: t("search"), "aria-label": t("search"), onChange: (e) => setQ(e.target.value), style: { textAlign: "left" } })),
-          mem && mem.error ? h("div", { className: "row sub" }, mem.error) : null,
-          ((mem && mem.items) || []).map((m) => h("div", { className: "row mem", key: m.id },
-            h("div", { className: "sub" }, fmtTime(memTime(m)), m.fact_type ? " · " + m.fact_type : ""),
-            h("div", { className: "t" }, m.text))),
-          mem && mem.items && !mem.items.length ? h("div", { className: "row sub" }, t("empty")) : null));
+        h(Browse, { t, api, banks: bl, bank, setBank, lastBank: o.lastBank || "" }),
+        h(Feedback, { t, api }));
+    }
+    const ISSUE_URL = "https://github.com/snakejohn/dsh-hindsight-local/issues/new?template=bug_report.yml";
+    function Feedback(p) {
+      const { t, api } = p;
+      const [msg, setMsg] = useState("");
+      const run = () => { setMsg("…"); api("exportLogs", { reveal: true }).then((r) => setMsg(t("exported") + r.file), (e) => setMsg(String(e.message || e))); };
+      return h(Group, { title: t("feedback"), foot: t("feedbackFoot") },
+        h("div", { className: "row", style: { gap: 8 } },
+          h("button", { className: "btn small", onClick: run }, t("exportLogs")),
+          h("a", { className: "btn ghost small", href: ISSUE_URL, target: "_blank", rel: "noreferrer" }, t("openIssue"))),
+        msg ? h("div", { className: "row sub mono", style: { wordBreak: "break-all" } }, msg) : null);
     }
 
     // ---- local deployment card ----
@@ -499,14 +616,15 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       }, []);
       return st;
     }
-    const ago = (iso) => { if (!iso) return "—"; const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000); return s < 60 ? "刚刚" : s < 3600 ? Math.floor(s / 60) + " 分钟前" : s < 86400 ? Math.floor(s / 3600) + " 小时前" : Math.floor(s / 86400) + " 天前"; };
+    const bankLabel = (b) => b.name && b.name !== b.id ? b.name + "（" + b.id + "）" : b.id;
+    const ago = (iso) => { const ms = iso ? new Date(iso).getTime() : NaN; if (!isFinite(ms)) return "还没有"; const s = Math.max(0, (Date.now() - ms) / 1000); return s < 60 ? "刚刚" : s < 3600 ? Math.floor(s / 60) + " 分钟前" : s < 86400 ? Math.floor(s / 3600) + " 小时前" : s < 86400 * 30 ? Math.floor(s / 86400) + " 天前" : new Date(ms).toLocaleDateString("zh-CN"); };
     function SidebarStatus(p) {
       useStyle();
       const st = useSidebarStatus(p.hsApi);
       const s = st || { level: "gray", text: "Hindsight…" };
       const color = LEVEL_COLOR[s.level] || LEVEL_COLOR.gray;
       const open = () => { window.__hsOpenTab = "status"; window.dispatchEvent(new CustomEvent("hs-open-tab", { detail: "status" })); p.openPlugin && p.openPlugin(); };
-      const tip = ["Hindsight：" + s.text, s.reason, s.bank ? "记忆库：" + s.bank : "", "等待记住：" + (s.pending || 0), "上次记住：" + ago(s.lastRetain), "上次回忆：" + ago(s.lastRecall)].filter(Boolean).join("\n");
+      const tip = ["Hindsight：" + s.text, s.reason, s.bank ? "记忆库：" + (s.bankName ? s.bankName + "（" + s.bank + "）" : s.bank) : "", "等待记住：" + (s.pending || 0), "上次记住：" + ago(s.lastRetain), "上次回忆：" + ago(s.lastRecall)].filter(Boolean).join("\n");
       const dot = h("span", { className: "hs-dot" + (s.level === "yellow" ? " pulse" : ""), style: { background: color, boxShadow: "0 0 0 3px color-mix(in srgb, " + color + " 22%, transparent)" } });
       const dkc = useDark() ? " dk" : "";
       if (!p.wide) return h("button", { className: "hs26 hs-side mini glass" + dkc, title: tip, "aria-label": tip, onClick: open }, dot);
@@ -515,7 +633,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         h("div", { className: "hs-side-top" }, dot, h("span", { className: "hs-side-t" }, s.text), s.pending ? h("span", { className: "pill warn" }, s.pending + " 条待记住") : null),
         pr ? h("div", { className: "bar", style: { margin: "6px 0 2px" } }, h("i", { style: { width: Math.round(100 * pr.done / Math.max(1, pr.total)) + "%" } })) : null,
         s.reason ? h("div", { className: "hs-side-sub", style: { color: s.level === "red" ? "var(--hs-red)" : undefined } }, s.reason) : null,
-        h("div", { className: "hs-side-sub" }, (s.bank ? s.bank + " · " : "") + "记住于 " + ago(s.lastRetain) + " · 回忆于 " + ago(s.lastRecall)));
+        h("div", { className: "hs-side-sub" }, (s.bank ? (s.bankName || s.bank) + " · " : "") + "记住于 " + ago(s.lastRetain) + " · 回忆于 " + ago(s.lastRecall)));
     }
 
     // ---- 小白模式：选服务商 → 粘贴密钥（自动检测） → 一键开始 ----
@@ -646,10 +764,12 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
           h("div", { className: "card glass", role: "button", onClick: pick("existing") }, h("div", { style: { fontSize: 17, fontWeight: 600 } }, "☁︎ " + t("existing")), h("div", { className: "sub" }, t("existingHint"))),
           h("div", { className: "card glass", role: "button", onClick: pick("local") }, h("div", { style: { fontSize: 17, fontWeight: 600 } }, "⌂ " + t("local")), h("div", { className: "sub" }, t("localHint"))));
       }
-      const remoteBanks = ((banksR.value && banksR.value.banks) || []).map((b) => b.id);
+      const remoteList = (banksR.value && banksR.value.banks) || [];
+      const remoteBanks = remoteList.map((b) => b.id);
+      const remoteNames = {}; remoteList.forEach((b) => { if (b.name && b.name !== b.id) remoteNames[b.id] = b.name; });
       const allBanks = Array.from(new Set(remoteBanks.concat(extraBanks).concat(Object.values(cur(["bank", "workspace_bank_mapping"]) || {})).concat([cur(["bank", "default_bank"])]).filter(Boolean)));
       const bankOptions = () => allBanks.map((b) => ({ value: b, label: b + (remoteBanks.includes(b) ? "" : " ✦") }));
-      const askNewBank = () => { const id = (window.prompt(t("newBankPrompt")) || "").trim(); if (id) setExtraBanks(extraBanks.concat([id])); return id; };
+      const askNewBank = () => { const id = (window.prompt(t("newBankPrompt")) || "").trim().slice(0, 60); if (id) setExtraBanks(extraBanks.concat([id])); return id; };
       const mapping = cur(["bank", "workspace_bank_mapping"]) || {};
       const llmMode = cur(["llm", "mode"]) || "follow";
       const dl = dshLlm.value;
@@ -672,6 +792,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
             h(Row, { label: t("runner") }, h(Seg, { label: "runner", value: cur(["service", "local", "runner"]) || "auto", onChange: set(["service", "local", "runner"]), options: ["auto", "venv", "uvx", "docker"].map((v) => ({ value: v, label: v })) })),
             h(Row, { label: t("variant") }, h(Seg, { label: "variant", value: cur(["service", "local", "variant"]) || "auto", onChange: set(["service", "local", "variant"]), options: ["auto", "slim", "full"].map((v) => ({ value: v, label: v })) })),
             h(Row, { label: t("port") }, h(Text, { type: "number", label: "port", value: cur(["service", "local", "port"]), placeholder: "8888", onChange: set(["service", "local", "port"]) })),
+            h(Row, { label: h("span", { title: t("concHint") }, t("conc") + " ⓘ") }, h(Seg, { label: "concurrency", value: String(cur(["service", "local", "concurrency"]) || 1), onChange: (v) => set(["service", "local", "concurrency"])(Number(v)), options: ["1", "2", "3", "4"].map((v) => ({ value: v, label: v })) })),
             h(Row, { label: t("cp") }, h(Switch, { label: "control plane", value: cur(["service", "local", "control_plane", "enabled"]) === true, onChange: set(["service", "local", "control_plane", "enabled"]) })),
             h(Row, { label: t("proxy") }, h(Seg, { label: "proxy", value: cur(["service", "proxy", "mode"]) || "auto", onChange: set(["service", "proxy", "mode"]), options: [{ value: "auto", label: t("proxyAuto") }, { value: "off", label: t("proxyOff") }, { value: "custom", label: t("proxyCustom") }] })),
             (cur(["service", "proxy", "mode"]) || "auto") === "custom" ? h(Row, { label: t("proxy") + " URL" }, h(Text, { label: "proxy url", value: cur(["service", "proxy", "url"]), placeholder: "http://127.0.0.1:7890", onChange: set(["service", "proxy", "url"]) })) : null,
@@ -689,9 +810,20 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
               h(Row, { label: t("followInfo") }, h("span", { className: "pill " + (dl.ok ? "ok" : "warn") }, dl.ok ? (dl.keyRef + " · " + dl.keySource) : (dl.keyRef || "—")))) : null,
             llmMode === "follow" && dl && !dl.ok ? h("div", { className: "row sub", style: { color: "var(--hs-orange)" } }, t("followNoKey") + (dl.reason ? "（" + dl.reason + "）" : "")) : null),
         h(Group, { title: t("bank") },
-          h(Row, { label: t("defaultBank") }, h(Select, { label: "default bank", value: cur(["bank", "default_bank"]) || "", onChange: (v) => { if (v === "__new") { const id = askNewBank(); if (id) set(["bank", "default_bank"])(id); } else set(["bank", "default_bank"])(v); }, options: [{ value: "", label: t("noDefault") }].concat(bankOptions()).concat([{ value: "__new", label: t("newBank") }]) })),
+          cur(["bank", "default_bank"]) ? h(Row, { label: t("defaultBank") }, h("span", { className: "mono" }, cur(["bank", "default_bank"])), h("button", { className: "btn ghost small", title: t("legacyShared"), onClick: () => set(["bank", "default_bank"])("") }, t("clear"))) : null,
+          cur(["bank", "default_bank"]) ? h("div", { className: "row sub" }, t("legacyShared")) : null,
           h(Row, { label: t("scope") }, h(Seg, { label: "scope", value: cur(["bank", "scope"]) || "workspace", onChange: set(["bank", "scope"]), options: ["workspace", "preset", "session"].map((v) => ({ value: v, label: v })) }))),
-        h(Workspaces, { t, api, mapping, setMapping: set(["bank", "workspace_bank_mapping"]), bankOptions, askNewBank }),
+        h(Workspaces, { t, api, mapping, setMapping: set(["bank", "workspace_bank_mapping"]), bankOptions, askNewBank, remoteBanks, remoteNames, legacyShared: cur(["bank", "default_bank"]) || "" }),
+        h(Group, { title: t("rcTitle"), foot: t("rcFoot") },
+          [["include_user", true, "rcUser", "rcUserH"], ["retain_assistant", true, "rcAsst", "rcAsstH"], ["include_tool_calls", false, "rcTool", "rcToolH"],
+            ["include_reasoning", false, "rcReason", "rcReasonH"], ["include_system", false, "rcSys", "rcSysH"], ["include_archived", false, "rcArch", "rcArchH"], ["include_subagents", false, "rcSub", "rcSubH"]].map(([k, def, lk, hk]) => {
+            const v = cur(["retain", k]); const on = v === undefined ? def : !!v;
+            return h(React.Fragment, { key: k },
+              h("div", { className: "row" }, h("span", { className: "lbl" }, t(lk), h("span", { className: "sub", style: { display: "block", fontSize: 11.5, marginTop: 2 } }, t(hk))), h("div", { className: "val" }, h(Switch, { label: t(lk), value: on, onChange: set(["retain", k]) }))),
+              k === "include_tool_calls" && on ? h(Row, { label: t("rcToolMax") }, h(Text, { type: "number", label: "max_tool_chars", value: cur(["retain", "max_tool_chars"]), placeholder: "400", onChange: set(["retain", "max_tool_chars"]) })) : null);
+          }),
+          h("div", { className: "row" }, h("span", { className: "lbl" }, t("rcMin"), h("span", { className: "sub", style: { display: "block", fontSize: 11.5, marginTop: 2 } }, t("rcMinH"))), h("div", { className: "val" }, h(Text, { type: "number", label: "min_turn_chars", value: cur(["retain", "min_turn_chars"]), placeholder: "24", onChange: set(["retain", "min_turn_chars"]) }))),
+          h("div", { className: "row" }, h("span", { className: "lbl" }, t("rcInj"), h("span", { className: "sub", style: { display: "block", fontSize: 11.5, marginTop: 2 } }, t("rcInjH"))), h("div", { className: "val" }, h("span", { className: "pill" }, t("rcAlwaysOff"))))),
         h(Group, { title: t("other") },
           h(Row, { label: t("recall") }, h(Switch, { label: "recall", value: cur(["recall", "enabled"]) !== false, onChange: set(["recall", "enabled"]) })),
           h(Row, { label: t("topN") }, h(Text, { type: "number", label: "top_n", value: cur(["recall", "top_n"]), onChange: set(["recall", "top_n"]) })),

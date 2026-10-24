@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 使用文档 / 常见问题
+    url: https://github.com/snakejohn/dsh-hindsight-local/blob/main/docs/使用文档.md
+    about: 提问题前可以先看看常见问题，很多情况都有解决办法。

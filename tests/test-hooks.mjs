@@ -113,7 +113,7 @@ const TURNS = Array.from({ length: 14 }, (_v, index) => ({
 // 5. turn-stopping retains only new turns, asynchronously, with bank routing metadata.
 {
   const client = createFakeClient()
-  const { runtime } = buildRuntime({ fakeClient: client })
+  const { runtime } = buildRuntime({ fakeClient: client, rawConfig: { retain: { state_dir: '', include_tool_calls: true } } })
   const session = buildSession({ turns: TURNS.slice(0, 4) })
   const agent = createFakeAgent({ session })
   const ctx = createFakeCtx({ services: { compaction: { compactRegion: async () => {} } } })
@@ -128,7 +128,7 @@ const TURNS = Array.from({ length: 14 }, (_v, index) => ({
   assert.equal(call.options.async, true)
   assert.match(call.items[0].content, /USER（用户本人）: 问题 0/)
   assert.match(call.items[0].content, /ASSISTANT: 回答 0/)
-  assert.match(call.items[3].content, /\[tool read\]/, 'tool call is retained for turn 3')
+  assert.match(call.items[3].content, /\[tool read\]/, 'tool call is retained for turn 3 when 工具调用内容 is on')
   assert.equal(call.items[0].metadata.harness, 'dsh')
   assert.ok(call.items[0].tags.includes('dsh'))
   assert.equal(call.bankId, runtime.workspaceFor(agent).bankId)
@@ -150,7 +150,7 @@ const TURNS = Array.from({ length: 14 }, (_v, index) => ({
 
 // 6. retain failure is swallowed and counted.
 {
-  const client = createFakeClient({ failRetain: new Error('socket hang up') })
+  const client = createFakeClient({ failRetain: Object.assign(new Error('HTTP 400 bad request'), { status: 400 }) })
   const { runtime } = buildRuntime({ fakeClient: client })
   const session = buildSession({ turns: TURNS.slice(0, 2) })
   const agent = createFakeAgent({ session })

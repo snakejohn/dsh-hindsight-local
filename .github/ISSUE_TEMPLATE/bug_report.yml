@@ -1,0 +1,71 @@
+name: 🐞 报告问题
+description: 插件用不了、记不住、报错……都可以在这里说。只有「日志」是必填的。
+title: "[问题] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        谢谢反馈！最快的做法：打开插件面板 →「状态」页最下面 →「导出日志」，把导出的 `export-….txt` 拖到下面的「日志」框里。
+        导出的日志已经自动隐藏了密钥，但上传前请再看一眼。
+  - type: input
+    id: plugin_version
+    attributes:
+      label: 插件版本
+      description: 面板顶部或 package.json 里能看到，例如 0.1.3
+      placeholder: "0.1.3"
+  - type: dropdown
+    id: os
+    attributes:
+      label: 系统
+      options:
+        - Windows
+        - Mac
+        - Linux
+  - type: input
+    id: dsh_version
+    attributes:
+      label: dsh 版本
+      description: 例如 网页版 / 桌面版 0.x.x，写你知道的就行
+  - type: input
+    id: llm
+    attributes:
+      label: 整理记忆用的模型
+      description: 服务商 / 模型名，例如「硅基流动 / Qwen2.5-7B」或「跟随 dsh」。**不要填密钥。**
+  - type: textarea
+    id: what
+    attributes:
+      label: 发生了什么
+      description: 你看到了什么、本来以为会怎样
+  - type: textarea
+    id: steps
+    attributes:
+      label: 怎么复现
+      placeholder: |
+        1. 打开 …
+        2. 点 …
+        3. 看到 …
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 截图
+      description: 可以直接把图片拖进来
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志（必填）
+      description: |
+        推荐：面板「状态」页 →「导出日志」，把生成的文件拖进来（文件可直接拖到这个框里）。
+        也可以手动找日志文件夹：
+        - Windows：`C:\Users\<用户名>\.dsh-hindsight\logs\`（还有 `C:\Users\<用户名>\.dsh-hindsight\plugin.log`）
+        - Mac / Linux：`~/.dsh-hindsight/logs/`（还有 `~/.dsh-hindsight/plugin.log`）
+        手动复制的日志里可能有密钥（sk-… 开头的一串），请先删掉。
+    validations:
+      required: true
+  - type: checkboxes
+    id: nokeys
+    attributes:
+      label: 确认
+      options:
+        - label: 我已确认日志里没有密钥
+          required: true
