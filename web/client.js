@@ -40,7 +40,7 @@ window.__ModuleLoader__.load({
       retainNow: "现在就记住", retainSel: "记住这个工作区的对话", retainAll: "记住全部对话（不含已归档）", retainHint: "已经记住过的内容不会重复记。", running: "进行中", done: "完成",
       other: "其他", recall: "聊天时自动回忆", retain: "自动记住对话", backfill: "启动时把以前的对话也记住", timezone: "时区", topN: "每次最多回忆几条",
       health: "记忆服务", state: "状态", version: "版本", openCp: "打开官方管理后台", banks: "记忆库", memories: "条记忆", docs: "段对话",
-      job: "记住进度", recent: "最近记住的", failures: "没记住的", empty: "暂无", browse: "看看记住了什么", search: "搜索记忆", llmFallback: "整理记忆的模型暂时不可用，目前只保存原话",
+      job: "记住进度", pendingTip: "已交给记忆服务、还在整理中（需要整理记忆的模型能连上）", failedTip: "整理失败的条数：多半是整理记忆的模型连不上或密钥不对，看 hindsight.log", jobTip: "✓ 已交给记忆服务（后台还要整理，实际条数看上面的记忆库） · ↷ 跳过（已记过/子任务） · 🗄 已归档 · ✗ 提交失败", recent: "最近记住的", failures: "没记住的", empty: "暂无", browse: "看看记住了什么", search: "搜索记忆", llmFallback: "整理记忆的模型暂时不可用，目前只保存原话",
       loading: "正在读取配置…", unavailable: "设置页面没有加载出来，请重启 dsh 再试。", noRpc: "插件还没连上，请稍等或重启 dsh",
       sLlm: "整理记忆的模型", sLlmTip: "它负责把聊天内容整理成一条条好找的记忆。默认和 dsh 用同一个模型，不用另外设置。",
       sLlmOk: "和 dsh 用同一个模型 ✓", sLlmNeed: "默认用 dsh 正在用的 {m}。插件拿不到 dsh 保存的密钥，请把这个模型的密钥也粘贴一次（不填也能用，只是先只保存原话、不做整理）。", sLlmPh: "粘贴 dsh 模型的密钥（可选）",
@@ -401,7 +401,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       return h("div", { className: "row", style: { flexWrap: "wrap" } },
         h("span", { className: "pill " + (job.running ? "warn" : job.error ? "bad" : "ok") }, job.running ? t("running") : t("done")),
         h("div", { className: "bar", "aria-label": "progress" }, h("i", { style: { width: pct + "%" } })),
-        h("span", { className: "sub" }, (job.done || 0) + "/" + (job.total || 0) + " · ✓" + (job.scanned || 0) + " · ↷" + (job.skipped || 0) + " · 🗄" + (job.archived || 0) + " · ✗" + (job.failed || 0)),
+        h("span", { className: "sub", title: t("jobTip") }, (job.done || 0) + "/" + (job.total || 0) + " · ✓" + (job.scanned || 0) + " · ↷" + (job.skipped || 0) + " · 🗄" + (job.archived || 0) + " · ✗" + (job.failed || 0)),
         job.current ? h("span", { className: "sub mono" }, job.current) : null,
         job.error ? h("span", { className: "sub", style: { color: "var(--hs-red)" } }, job.error) : null);
     }
@@ -439,7 +439,8 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
           bl.length ? bl.map((b) => h("div", { className: "row", key: b.id, style: { cursor: "pointer" }, onClick: () => setBank(b.id) },
             h("span", { className: "lbl mono" }, b.id),
             h("div", { className: "val" }, h("span", { className: "pill" + (bank === b.id ? " ok" : "") }, ((b.stats && b.stats.total_nodes) || 0) + " " + t("memories")), h("span", { className: "pill" }, ((b.stats && b.stats.total_documents) || 0) + " " + t("docs")),
-              b.stats && b.stats.failed_operations ? h("span", { className: "pill bad" }, "✗" + b.stats.failed_operations) : null))) : h("div", { className: "row sub" }, banks.loading ? "…" : t("empty"))),
+              b.stats && b.stats.pending_operations ? h("span", { className: "pill warn", title: t("pendingTip") }, "⏳" + b.stats.pending_operations) : null,
+              b.stats && b.stats.failed_operations ? h("span", { className: "pill bad", title: t("failedTip") }, "✗" + b.stats.failed_operations) : null))) : h("div", { className: "row sub" }, banks.loading ? "…" : t("empty"))),
         h(Group, { title: t("job") }, o.job ? h(JobRow, { t, job: o.job }) : h("div", { className: "row sub" }, t("empty"))),
         h(Group, { title: t("recent") }, (o.recent || []).length ? o.recent.map((r, i) => h("div", { className: "row", key: i }, h("span", { className: "sub" }, fmtTime(r.at)), h("div", { className: "val" }, h("span", { className: "mono" }, r.bank), h("span", { className: "pill" }, (r.turns || 0) + " turns")))) : h("div", { className: "row sub" }, t("empty"))),
         h(Group, { title: t("failures") }, (o.failures || []).length ? o.failures.map((r, i) => h("div", { className: "row", key: i }, h("span", { className: "sub" }, fmtTime(r.at)), h("div", { className: "val" }, h("span", { className: "mono" }, r.bank), h("span", { className: "pill bad", title: r.error }, String(r.error || "").slice(0, 60))))) : h("div", { className: "row sub" }, t("empty"))),

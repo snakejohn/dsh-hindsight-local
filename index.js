@@ -19,6 +19,7 @@
  * Failure policy: every step is wrapped. If Hindsight is missing, slow, rate-limited or
  * broken, the plugin logs one warning and DSH behaves exactly as it would without it.
  */
+import { probeLlmReachable } from './lib/llmprobe.js'
 import { createRuntime } from './lib/runtime.js'
 import { errorMessage } from './lib/log.js'
 import { buildConfigSchema, loadSchemastery, plainConfig } from './lib/schema.js'
@@ -124,6 +125,12 @@ async function applyLlmMode(ctx, runtime, config) {
   }
   const r = await resolveDshDefaultLlm(ctx).catch((error) => ({ ok: false, reason: errorMessage(error) }))
   runtime.followSignature = r.llm ? `${r.llm.provider}|${r.llm.base_url}|${r.llm.model}|${r.keyRef}|${r.ok}` : `none|${r.reason}`
+  if (r.ok) {
+    // A loopback gateway only dsh can use (Tauri: cline-pass on 127.0.0.1) would make every
+    // async retain fail extraction in Hindsight; fall back to raw chunks and say so instead.
+    const probe = await probeLlmReachable(r.llm.base_url, { fetchImpl: runtime.fetchImpl })
+    if (!probe.ok) Object.assign(r, { ok: false, reason: probe.reason })
+  }
   if (r.ok) {
     Object.assign(llm, { provider: r.llm.provider, base_url: r.llm.base_url, model: r.llm.model, api_key: r.llm.api_key })
     runtime.llmStatus = { mode: 'follow', effective: `${r.llm.provider}/${r.llm.model}`, dshProvider: r.dshProvider, keyRef: r.keyRef, keySource: r.keySource }
