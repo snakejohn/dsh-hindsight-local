@@ -12,6 +12,7 @@ const files = [
   'test-timeline.mjs',
   'test-keys-dotenv.mjs',
   'test-retry-status.mjs',
+  'test-nonascii-home.mjs',
   'test-sidebar-card.mjs',
   'test-fixes.mjs',
   'test-config-bank.mjs',
