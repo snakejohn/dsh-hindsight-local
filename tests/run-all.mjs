@@ -20,7 +20,8 @@ const files = [
   'test-dotenv-deploy.mjs', 'test-sidebar.mjs',
   'test-v011.mjs',
   'test-dimension.mjs',
-  'test-integration.mjs'
+  'test-integration.mjs',
+  'test-e2e-banks.mjs'
 ]
 
 function runOne(file) {

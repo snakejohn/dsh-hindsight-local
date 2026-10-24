@@ -112,6 +112,7 @@ https://github.com/snakejohn/dsh-hindsight-local
 | 自动记住对话 `retain.enabled` | 开 | 关掉就不写入 |
 | 启动时补录旧对话 `backfill.enabled` | 开 | 把以前的对话也记住（不含已归档） |
 | 时区 `time.timezone` | 跟随系统 | 用于记忆时间和「早上 7 点」这类解析 |
+| 向量维度 `embedding.expected_dim` | 1024 | 理解文字的模型输出多少个数字（bge-m3 = 1024）。换模型或迁移时必须和原来一致，不一致时插件会拦下并用中文提示，不会写坏已有记忆 |
 | 端口 `service.local.port` | 8888 | 本地 Hindsight 监听的端口 |
 | LLM 超时 `service.local.llm_timeout` | 300 秒 | 慢模型也能整理完 |
 | 写入分块 `service.local.retain_chunk_size` | 1500 字符 | 长消息切小块处理，避免卡在「处理中」 |
@@ -167,6 +168,16 @@ v0.1.1 默认把长消息切成 1500 字符一块处理，并把超时放宽到 
 | 日志 | `~/.dsh-hindsight/logs/` |
 | 写入进度 | `~/.dsh-hindsight/state` |
 | 服务配置（含密钥） | 插件根目录的 `.env` |
+</details>
+
+<details><summary><b>怎么备份记忆、换电脑，或把本地服务改成独立服务？</b></summary>
+
+见使用文档的 [迁移和备份记忆](docs/使用文档.md#迁移和备份记忆) 一章：记忆存在哪里、怎么备份和恢复、怎么把插件自己的本地服务改成一直开着的独立服务、怎么合并或拆分记忆库。每一步都实测过，没实测的地方都标出来了。
+</details>
+
+<details><summary><b>我已经有一个 Hindsight 服务了，能直接用吗？</b></summary>
+
+能。设置里选「已经配置好了」，填地址（和密码，如果服务开了的话）。插件只连接它，**不会**启动、停止或修改它；服务中途停了，聊天照常，漏记的对话会在服务恢复后自动补上。
 </details>
 
 <details><summary><b>怎么卸载？</b></summary>

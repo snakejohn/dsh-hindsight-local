@@ -191,9 +191,16 @@ await ok('retry backoff doubles up to 10 min; repeated errors logged once', asyn
   await s.ensureReady('t')
   const delays = []
   for (let i = 0; i < 7; i++) { s.lastAttemptAt = 0; s.maybeRetry('t'); delays.push(s.retryDelay); if (s.pending) await s.pending }
-  assert.deepEqual(delays, [60000, 120000, 240000, 480000, 600000, 600000, 600000])
+  // An existing server is probed at most once a minute so a restarted server is picked up quickly.
+  assert.deepEqual(delays, [60000, 60000, 60000, 60000, 60000, 60000, 60000])
   assert.equal(logs.filter(([lvl, m]) => lvl === 'warn' && /not reachable/.test(m)).length, 1)
   await s.stop()
+  const l = service({ setup: 'manual', service: { mode: 'attach', retry_degraded_ms: 30000 } }, { plan: [health.bad] })
+  await l.ensureReady('t')
+  const d2 = []
+  for (let i = 0; i < 7; i++) { l.lastAttemptAt = 0; l.maybeRetry('t'); d2.push(l.retryDelay); if (l.pending) await l.pending }
+  assert.deepEqual(d2, [60000, 120000, 240000, 480000, 600000, 600000, 600000])
+  await l.stop()
 })
 
 await ok('defaults: SiliconFlow bge-m3 / bge-reranker-v2-m3 / Xing4.0-29B; one key shared by host', () => {

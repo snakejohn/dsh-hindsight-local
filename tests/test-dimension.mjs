@@ -10,7 +10,7 @@ const { localEnv } = await import('../lib/local.js')
 const { DEFAULT_CONFIG } = await import('../lib/config.js')
 const { turnCharCount } = await import('../lib/transcript.js')
 let pass = 0
-const ok = (name) => { pass++; console.log('ok', name) }
+const ok = (name) => { pass++; console.log('PASS', name) }
 const fakeFetch = (n, status = 200) => async (url, init) => ({ ok: status === 200, status, text: async () => status === 200 ? JSON.stringify({ data: [{ embedding: new Array(n).fill(0) }] }) : '{"code":20015}', _body: init.body })
 
 assert.equal(DEFAULT_CONFIG.embedding.expected_dim, 1024)

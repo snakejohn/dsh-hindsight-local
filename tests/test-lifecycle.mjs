@@ -308,4 +308,27 @@ function isAlive(pid) {
   }
 }
 
+// Existing service: wrong key -> degraded with a beginner hint; outage mid-session -> degraded, then recovers.
+{
+  const { friendlyConnError } = await import('../lib/deploy.js')
+  const { service, client } = serviceFor({ healthPlan: [goodHealth], config: cfg({ setup: 'existing', service: { mode: 'attach', autostart: false } }) })
+  client.listBanks = async () => { const e = new Error('HTTP 401'); e.status = 401; throw e }
+  assert.equal(await service.ensureReady('test'), false)
+  assert.equal(service.state, 'degraded')
+  assert.match(service.lastError, /密钥不对/)
+  client.listBanks = async () => []
+  service.lastAttemptAt = 0
+  assert.equal(await service.ensureReady('retry'), true)
+  assert.equal(service.markUnreachable(Object.assign(new Error('fetch failed'), { status: 0 })), true)
+  assert.equal(service.state, 'degraded')
+  assert.match(service.lastError, /连不上记忆服务.*自动补记/)
+  const bad = Object.assign(new Error('HTTP 422'), { status: 422 })
+  service.state = 'ready'
+  assert.equal(service.markUnreachable(bad), false, 'a 4xx request error is not an outage')
+  assert.match(friendlyConnError(new Error('getaddrinfo ENOTFOUND hs.local'), 'http://hs.local'), /找不到记忆服务的地址/)
+  assert.match(friendlyConnError(new Error('The operation was aborted due to timeout'), 'u'), /超时/)
+  await service.stop()
+  console.log('PASS existing service: wrong key / outage get Chinese hints and recover')
+}
+
 console.log('\nlifecycle tests passed')
