@@ -12,6 +12,7 @@ import { join } from 'node:path'
 
 const root = mkdtempSync(join(tmpdir(), 'hs-dotenv-'))
 const pluginRoot = join(root, 'plugin')
+process.env.HOME = process.env.USERPROFILE = join(root, 'home') // data root (~/.dsh-hindsight) under the temp dir
 const bin = join(root, 'bin')
 mkdirSync(pluginRoot); mkdirSync(bin)
 process.env.DSH_HINDSIGHT_PLUGIN_ROOT = pluginRoot
@@ -63,7 +64,7 @@ const PANEL = {
   reranker: { provider: '' },
   llm: { mode: 'custom', provider: 'deepseek', base_url: 'https://api.deepseek.com', api_key: 'sk-llm-456', model: 'deepseek-chat' }
 }
-import { unlinkSync } from 'node:fs'
+import { unlinkSync, realpathSync } from 'node:fs'
 const dump = () => JSON.parse(readFileSync(DUMP, 'utf8'))
 async function started(s) { try { unlinkSync(DUMP) } catch {} ; const r = await s.ensureReady('test'); for (let i = 0; i < 50 && !existsSync(DUMP); i++) await new Promise((res) => setTimeout(res, 100)); return r }
 
@@ -79,7 +80,7 @@ await ok('dotenv: quoting round-trips Windows/Chinese paths, spaces, quotes; no 
   assert.deepEqual(parseDotenv('\uFEFFK=v\r\nexport J="a\\nb" # c\n'), { K: 'v', J: 'a\nb' })
 })
 
-await ok('panel config (Volatile) → .env → child env: EMBEDDINGS_*/LLM_*/RERANKER correct, cwd = plugin root', async () => {
+await ok('panel config (Volatile) → .env → child env: EMBEDDINGS_*/LLM_*/RERANKER correct, cwd = data root run dir (not the plugin dir)', async () => {
   const s = service(PANEL)
   assert.equal(await s.ensureReady("test"), true, JSON.stringify(s.deploy)); for (let i = 0; i < 50 && !existsSync(DUMP); i++) await new Promise((r) => setTimeout(r, 100))
   const d = dump()
@@ -92,7 +93,12 @@ await ok('panel config (Volatile) → .env → child env: EMBEDDINGS_*/LLM_*/RER
   assert.equal(d.env.HINDSIGHT_API_LLM_API_KEY, 'sk-llm-456')
   assert.equal(d.env.HINDSIGHT_API_LLM_MODEL, 'deepseek-chat')
   assert.equal(d.env.PYTHONUTF8, '1')
-  assert.equal(d.cwd, pluginRoot) // hindsight-api's find_dotenv(usecwd) finds OUR .env
+  // Not the plugin install dir (Windows would lock it and block plugin updates); the run dir holds
+  // a copy of our .env so hindsight-api's find_dotenv(usecwd) still finds OUR settings first.
+  const runDir = join(root, 'home', '.dsh-hindsight', 'run')
+  assert.equal(realpathSync(d.cwd), realpathSync(runDir))
+  assert.ok(!realpathSync(d.cwd).startsWith(realpathSync(pluginRoot)))
+  assert.equal(readFileSync(join(runDir, '.env'), 'utf8'), readFileSync(join(pluginRoot, '.env'), 'utf8'))
   assert.deepEqual(d.argv, ['--host', '127.0.0.1', '--port', '18555'])
   const file = parseDotenv(readFileSync(join(pluginRoot, '.env'), 'utf8'))
   assert.equal(file.HINDSIGHT_API_EMBEDDINGS_OPENAI_API_KEY, 'sk-emb-123')
