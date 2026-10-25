@@ -140,6 +140,7 @@ await ok('follow mode: dsh key is injected but never written to .env', async () 
 await ok('preflight: missing embedding/LLM key blocks the start with Chinese hints (no spawn)', async () => {
   const fresh = mkdtempSync(join(tmpdir(), 'hs-pre-'))
   process.env.DSH_HINDSIGHT_PLUGIN_ROOT = fresh
+  process.env.DSH_HINDSIGHT_ENV_BACKUP = join(fresh, 'no-backup', 'plugin.env') // a brand-new install, nothing to restore
   writeFileSync(DUMP, '{}')
   const s = service({ ...PANEL, embedding: { provider: '' }, llm: { mode: 'custom', provider: 'deepseek', api_key: '' } })
   assert.equal(await s.ensureReady('test'), false)

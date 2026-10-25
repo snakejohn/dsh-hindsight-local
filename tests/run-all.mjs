@@ -4,13 +4,15 @@
  * Run: node tests/run-all.mjs
  */
 import { spawn } from 'node:child_process'
+import { mkdtempSync as mkdtempBackup } from 'node:fs'
+import { tmpdir as tmpdirBackup } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const files = [
   'test-timeline.mjs',
-  'test-keys-dotenv.mjs',
+  'test-keys-dotenv.mjs', 'test-env-backup.mjs',
   'test-retry-status.mjs',
   'test-nonascii-home.mjs',
   'test-macos.mjs',
@@ -32,7 +34,9 @@ const files = [
 
 function runOne(file) {
   return new Promise((resolve) => {
-    const child = spawn(process.execPath, [join(here, file)], { stdio: ['ignore', 'pipe', 'pipe'] })
+    // Keep the plugin.env backup (lib/dotenv.js) out of the real home during tests.
+    const env = { ...process.env, DSH_HINDSIGHT_ENV_BACKUP: join(mkdtempBackup(join(tmpdirBackup(), 'hs-envbak-')), 'plugin.env') }
+    const child = spawn(process.execPath, [join(here, file)], { stdio: ['ignore', 'pipe', 'pipe'], env })
     let out = ''
     child.stdout.on('data', (chunk) => {
       out += chunk
