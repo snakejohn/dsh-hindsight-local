@@ -19,7 +19,6 @@ const { runtime } = createRuntime({
   rawConfig: {
     service: { mode: 'attach', base_url: base, autostart: false },
     time: { timezone: 'Asia/Hong_Kong' },
-    bank: { scope: 'preset' },
     retain: { state_dir: mkdtempSync(join(tmpdir(), 'hs-tl-')), async: false },
     prune: { enabled: false },
     backfill: { enabled: false },

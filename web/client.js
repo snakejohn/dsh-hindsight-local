@@ -27,20 +27,20 @@ window.__ModuleLoader__.load({
       existing: "我已经有记忆服务", existingHint: "适合懂技术的用户：连接一个已经在运行的 Hindsight 服务",
       local: "装在这台电脑上（推荐）", localHint: "记忆存在你自己的电脑里，大约占用 500MB 内存。缺少的运行环境会自动下载，不用你操心。",
       shareKey: "留空 = 和上面用同一个密钥", deployTitle: "准备进度", step_config: "检查设置", step_python: "准备运行环境", step_install: "下载记忆程序", step_start: "启动", step_health: "检查是否正常",
-      port: "端口", pid: "PID", mem: "内存", logTail: "运行记录（给技术支持看）", installTail: "下载记录", logDir: "记录保存位置", envFile: "设置文件（.env）", checkConn: "检查一下", redeploy: "重新安装", restart: "重新启动", connOk: "一切正常", connBad: "连不上", hintT: "怎么办",
+      port: "端口", pid: "进程号", mem: "内存", logTail: "运行记录（给技术支持看）", installTail: "下载记录", logDir: "记录保存位置", envFile: "设置文件（.env）", checkConn: "检查一下", redeploy: "重新安装", restart: "重新启动", connOk: "一切正常", connBad: "连不上", hintT: "怎么办",
       rechoose: "重新选择", save: "保存", saved: "已保存，正在按新设置重新准备", failed: "保存没有成功，请再点一次保存；还不行就重启 dsh", unsaved: "有未保存的修改",
-      conn: "连接", baseUrl: "Base URL", apiKey: "API Key", apiPrefix: "API 前缀", secretSet: "已设置（留空不修改）", keyUnset: "未设置", keyUseDsh: "使用 dsh 的密钥", keySrc: "来源", src_dotenv: "本插件的 .env", "src_plugin-config": "dsh 插件配置", src_env: "系统环境变量", src_dsh: "dsh 的密钥", clearKeys: "清除密钥", clearKeysAsk: "确定清除已保存的密钥吗？会同时清掉本插件 .env 和 dsh 插件配置里的密钥（不影响 dsh 自己的模型密钥）。", clearKeysDone: "已清除密钥", modelsLoading: "正在获取模型…", modelsCount: "共 {n} 个可选模型，也可以直接输入模型名", modelsNone: "还没有获取到模型列表，可以直接输入模型名", modelsManual: "仍可在上面手动输入模型名", modelSearch: "搜索或输入模型名", modelPick: "选择或输入模型", proxy: "代理", proxyAuto: "自动", proxyOff: "不用代理", proxyCustom: "自定义地址", proxyFoot: "「自动」跟随系统代理，并自动去掉 httpx 无法识别的地址（如 [::1]）。启动报 Invalid port 时可选「不用代理」。", sModels: "模型（一般不用改）",
-      deploy: "本地部署", runner: "安装方式", variant: "版本", port: "端口", cp: "同时启动 Control Plane", cpHint: "官方后台 UI（npm @vectorize-io/hindsight-control-plane，端口 9999，需要 Node/npx，首次运行需联网下载约 80MB）",
-      emb: "理解文字的模型", embFoot: "用来理解每句话的意思，找回相关的记忆。必须设置。", dim: "向量维度", dimFoot: "向量维度：模型把一句话变成多少个数字。bge-m3 是 1024，一般不用改。换模型或迁移时必须和原来一致，不一致时插件会拦下来并提示，不会弄坏已有记忆。", rr: "排序模型", rrFoot: "把找回的记忆按相关程度排好。选 rrf 表示不用模型。", llm: "整理记忆的模型",
+      conn: "连接", baseUrl: "接口地址", apiKey: "密钥", apiPrefix: "接口路径前缀", secretSet: "已设置（留空不修改）", keyUnset: "未设置", keyUseDsh: "使用 dsh 的密钥", keySrc: "来源", src_dotenv: "本插件的设置文件（.env）", "src_plugin-config": "dsh 插件配置", src_env: "系统环境变量", src_dsh: "dsh 的密钥", clearKeys: "清除密钥", clearKeysAsk: "确定清除已保存的密钥吗？会同时清掉本插件 .env 和 dsh 插件配置里的密钥（不影响 dsh 自己的模型密钥）。", clearKeysDone: "已清除密钥", modelsLoading: "正在获取模型…", modelsCount: "共 {n} 个可选模型，也可以直接输入模型名", modelsNone: "还没有获取到模型列表，可以直接输入模型名", modelsManual: "仍可在上面手动输入模型名", modelSearch: "搜索或输入模型名", modelPick: "选择或输入模型", proxy: "代理", proxyAuto: "自动", proxyOff: "不用代理", proxyCustom: "自定义地址", proxyFoot: "「自动」跟随系统代理，并自动去掉无法识别的地址（如 [::1]）。启动时报「端口无效」（Invalid port）可选「不用代理」。", sModels: "模型（一般不用改）",
+      deploy: "本地部署", runner: "安装方式", variant: "版本", port: "端口", cp: "同时打开官方管理后台", cpHint: "官方的网页管理后台（端口 9999；电脑上需要有 Node.js，第一次打开要联网下载约 80MB）",
+      emb: "理解文字的模型", embFoot: "用来理解每句话的意思，找回相关的记忆。必须设置。", dim: "向量维度", dimFoot: "向量维度：模型把一句话变成多少个数字。bge-m3 是 1024，一般不用改。换模型或迁移时必须和原来一致，不一致时插件会拦下来并提示，不会弄坏已有记忆。", rr: "排序模型", rrFoot: "把找回的记忆按相关程度排好。选「不用模型」就只按简单规则排序。", llm: "整理记忆的模型",
       preset: "服务商", provider: "接口类型", model: "模型", fetchModels: "获取模型", modelsN: "个模型", modelsErr: "获取模型失败",
       follow: "和 dsh 用同一个", custom: "自己指定", none: "不整理",
       followOk: "使用 dsh 默认模型", followNoKey: "dsh 的模型还没有密钥，所以暂时只保存原话、不做整理。", followInfo: "密钥来自", followOnlyLocal: "只对装在本机的记忆服务有效。", noneFoot: "不整理，只原样保存对话。",
-      bank: "记忆库", ownBank: "新建库", ownAuto: "新建库（自动命名）", ownNamed: "新建库，自己起名…", joinBank: "接入已有库", usedBy: "已被使用：", legacyShared: "旧版设置：所有工作区共用这个库。换成「每个工作区各选一个库」请点清除。", clear: "清除", defaultBank: "所有工作区共用一个记忆库", noDefault: "（不共用：每个工作区各记各的）", newBank: "新建记忆库…", newBankPrompt: "给新记忆库起个名字（中文也可以）", scope: "按什么分开记",
+      bank: "记忆库", ownBank: "新建库", ownAuto: "新建库（自动命名）", ownNamed: "新建库，自己起名…", joinBank: "接入已有库", usedBy: "已被使用：", legacyShared: "旧版设置：所有工作区共用这个库。换成「每个工作区各选一个库」请点清除。", clear: "清除", defaultBank: "所有工作区共用一个记忆库", noDefault: "（不共用：每个工作区各记各的）", newBank: "新建记忆库…", newBankPrompt: "给新记忆库起个名字（中文也可以）",
       ws: "工作区", wsFoot: "对话数不含已归档的对话；归档的对话不会被记住。", sessions: "个对话", archivedN: "个已归档", unmapped: "（默认路由）", addPath: "手动添加路径", path: "工作区文件夹", bankId: "记忆库名字", remove: "删除", noWs: "dsh 未提供工作区服务，可手动添加路径。",
       importQ: "要导入以前的对话吗？", importText: "装好后只会自动记住新的聊天。以前的对话可以在下面「现在就记住」里选一个工作区或单个对话导入：会一段一段慢慢整理，已经记过的不会重复。", importGo: "去选择", importNo: "不用了", pickOne: "选择单个对话", pickHide: "收起", retainPicked: "记住选中的对话", recorded: "已记过", noSessions: "没有找到对话", retainNow: "现在就记住", retainSel: "记住这个工作区的对话", retainAll: "记住全部对话（不含已归档）", retainHint: "已经记住过的内容不会重复记。", running: "进行中", done: "完成",
-      other: "其他", rcTitle: "记住哪些内容", rcFoot: "只影响以后新记的内容，已经记住的不会改。设置同时保存在插件目录的 .env 里。", rcUser: "我说的话", rcUserH: "你发给 AI 的消息。", rcAsst: "AI 的回复", rcAsstH: "AI 回给你的正文。", rcTool: "工具调用内容", rcToolH: "AI 读文件、搜网页等工具的输入和结果，通常又长又杂，默认不记。", rcToolMax: "每条工具内容最多保留几个字", rcReason: "AI 的思考过程", rcReasonH: "模型的推理草稿，会截断后再记，默认不记。", rcSys: "系统提示", rcSysH: "角色设定等系统提示，只在它变化时记一次，默认不记。", rcArch: "已归档的对话", rcArchH: "打开后，归档的对话也会被记住和导入。", rcSub: "子代理的对话", rcSubH: "AI 自己派出去干活的子任务对话，默认不记。", rcMin: "最短字数", rcMinH: "一轮对话太短就不记（默认 24，中文一个字算 2）。", rcInj: "插件自己插入的记忆", rcInjH: "回忆时插进对话的记忆块永远不会再被记一遍，否则会越记越多、自己重复自己。", rcAlwaysOff: "永远不记", recall: "聊天时自动回忆", retain: "自动记住对话", backfill: "启动时把以前的对话也记住", timezone: "时区", topN: "每次最多回忆几条",
+      other: "其他", sideCard: "侧栏显示状态卡片", sideCardH: "左下角的记忆状态卡片；关掉后不显示，记忆照常工作。", rcTitle: "记住哪些内容", rcFoot: "只影响以后新记的内容，已经记住的不会改。设置同时保存在插件目录的 .env 里。", rcUser: "我说的话", rcUserH: "你发给 AI 的消息。", rcAsst: "AI 的回复", rcAsstH: "AI 回给你的正文。", rcTool: "工具调用内容", rcToolH: "AI 读文件、搜网页等工具的输入和结果，通常又长又杂，默认不记。", rcToolMax: "每条工具内容最多保留几个字", rcReason: "AI 的思考过程", rcReasonH: "模型的推理草稿，会截断后再记，默认不记。", rcSys: "系统提示", rcSysH: "角色设定等系统提示，只在它变化时记一次，默认不记。", rcArch: "已归档的对话", rcArchH: "打开后，归档的对话也会被记住和导入。", rcSub: "子代理的对话", rcSubH: "AI 自己派出去干活的子任务对话，默认不记。", rcMin: "最短字数", rcMinH: "一轮对话太短就不记（默认 24，中文一个字算 2）。", rcInj: "插件自己插入的记忆", rcInjH: "回忆时插进对话的记忆块永远不会再被记一遍，否则会越记越多、自己重复自己。", rcAlwaysOff: "永远不记", recall: "聊天时自动回忆", retain: "自动记住对话", backfill: "启动时把以前的对话也记住", timezone: "时区", topN: "每次最多回忆几条",
       health: "记忆服务", state: "状态", version: "版本", openCp: "打开官方管理后台", banks: "记忆库", memories: "条记忆", docs: "段对话",
-      feedback: "反馈问题", exportLogs: "导出日志", exported: "已导出（密钥已隐藏）：", openIssue: "去提问题 ↗", feedbackFoot: "遇到问题：先点「导出日志」，再点「去提问题」，把导出的文件拖进问题表单。导出时会自动隐藏密钥，上传前也请再看一眼。", job: "记住进度", pendingTip: "已交给记忆服务、还在整理中（需要整理记忆的模型能连上）", failedTip: "整理失败的条数：多半是整理记忆的模型连不上或密钥不对，看 hindsight.log", jobTip: "已提交：交给记忆服务的对话 · 完成：真的整理好写进记忆库 · 处理中：排队或正在整理 · 失败：整理没成功（会自动重试） · ↷ 跳过（已记过/子任务） · 🗄 已归档", submitted: "已提交", opsDone: "完成", opsProc: "处理中", opsFail: "失败", retryFailed: "重试失败项", retrying: "已重新排队 {n} 项", conc: "同时处理数", concHint: "同时整理几段对话（1-4）。免费模型或中转服务请保持 1，否则容易被限流。", recent: "最近记住的", failures: "没记住的", empty: "暂无", browse: "看看记住了什么", browseSum: "共 {n} 条记忆，{b} 个记忆库", browseOpen: "展开看看", collapse: "收起", loadMore: "加载更多", shownOf: "已显示 {a} / {b} 条", hideMem: "隐藏内容", tapShow: "点一下显示", search: "搜索记忆", llmFallback: "整理记忆的模型暂时不可用，目前只保存原话",
+      feedback: "反馈问题", exportLogs: "导出日志", exported: "已导出（密钥已隐藏）：", openIssue: "去提问题 ↗", feedbackFoot: "遇到问题：先点「导出日志」，再点「去提问题」，把导出的文件拖进问题表单。导出时会自动隐藏密钥，上传前也请再看一眼。", job: "记住进度", pendingTip: "已交给记忆服务、还在整理中（需要整理记忆的模型能连上）", failedTip: "整理失败的条数：多半是整理记忆的模型连不上或密钥无效，详情见记忆服务日志（hindsight.log）", jobTip: "已提交：交给记忆服务的对话 · 完成：真的整理好写进记忆库 · 处理中：排队或正在整理 · 失败：整理没成功（会自动重试） · ↷ 跳过（已记过/子任务） · 🗄 已归档", submitted: "已提交", opsDone: "完成", opsProc: "处理中", opsFail: "失败", retryFailed: "重试失败项", retrying: "已重新排队 {n} 项", dataDir: "数据目录", dataDirPh: "留空＝自动", dataDirHint: "记忆服务的程序、数据库和模型缓存放在这里。留空会自动选择：Windows 用户名含中文时改放到 C:\\Users\\Public\\dsh-hindsight。自己填写时请用纯英文路径（例如 D:\\dsh-hindsight），改完后重新部署。", conc: "同时处理数", concHint: "同时整理几段对话（1-4）。免费模型或中转服务请保持 1，否则容易被限流。", recent: "最近记住的", failures: "没记住的", empty: "暂无", browse: "看看记住了什么", browseSum: "共 {n} 条记忆，{b} 个记忆库", browseOpen: "展开看看", collapse: "收起", loadMore: "加载更多", shownOf: "已显示 {a} / {b} 条", hideMem: "隐藏内容", tapShow: "点一下显示", search: "搜索记忆", llmFallback: "整理记忆的模型暂时不可用，目前只保存原话",
       loading: "正在读取配置…", unavailable: "设置页面没有加载出来，请重启 dsh 再试。", noRpc: "插件还没连上，请稍等或重启 dsh",
       sLlm: "整理记忆的模型", sLlmTip: "它负责把聊天内容整理成一条条好找的记忆。默认和 dsh 用同一个模型，不用另外设置。",
       sLlmOk: "和 dsh 用同一个模型 ✓", sLlmNeed: "默认用 dsh 正在用的 {m}。插件拿不到 dsh 保存的密钥，请把这个模型的密钥也粘贴一次（不填也能用，只是先只保存原话、不做整理）。", sLlmPh: "粘贴 dsh 模型的密钥（可选）",
@@ -103,6 +103,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
 .hs-side-top{display:flex;align-items:center;gap:8px}
 .hs-side-t{font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hs-side-sub{font-size:11.5px;color:var(--hs-sub);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hs-side-why{font-size:11.5px;line-height:1.4;color:var(--hs-sub);margin-top:3px;white-space:normal;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden}
 .hs-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;display:inline-block}
 .hs-dot.pulse{animation:hspulse 1.2s ease-in-out infinite}
 @keyframes hspulse{50%{opacity:.35}}
@@ -340,7 +341,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       };
       return h(Group, { title, foot },
         extraTop,
-        h(Row, { label: t("preset") }, h(Picker, { label: chan + " preset", value: preset, onChange: pick, placeholder: "—", options: [{ value: "", label: "—" }].concat(list.map((n) => ({ value: n, label: n }))) })),
+        h(Row, { label: t("preset") }, h(Picker, { label: chan + " preset", value: preset, onChange: pick, placeholder: "—", options: [{ value: "", label: "—" }].concat(list.map((n) => ({ value: n, label: PRESET_ZH[n] || n }))) })),
         h(Row, { label: t("provider") }, h(Text, { label: chan + " provider", value: cur([chan, "provider"]), onChange: set([chan, "provider"]) })),
         h(Row, { label: t("baseUrl") }, h(Text, { label: chan + " base_url", value: baseUrl, placeholder: "https://…", onChange: (v) => { touched.current = true; set([chan, "base_url"])(v); } })),
         h(Row, { label: t("apiKey") }, h(Text, { type: "password", label: chan + " api_key", value: keyDraft, placeholder: keyText(t, info, chan), onChange: set([chan, "api_key"]) })),
@@ -536,12 +537,12 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const llm = o.llm || {};
       return h(React.Fragment, null,
         h(Group, { title: t("health") },
-          h(Row, { label: t("state") }, h("span", { className: "pill " + (o.ready ? "ok" : o.state === "starting" ? "warn" : "bad") }, o.state || "…")),
+          h(Row, { label: t("state") }, h("span", { className: "pill " + (o.ready ? "ok" : o.state === "starting" ? "warn" : "bad") }, STATE_ZH[o.state] || o.state || "…")),
           h(Row, { label: t("version") }, h("span", { className: "mono" }, (o.version && (o.version.api_version || o.version.version)) || "—")),
           h(Row, { label: t("baseUrl") }, h("span", { className: "mono" }, o.baseUrl || "")),
-          o.localPlan ? h(Row, { label: t("deploy") }, o.localPlan.runner + " · " + o.localPlan.variant) : null,
-          h(Row, { label: t("llm") }, h("span", { className: "pill " + (llm.fallback ? "warn" : "ok") }, llm.mode || ""), h("span", { className: "mono" }, llm.effective || "")),
-          o.controlPlaneUrl ? h(Row, { label: "Control Plane" }, h("a", { href: o.controlPlaneUrl, target: "_blank", rel: "noreferrer" }, t("openCp") + " ↗")) : null,
+          o.localPlan ? h(Row, { label: t("deploy") }, (RUNNER_ZH[o.localPlan.runner] || o.localPlan.runner) + " · " + (VARIANT_ZH[o.localPlan.variant] || o.localPlan.variant)) : null,
+          h(Row, { label: t("llm") }, h("span", { className: "pill " + (llm.fallback ? "warn" : "ok") }, ({ follow: "和 dsh 用同一个", custom: "自己指定", none: "不整理" })[llm.mode] || llm.mode || ""), h("span", { className: "mono" }, llm.effective || "")),
+          o.controlPlaneUrl ? h(Row, { label: "官方管理后台" }, h("a", { href: o.controlPlaneUrl, target: "_blank", rel: "noreferrer" }, t("openCp") + " ↗")) : null,
           o.lastError ? h("div", { className: "row sub", style: { color: "var(--hs-red)" } }, o.lastError) : null),
         o.setup === "local" || o.deploy && o.deploy.startedAt ? h(Deploy, { t, api, d: o.deploy || {}, refresh: ov.reload }) : null,
         llm.fallback ? h("div", { className: "warnbox" }, "⚠︎ " + t("llmFallback") + (llm.reason ? "（" + llm.reason + "）" : "")) : null,
@@ -600,10 +601,16 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
     }
 
     // ---- left-sidebar status indicator (slot sidebar.footer.action) ----
+    // User-visible names for option ids (the id stays in parentheses for search/support).
+    const RUNNER_ZH = { auto: "自动", venv: "Python 虚拟环境（venv）", uvx: "uv 临时运行（uvx）", docker: "Docker 容器" };
+    const VARIANT_ZH = { auto: "自动", slim: "精简版（slim，用在线模型）", full: "完整版（full，含本机模型）" };
+    const STATE_ZH = { ready: "正常运行（ready）", starting: "正在启动", degraded: "出问题了", failed: "启动失败", stopped: "已停止", idle: "未启动" };
+    const PRESET_ZH = { siliconflow: "硅基流动（siliconflow）", openai: "OpenAI 或兼容接口（openai）", deepseek: "DeepSeek 深度求索", dashscope: "阿里云百炼（dashscope）", alibaba: "阿里云（alibaba）", openrouter: "OpenRouter", anthropic: "Anthropic Claude", gemini: "Google Gemini", groq: "Groq", jina: "Jina", voyage: "Voyage", cohere: "Cohere", zeroentropy: "ZeroEntropy", ollama: "Ollama（本机）", lmstudio: "LM Studio（本机）", tei: "自建 TEI 服务（tei）", local: "本机模型（local）", rrf: "不用模型（rrf）" };
     const LEVEL_COLOR = { green: "var(--hs-green)", yellow: "var(--hs-orange)", gray: "var(--hs-gray)", red: "var(--hs-red)" };
     function useSidebarStatus(api) {
       const [st, setSt] = useState(null);
       useEffect(() => {
+        if (!api) return undefined;
         let alive = true, sig = "";
         const loop = async () => {
           while (alive) {
@@ -613,26 +620,34 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         };
         loop();
         return () => { alive = false; };
-      }, []);
+      }, [api]);
       return st;
     }
     const bankLabel = (b) => b.name && b.name !== b.id ? b.name + "（" + b.id + "）" : b.id;
     const ago = (iso) => { const ms = iso ? new Date(iso).getTime() : NaN; if (!isFinite(ms)) return "还没有"; const s = Math.max(0, (Date.now() - ms) / 1000); return s < 60 ? "刚刚" : s < 3600 ? Math.floor(s / 60) + " 分钟前" : s < 86400 ? Math.floor(s / 3600) + " 小时前" : s < 86400 * 30 ? Math.floor(s / 86400) + " 天前" : new Date(ms).toLocaleDateString("zh-CN"); };
+    /** 侧栏显示状态卡片 (ui.sidebar_card, default on): follows the saved config live, no restart. */
+    function sidebarCardOn(form) {
+      const v = form && form.getSnapshot && (form.getSnapshot() || {}).value;
+      return !(v && v.ui && v.ui.sidebar_card === false);
+    }
+    const NOOP_SUB = () => () => {};
     function SidebarStatus(p) {
       useStyle();
-      const st = useSidebarStatus(p.hsApi);
-      const s = st || { level: "gray", text: "Hindsight…" };
+      const on = useSyncExternalStore(p.hsForm && p.hsForm.subscribe ? (l) => p.hsForm.subscribe(l) : NOOP_SUB, () => sidebarCardOn(p.hsForm), () => sidebarCardOn(p.hsForm));
+      const st = useSidebarStatus(on ? p.hsApi : null);
+      if (!on) return null;
+      const s = st || { level: "gray", text: "记忆服务…" };
       const color = LEVEL_COLOR[s.level] || LEVEL_COLOR.gray;
       const open = () => { window.__hsOpenTab = "status"; window.dispatchEvent(new CustomEvent("hs-open-tab", { detail: "status" })); p.openPlugin && p.openPlugin(); };
-      const tip = ["Hindsight：" + s.text, s.reason, s.bank ? "记忆库：" + (s.bankName ? s.bankName + "（" + s.bank + "）" : s.bank) : "", "等待记住：" + (s.pending || 0), "上次记住：" + ago(s.lastRetain), "上次回忆：" + ago(s.lastRecall)].filter(Boolean).join("\n");
+      const tip = ["记忆服务：" + s.text, s.reason, s.bank ? "记忆库：" + (s.bankName ? s.bankName + "（" + s.bank + "）" : s.bank) : "", "等待记住：" + (s.pending || 0), "上次记住：" + ago(s.lastRetain), "上次回忆：" + ago(s.lastRecall)].filter(Boolean).join("\n");
       const dot = h("span", { className: "hs-dot" + (s.level === "yellow" ? " pulse" : ""), style: { background: color, boxShadow: "0 0 0 3px color-mix(in srgb, " + color + " 22%, transparent)" } });
       const dkc = useDark() ? " dk" : "";
       if (!p.wide) return h("button", { className: "hs26 hs-side mini glass" + dkc, title: tip, "aria-label": tip, onClick: open }, dot);
       const pr = s.progress;
-      return h("button", { className: "hs26 hs-side glass" + dkc, title: tip, "aria-label": "Hindsight " + s.text, onClick: open },
+      return h("button", { className: "hs26 hs-side glass" + dkc, title: tip, "aria-label": "记忆服务 " + s.text, onClick: open },
         h("div", { className: "hs-side-top" }, dot, h("span", { className: "hs-side-t" }, s.text), s.pending ? h("span", { className: "pill warn" }, s.pending + " 条待记住") : null),
         pr ? h("div", { className: "bar", style: { margin: "6px 0 2px" } }, h("i", { style: { width: Math.round(100 * pr.done / Math.max(1, pr.total)) + "%" } })) : null,
-        s.reason ? h("div", { className: "hs-side-sub", style: { color: s.level === "red" ? "var(--hs-red)" : undefined } }, s.reason) : null,
+        s.reason ? h("div", { className: "hs-side-why", title: s.reason, style: { color: s.level === "red" ? "var(--hs-red)" : undefined } }, s.reason) : null,
         h("div", { className: "hs-side-sub" }, (s.bank ? (s.bankName || s.bank) + " · " : "") + "记住于 " + ago(s.lastRetain) + " · 回忆于 " + ago(s.lastRecall)));
     }
 
@@ -668,7 +683,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         if (embModel) ops.push({ op: "set", path: ["embedding", "model"], value: embModel });
         if (rrModel) ops.push({ op: "set", path: ["reranker", "model"], value: rrModel });
         if (key.trim()) ops.push({ op: "set", path: ["embedding", "api_key"], value: key.trim() });
-        const ok = await form.mutate(ops);
+        const ok = await mutateKeys(form, api, ops);
         setBusy(false);
         if (ok) { setStarted(true); setKey(""); setLlmKey(""); setNonce(nonce + 1); }
         else setChk({ ok: false, what: "设置没有保存成功", how: "再点一次「一键开始」；还不行就重启 dsh。" });
@@ -718,6 +733,25 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
     }
 
     // ---- settings ----
+    // API keys are never written into dsh's plugin config (cordis.patch.yml): they go to the
+    // plugin .env through the saveKeys RPC, and any key left in the config is unset.
+    const KEY_PATHS = [["embedding", "api_key"], ["reranker", "api_key"], ["llm", "api_key"], ["service", "api_key"]];
+    // Unset only inside sections the saved config already has: unsetting under a missing section
+    // would make dsh write that section's defaults into cordis.patch.yml. (Secrets are redacted
+    // from the snapshot, so presence of the key itself cannot be checked.)
+    const keyUnsets = (form) => { const sn = form.getSnapshot() || {}; const u = (sn.user && typeof sn.user === "object") ? sn.user : (sn.value || {}); return KEY_PATHS.filter(([a]) => u[a] && typeof u[a] === "object").map((path) => ({ op: "unset", path })); };
+    async function mutateKeys(form, api, ops) {
+      const isKey = (o) => o.path[o.path.length - 1] === "api_key";
+      const keys = {};
+      for (const o of ops) if (o.op === "set" && isKey(o) && typeof o.value === "string" && o.value.trim()) keys[o.path.join(".")] = o.value.trim();
+      if (Object.keys(keys).length) {
+        const r = await api("saveKeys", { keys }).catch(() => null);
+        if (!r || !r.ok) return false;
+      }
+      const rest = ops.filter((o) => !isKey(o)).concat(keyUnsets(form));
+      if (!rest.length) return true;
+      return form.mutate(rest);
+    }
     function Settings(p) {
       const { t, api, form } = p;
       const snap = useSyncExternalStore(form.subscribe.bind(form), form.getSnapshot.bind(form), form.getSnapshot.bind(form));
@@ -729,6 +763,9 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const dshLlm = useRpc(api, "dshLlm", {}, []);
       // The redacted settings snapshot hides secrets; overview reports which keys are saved (booleans only).
       const ovS = useRpc(api, "overview", {}, [], 5000).value;
+      // Keys saved by older versions: once the server has copied them into .env, strip them from dsh's config.
+      const keysInPatch = !!(ovS && ovS.keysInPatch);
+      useEffect(() => { const u = keysInPatch ? keyUnsets(form) : []; if (u.length) Promise.resolve(form.mutate(u)).catch(() => {}); }, [keysInPatch]); // eslint-disable-line
       const [extraBanks, setExtraBanks] = useState([]);
       if (snap.status === "loading") return h("p", null, t("loading"));
       if (snap.status !== "ready") return h("p", null, t("unavailable"));
@@ -744,14 +781,14 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const isSecretSet = (path) => { if (path[path.length - 1] !== "api_key") return false; if (path[0] === "service") { const v = get(value, path); return typeof v === "string" && v.trim() !== "" && !/^(undefined|null)$/i.test(v.trim()); } return !!keyInfo(path[0]).set; };
       const clearKeys = async () => {
         if (!window.confirm(t("clearKeysAsk"))) return;
-        const ok = await form.mutate(["embedding", "reranker", "llm"].map((c) => ({ op: "unset", path: [c, "api_key"] })));
+        const u = keyUnsets(form); const ok = u.length ? await form.mutate(u) : true;
         await api("clearKeys", {}).catch(() => null);
         setEdits((e) => { const n = Object.assign({}, e); delete n["embedding.api_key"]; delete n["reranker.api_key"]; delete n["llm.api_key"]; return n; });
         setMsg(ok ? t("clearKeysDone") : t("failed"));
       };
       async function save() {
         const ops = Object.values(edits).filter((e) => e.v !== undefined && !(e.v === "" && /api_key$/.test(e.path[e.path.length - 1]))).map((e) => ({ op: "set", path: e.path, value: e.v }));
-        const ok = await form.mutate(ops);
+        const ok = await mutateKeys(form, api, ops);
         setMsg(ok ? t("saved") : t("failed"));
         if (ok) { setEdits({}); setWizard(false); }
       }
@@ -789,10 +826,11 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
             h(Row, { label: t("apiKey") }, h(Text, { type: "password", label: "service api_key", value: edits["service.api_key"] ? edits["service.api_key"].v : "", placeholder: isSecretSet(["service", "api_key"]) ? t("secretSet") : "", onChange: set(["service", "api_key"]) })),
             h(Row, { label: t("apiPrefix") }, h(Text, { label: "api_prefix", value: cur(["service", "api_prefix"]), placeholder: "/v1/default", onChange: set(["service", "api_prefix"]) })))
           : h(React.Fragment, null,
-            h(Row, { label: t("runner") }, h(Seg, { label: "runner", value: cur(["service", "local", "runner"]) || "auto", onChange: set(["service", "local", "runner"]), options: ["auto", "venv", "uvx", "docker"].map((v) => ({ value: v, label: v })) })),
-            h(Row, { label: t("variant") }, h(Seg, { label: "variant", value: cur(["service", "local", "variant"]) || "auto", onChange: set(["service", "local", "variant"]), options: ["auto", "slim", "full"].map((v) => ({ value: v, label: v })) })),
+            h(Row, { label: t("runner") }, h(Seg, { label: "runner", value: cur(["service", "local", "runner"]) || "auto", onChange: set(["service", "local", "runner"]), options: ["auto", "venv", "uvx", "docker"].map((v) => ({ value: v, label: RUNNER_ZH[v] || v })) })),
+            h(Row, { label: t("variant") }, h(Seg, { label: "variant", value: cur(["service", "local", "variant"]) || "auto", onChange: set(["service", "local", "variant"]), options: ["auto", "slim", "full"].map((v) => ({ value: v, label: VARIANT_ZH[v] || v })) })),
             h(Row, { label: t("port") }, h(Text, { type: "number", label: "port", value: cur(["service", "local", "port"]), placeholder: "8888", onChange: set(["service", "local", "port"]) })),
             h(Row, { label: h("span", { title: t("concHint") }, t("conc") + " ⓘ") }, h(Seg, { label: "concurrency", value: String(cur(["service", "local", "concurrency"]) || 1), onChange: (v) => set(["service", "local", "concurrency"])(Number(v)), options: ["1", "2", "3", "4"].map((v) => ({ value: v, label: v })) })),
+            h(Row, { label: h("span", { title: t("dataDirHint") }, t("dataDir") + " ⓘ") }, h(Text, { label: "data_dir", value: cur(["service", "local", "data_dir"]), placeholder: t("dataDirPh"), onChange: set(["service", "local", "data_dir"]) })),
             h(Row, { label: t("cp") }, h(Switch, { label: "control plane", value: cur(["service", "local", "control_plane", "enabled"]) === true, onChange: set(["service", "local", "control_plane", "enabled"]) })),
             h(Row, { label: t("proxy") }, h(Seg, { label: "proxy", value: cur(["service", "proxy", "mode"]) || "auto", onChange: set(["service", "proxy", "mode"]), options: [{ value: "auto", label: t("proxyAuto") }, { value: "off", label: t("proxyOff") }, { value: "custom", label: t("proxyCustom") }] })),
             (cur(["service", "proxy", "mode"]) || "auto") === "custom" ? h(Row, { label: t("proxy") + " URL" }, h(Text, { label: "proxy url", value: cur(["service", "proxy", "url"]), placeholder: "http://127.0.0.1:7890", onChange: set(["service", "proxy", "url"]) })) : null,
@@ -812,7 +850,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         h(Group, { title: t("bank") },
           cur(["bank", "default_bank"]) ? h(Row, { label: t("defaultBank") }, h("span", { className: "mono" }, cur(["bank", "default_bank"])), h("button", { className: "btn ghost small", title: t("legacyShared"), onClick: () => set(["bank", "default_bank"])("") }, t("clear"))) : null,
           cur(["bank", "default_bank"]) ? h("div", { className: "row sub" }, t("legacyShared")) : null,
-          h(Row, { label: t("scope") }, h(Seg, { label: "scope", value: cur(["bank", "scope"]) || "workspace", onChange: set(["bank", "scope"]), options: ["workspace", "preset", "session"].map((v) => ({ value: v, label: v })) }))),
+          null),
         h(Workspaces, { t, api, mapping, setMapping: set(["bank", "workspace_bank_mapping"]), bankOptions, askNewBank, remoteBanks, remoteNames, legacyShared: cur(["bank", "default_bank"]) || "" }),
         h(Group, { title: t("rcTitle"), foot: t("rcFoot") },
           [["include_user", true, "rcUser", "rcUserH"], ["retain_assistant", true, "rcAsst", "rcAsstH"], ["include_tool_calls", false, "rcTool", "rcToolH"],
@@ -825,6 +863,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
           h("div", { className: "row" }, h("span", { className: "lbl" }, t("rcMin"), h("span", { className: "sub", style: { display: "block", fontSize: 11.5, marginTop: 2 } }, t("rcMinH"))), h("div", { className: "val" }, h(Text, { type: "number", label: "min_turn_chars", value: cur(["retain", "min_turn_chars"]), placeholder: "24", onChange: set(["retain", "min_turn_chars"]) }))),
           h("div", { className: "row" }, h("span", { className: "lbl" }, t("rcInj"), h("span", { className: "sub", style: { display: "block", fontSize: 11.5, marginTop: 2 } }, t("rcInjH"))), h("div", { className: "val" }, h("span", { className: "pill" }, t("rcAlwaysOff"))))),
         h(Group, { title: t("other") },
+          h("div", { className: "row" }, h("span", { className: "lbl" }, t("sideCard"), h("span", { className: "sub", style: { display: "block", fontSize: 11.5, marginTop: 2 } }, t("sideCardH"))), h("div", { className: "val" }, h(Switch, { label: t("sideCard"), value: cur(["ui", "sidebar_card"]) !== false, onChange: set(["ui", "sidebar_card"]) }))),
           h(Row, { label: t("recall") }, h(Switch, { label: "recall", value: cur(["recall", "enabled"]) !== false, onChange: set(["recall", "enabled"]) })),
           h(Row, { label: t("topN") }, h(Text, { type: "number", label: "top_n", value: cur(["recall", "top_n"]), onChange: set(["recall", "top_n"]) })),
           h(Row, { label: t("retain") }, h(Switch, { label: "retain", value: cur(["retain", "enabled"]) !== false, onChange: set(["retain", "enabled"]) })),
@@ -867,15 +906,17 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       // Left-sidebar indicator: the sidebar foot's documented `sidebar.footer.action` list.
       ctx.slots.inject("sidebar.footer.action", () => ctx.slots.register({
         name: "sidebar.footer.action", id: "dsh-hindsight.status", order: 50, label: "Hindsight",
-        inject: () => ({ hsApi, openPlugin: () => { const nav = ctx.get && ctx.get("pluginNavigation"); if (nav) nav.openBundle(PKG); } })
+        inject: () => ({ hsApi, hsForm: form, openPlugin: () => { const nav = ctx.get && ctx.get("pluginNavigation"); if (nav) nav.openBundle(PKG); } })
       }, SidebarStatus));
       ctx.slots.inject("plugins.bundle.activation", () => ctx.slots.register({
         name: "plugins.bundle.activation", key: PKG, locale: NS
       }, Activation));
     }
+    exports.sidebarCardOn = sidebarCardOn;
     exports.apply = apply;
     exports.inject = inject;
     exports.Panel = Panel;
+    exports.SidebarStatus = SidebarStatus;
     exports.makeApi = makeApi;
     return module.exports;
   }

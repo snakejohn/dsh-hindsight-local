@@ -36,15 +36,11 @@ try {
   assert.match(await recallText(ba, 'What is my secret fruit?'), /dragonfruit/i)
   assert.doesNotMatch(await recallText(bb, 'What is my secret fruit?'), /dragonfruit/i)
   ok('A1 per-workspace banks, no leak')
-  // A2 preset / session scopes route to distinct banks
+  // A2 legacy preset/session scope falls back to the workspace bank
   const p1 = resolveBankId({ workspacePath: wa, config: cfg({ scope: 'preset' }), preset: 'alice' }).bankId
-  const p2 = resolveBankId({ workspacePath: wa, config: cfg({ scope: 'preset' }), preset: 'bob' }).bankId
   const s1 = resolveBankId({ workspacePath: wa, config: cfg({ scope: 'session' }), sessionId: 's1' }).bankId
-  const s2 = resolveBankId({ workspacePath: wa, config: cfg({ scope: 'session' }), sessionId: 's2' }).bankId
-  assert.equal(new Set([p1, p2, s1, s2, ba]).size, 5)
-  await write(p1, 'p1:t0', 'USER: I am Alice and my favourite colour is violet. ASSISTANT: Got it.')
-  assert.deepEqual(await docs(p1), ['p1:t0']); assert.deepEqual(await docs(p2).catch(() => []), [])
-  ok('A2 preset/session scopes write to their own bank')
+  assert.equal(p1, ba); assert.equal(s1, ba)
+  ok('A2 legacy scope routes to the workspace bank')
   // A3 shared bank through mapping
   const shared = `dsh-e2e-shared-${S}`
   const map = cfg({ workspace_bank_mapping: { [wa]: shared, [wb]: shared } })

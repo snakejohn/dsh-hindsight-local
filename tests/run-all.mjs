@@ -4,12 +4,20 @@
  * Run: node tests/run-all.mjs
  */
 import { spawn } from 'node:child_process'
+import { mkdtempSync as mkdtempBackup } from 'node:fs'
+import { tmpdir as tmpdirBackup } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const files = [
   'test-timeline.mjs',
+  'test-keys-dotenv.mjs', 'test-env-backup.mjs',
+  'test-retry-status.mjs',
+  'test-nonascii-home.mjs',
+  'test-macos.mjs',
+  'test-no-double-retain.mjs',
+  'test-sidebar-card.mjs',
   'test-fixes.mjs',
   'test-config-bank.mjs',
   'test-lifecycle.mjs',
@@ -19,14 +27,16 @@ const files = [
   'test-panel-v2.mjs',
   'test-dotenv-deploy.mjs', 'test-sidebar.mjs',
   'test-v011.mjs', 'test-v012.mjs', 'test-llmprobe.mjs', 'test-v013.mjs', 'test-logfiles.mjs', 'test-banknames.mjs', 'test-retain-content.mjs', 'test-v014.mjs',
-  'test-dimension.mjs',
+  'test-dimension.mjs', 'test-bank-scope-migration.mjs',
   'test-integration.mjs',
   'test-e2e-banks.mjs'
 ]
 
 function runOne(file) {
   return new Promise((resolve) => {
-    const child = spawn(process.execPath, [join(here, file)], { stdio: ['ignore', 'pipe', 'pipe'] })
+    // Keep the plugin.env backup (lib/dotenv.js) out of the real home during tests.
+    const env = { ...process.env, DSH_HINDSIGHT_ENV_BACKUP: join(mkdtempBackup(join(tmpdirBackup(), 'hs-envbak-')), 'plugin.env') }
+    const child = spawn(process.execPath, [join(here, file)], { stdio: ['ignore', 'pipe', 'pipe'], env })
     let out = ''
     child.stdout.on('data', (chunk) => {
       out += chunk
