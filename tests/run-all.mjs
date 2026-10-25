@@ -20,6 +20,7 @@ const files = [
   'test-sidebar-card.mjs',
   'test-fixes.mjs',
   'test-config-bank.mjs',
+  'test-default-bank-migration.mjs',
   'test-lifecycle.mjs',
   'test-client-http.mjs',
   'test-hooks.mjs',

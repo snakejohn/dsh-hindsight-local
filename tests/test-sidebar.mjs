@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { sidebarStatus, createRpcHandler } from '../lib/rpc.js'
+import { sidebarStatus, createRpcHandler, recentLines } from '../lib/rpc.js'
 import { mkdtempSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
@@ -15,7 +15,16 @@ await t('green + bank + queue + times', async () => {
 })
 await t('gray when unset+auto', async () => {
   const v = await sidebarStatus(base({ ready: false, state: 'degraded' }, { setup: 'unset', service: { mode: 'auto' } }))
-  assert.equal(v.level, 'gray')
+  assert.equal(v.level, 'gray'); assert.equal(v.setup, true, 'card opens the settings tab')
+  assert.match(v.reason, /一键开始/)
+  const done = await sidebarStatus(base({ ready: true }, { setup: 'local', service: { mode: 'local' } }))
+  assert.equal(done.setup, false)
+})
+await t('an old 401 in the server log does not stick (only the last 10 minutes count)', async () => {
+  const now = Date.parse('2026-10-25T20:30:00')
+  const log = '2026-10-25 20:00:01,000 - ERROR - x - Auth error (HTTP 401) Unauthorized\n  traceback\n2026-10-25 20:29:00,000 - INFO - ok'
+  assert.deepEqual(recentLines(log, { now }), ['2026-10-25 20:29:00,000 - INFO - ok'])
+  assert.equal(recentLines(log, { now: Date.parse('2026-10-25T20:05:00') }).length, 3)
 })
 await t('yellow with progress while deploying', async () => {
   const v = await sidebarStatus(base({ ready: false, state: 'starting', deploy: { steps: [{ id: 'python', status: 'done' }, { id: 'install', status: 'running', detail: 'pip 40%' }, { id: 'start' }] } }, { setup: 'local' }))
