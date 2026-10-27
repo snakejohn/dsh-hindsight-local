@@ -183,7 +183,7 @@ await ok('setup=unset + mode auto: never starts, logs once, no retry storm', asy
   const s = service({ setup: 'unset' }, { plan: [health.bad] })
   for (let i = 0; i < 3; i++) await s.ensureReady('test')
   assert.equal(s.launchMode === 'process', false)
-  assert.match(s.lastError, /尚未完成首次设置/)
+  assert.match(s.lastError, /还没设置/)
   assert.ok(!logs.some(([, m]) => /attach only/.test(m)))
   assert.equal(logs.filter(([lvl, m]) => lvl === 'warn' && /not set up yet/.test(m)).length, 1)
   s.lastAttemptAt = 0

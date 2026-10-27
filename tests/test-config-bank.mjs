@@ -109,7 +109,7 @@ ok('bank template is deterministic per workspace path', () => {
   assert.equal(slugify('中文 目录 Name!!'), 'name')
 })
 
-ok('routing: default_bank > exact mapping > longest prefix > template', () => {
+ok('routing: exact mapping > longest prefix > template', () => {
   const config = resolveConfig(
     {
       bank: {
@@ -138,10 +138,10 @@ ok('routing: default_bank > exact mapping > longest prefix > template', () => {
   assert.equal(template.rule, 'template:workspace')
   assert.match(template.bankId, /^tmpl-thing/)
 
-  const forced = resolveConfig({ bank: { default_bank: 'One Shared Bank', workspace_bank_mapping: { '/srv': 'x' } } }, { env: {} }).config
-  const forcedRoute = resolveBankId({ workspacePath: '/srv/projects/alpha', config: forced })
-  assert.equal(forcedRoute.rule, 'default_bank')
-  assert.equal(forcedRoute.bankId, 'one-shared-bank')
+  const legacy = resolveConfig({ bank: { default_bank: 'One Shared Bank', workspace_bank_mapping: { '/srv': 'x' } } }, { env: {} }).config
+  const legacyRoute = resolveBankId({ workspacePath: '/srv/projects/alpha', config: legacy })
+  assert.notEqual(legacyRoute.rule, 'default_bank', 'default_bank no longer routes')
+  assert.equal(legacyRoute.bankId, 'x')
 
   const noPrefix = resolveConfig({ bank: { prefix_match: false, workspace_bank_mapping: { '/srv/projects': 'p' } } }, { env: {} }).config
   assert.equal(resolveBankId({ workspacePath: '/srv/projects/alpha', config: noPrefix }).rule, 'template:workspace')

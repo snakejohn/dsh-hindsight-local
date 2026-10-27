@@ -35,7 +35,7 @@ window.__ModuleLoader__.load({
       preset: "服务商", provider: "接口类型", model: "模型", fetchModels: "获取模型", modelsN: "个模型", modelsErr: "获取模型失败",
       follow: "和 dsh 用同一个", custom: "自己指定", none: "不整理",
       followOk: "使用 dsh 默认模型", followNoKey: "dsh 的模型还没有密钥，所以暂时只保存原话、不做整理。", followInfo: "密钥来自", followOnlyLocal: "只对装在本机的记忆服务有效。", noneFoot: "不整理，只原样保存对话。",
-      bank: "记忆库", ownBank: "新建库", ownAuto: "新建库（自动命名）", ownNamed: "新建库，自己起名…", joinBank: "接入已有库", usedBy: "已被使用：", legacyShared: "旧版设置：所有工作区共用这个库。换成「每个工作区各选一个库」请点清除。", clear: "清除", defaultBank: "所有工作区共用一个记忆库", noDefault: "（不共用：每个工作区各记各的）", newBank: "新建记忆库…", newBankPrompt: "给新记忆库起个名字（中文也可以）",
+      bank: "记忆库", ownBank: "新建库", ownAuto: "新建库（自动命名）", ownNamed: "新建库，自己起名…", joinBank: "接入已有库", usedBy: "已被使用：", newBank: "新建记忆库…", newBankPrompt: "给新记忆库起个名字（中文也可以）",
       ws: "工作区", wsFoot: "对话数不含已归档的对话；归档的对话不会被记住。", sessions: "个对话", archivedN: "个已归档", unmapped: "（默认路由）", addPath: "手动添加路径", path: "工作区文件夹", bankId: "记忆库名字", remove: "删除", noWs: "dsh 未提供工作区服务，可手动添加路径。",
       importQ: "要导入以前的对话吗？", importText: "装好后只会自动记住新的聊天。以前的对话可以在下面「现在就记住」里选一个工作区或单个对话导入：会一段一段慢慢整理，已经记过的不会重复。", importGo: "去选择", importNo: "不用了", pickOne: "选择单个对话", pickHide: "收起", retainPicked: "记住选中的对话", recorded: "已记过", noSessions: "没有找到对话", retainNow: "现在就记住", retainSel: "记住这个工作区的对话", retainAll: "记住全部对话（不含已归档）", retainHint: "已经记住过的内容不会重复记。", running: "进行中", done: "完成",
       other: "其他", sideCard: "侧栏显示状态卡片", sideCardH: "左下角的记忆状态卡片；关掉后不显示，记忆照常工作。", rcTitle: "记住哪些内容", rcFoot: "只影响以后新记的内容，已经记住的不会改。设置同时保存在插件目录的 .env 里。", rcUser: "我说的话", rcUserH: "你发给 AI 的消息。", rcAsst: "AI 的回复", rcAsstH: "AI 回给你的正文。", rcTool: "工具调用内容", rcToolH: "AI 读文件、搜网页等工具的输入和结果，通常又长又杂，默认不记。", rcToolMax: "每条工具内容最多保留几个字", rcReason: "AI 的思考过程", rcReasonH: "模型的推理草稿，会截断后再记，默认不记。", rcSys: "系统提示", rcSysH: "角色设定等系统提示，只在它变化时记一次，默认不记。", rcArch: "已归档的对话", rcArchH: "打开后，归档的对话也会被记住和导入。", rcSub: "子代理的对话", rcSubH: "AI 自己派出去干活的子任务对话，默认不记。", rcMin: "最短字数", rcMinH: "一轮对话太短就不记（默认 24，中文一个字算 2）。", rcInj: "插件自己插入的记忆", rcInjH: "回忆时插进对话的记忆块永远不会再被记一遍，否则会越记越多、自己重复自己。", rcAlwaysOff: "永远不记", recall: "聊天时自动回忆", retain: "自动记住对话", backfill: "启动时把以前的对话也记住", timezone: "时区", topN: "每次最多回忆几条",
@@ -375,7 +375,6 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const remote = p.remoteBanks || [];
       const usersOf = (bank) => list.filter((w) => w.bank === bank).map((w) => w.title || w.path.split(/[\\/]/).pop());
       const bankSel = (path, auto) => {
-        if (p.legacyShared) return h("span", { className: "pill" }, p.legacyShared);
         const cur0 = mapping[path] || "";
         const opts = [{ value: "", label: t("ownAuto") + (auto ? " · " + auto : "") }];
         if (cur0 && !remote.includes(cur0)) opts.push({ value: cur0, label: t("ownBank") + " · " + cur0 });
@@ -537,13 +536,13 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const llm = o.llm || {};
       return h(React.Fragment, null,
         h(Group, { title: t("health") },
-          h(Row, { label: t("state") }, h("span", { className: "pill " + (o.ready ? "ok" : o.state === "starting" ? "warn" : "bad") }, STATE_ZH[o.state] || o.state || "…")),
+          h(Row, { label: t("state") }, o.setup === "unset" && !o.ready ? h("span", { className: "pill" }, "还没设置") : h("span", { className: "pill " + (o.ready ? "ok" : o.state === "starting" ? "warn" : "bad") }, STATE_ZH[o.state] || o.state || "…")),
           h(Row, { label: t("version") }, h("span", { className: "mono" }, (o.version && (o.version.api_version || o.version.version)) || "—")),
           h(Row, { label: t("baseUrl") }, h("span", { className: "mono" }, o.baseUrl || "")),
           o.localPlan ? h(Row, { label: t("deploy") }, (RUNNER_ZH[o.localPlan.runner] || o.localPlan.runner) + " · " + (VARIANT_ZH[o.localPlan.variant] || o.localPlan.variant)) : null,
           h(Row, { label: t("llm") }, h("span", { className: "pill " + (llm.fallback ? "warn" : "ok") }, ({ follow: "和 dsh 用同一个", custom: "自己指定", none: "不整理" })[llm.mode] || llm.mode || ""), h("span", { className: "mono" }, llm.effective || "")),
           o.controlPlaneUrl ? h(Row, { label: "官方管理后台" }, h("a", { href: o.controlPlaneUrl, target: "_blank", rel: "noreferrer" }, t("openCp") + " ↗")) : null,
-          o.lastError ? h("div", { className: "row sub", style: { color: "var(--hs-red)" } }, o.lastError) : null),
+          o.lastError ? h("div", { className: "row sub", style: { color: o.setup === "unset" && !o.ready ? undefined : "var(--hs-red)" } }, o.lastError) : null),
         o.setup === "local" || o.deploy && o.deploy.startedAt ? h(Deploy, { t, api, d: o.deploy || {}, refresh: ov.reload }) : null,
         llm.fallback ? h("div", { className: "warnbox" }, "⚠︎ " + t("llmFallback") + (llm.reason ? "（" + llm.reason + "）" : "")) : null,
         h(Group, { title: t("banks") },
@@ -638,7 +637,8 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       if (!on) return null;
       const s = st || { level: "gray", text: "记忆服务…" };
       const color = LEVEL_COLOR[s.level] || LEVEL_COLOR.gray;
-      const open = () => { window.__hsOpenTab = "status"; window.dispatchEvent(new CustomEvent("hs-open-tab", { detail: "status" })); p.openPlugin && p.openPlugin(); };
+      // 还没设置：直接打开「设置」页（三步开始），不要落到一片红的状态页。
+      const open = () => { const tab = s.setup ? "settings" : "status"; window.__hsOpenTab = tab; window.dispatchEvent(new CustomEvent("hs-open-tab", { detail: tab })); p.openPlugin && p.openPlugin(); };
       const tip = ["记忆服务：" + s.text, s.reason, s.bank ? "记忆库：" + (s.bankName ? s.bankName + "（" + s.bank + "）" : s.bank) : "", "等待记住：" + (s.pending || 0), "上次记住：" + ago(s.lastRetain), "上次回忆：" + ago(s.lastRecall)].filter(Boolean).join("\n");
       const dot = h("span", { className: "hs-dot" + (s.level === "yellow" ? " pulse" : ""), style: { background: color, boxShadow: "0 0 0 3px color-mix(in srgb, " + color + " 22%, transparent)" } });
       const dkc = useDark() ? " dk" : "";
@@ -748,7 +748,15 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         const r = await api("saveKeys", { keys }).catch(() => null);
         if (!r || !r.ok) return false;
       }
-      const rest = ops.filter((o) => !isKey(o)).concat(keyUnsets(form));
+      let rest = ops.filter((o) => !isKey(o)).concat(keyUnsets(form));
+      // Config is fully volatile: form.mutate replaces the whole user overlay. Re-assert a
+      // completed setup choice so a settings save never drops the user back to 「需要设置」.
+      const sn = form.getSnapshot() || {};
+      const u = (sn.user && typeof sn.user === "object") ? sn.user : (sn.value || {});
+      const setupNow = u.setup;
+      if ((setupNow === "local" || setupNow === "existing") && !rest.some((o) => o.op === "set" && o.path && o.path[0] === "setup")) {
+        rest = [{ op: "set", path: ["setup"], value: setupNow }].concat(rest);
+      }
       if (!rest.length) return true;
       return form.mutate(rest);
     }
@@ -766,6 +774,17 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       // Keys saved by older versions: once the server has copied them into .env, strip them from dsh's config.
       const keysInPatch = !!(ovS && ovS.keysInPatch);
       useEffect(() => { const u = keysInPatch ? keyUnsets(form) : []; if (u.length) Promise.resolve(form.mutate(u)).catch(() => {}); }, [keysInPatch]); // eslint-disable-line
+      // Server may have healed setup from .env / local install evidence while the volatile
+      // overlay still shows unset — write it back so the next save cannot lose it again.
+      useEffect(() => {
+        const healed = ovS && (ovS.setup === "local" || ovS.setup === "existing") ? ovS.setup : "";
+        if (!healed) return;
+        const sn = form.getSnapshot() || {};
+        const u = (sn.user && typeof sn.user === "object") ? sn.user : (sn.value || {});
+        if (u.setup === healed) return;
+        if (u.setup && u.setup !== "unset") return;
+        Promise.resolve(form.mutate([{ op: "set", path: ["setup"], value: healed }])).catch(() => {});
+      }, [ovS && ovS.setup]); // eslint-disable-line
       const [extraBanks, setExtraBanks] = useState([]);
       if (snap.status === "loading") return h("p", null, t("loading"));
       if (snap.status !== "ready") return h("p", null, t("unavailable"));
@@ -804,7 +823,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const remoteList = (banksR.value && banksR.value.banks) || [];
       const remoteBanks = remoteList.map((b) => b.id);
       const remoteNames = {}; remoteList.forEach((b) => { if (b.name && b.name !== b.id) remoteNames[b.id] = b.name; });
-      const allBanks = Array.from(new Set(remoteBanks.concat(extraBanks).concat(Object.values(cur(["bank", "workspace_bank_mapping"]) || {})).concat([cur(["bank", "default_bank"])]).filter(Boolean)));
+      const allBanks = Array.from(new Set(remoteBanks.concat(extraBanks).concat(Object.values(cur(["bank", "workspace_bank_mapping"]) || {})).filter(Boolean)));
       const bankOptions = () => allBanks.map((b) => ({ value: b, label: b + (remoteBanks.includes(b) ? "" : " ✦") }));
       const askNewBank = () => { const id = (window.prompt(t("newBankPrompt")) || "").trim().slice(0, 60); if (id) setExtraBanks(extraBanks.concat([id])); return id; };
       const mapping = cur(["bank", "workspace_bank_mapping"]) || {};
@@ -848,10 +867,8 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
               h(Row, { label: t("followInfo") }, h("span", { className: "pill " + (dl.ok ? "ok" : "warn") }, dl.ok ? (dl.keyRef + " · " + dl.keySource) : (dl.keyRef || "—")))) : null,
             llmMode === "follow" && dl && !dl.ok ? h("div", { className: "row sub", style: { color: "var(--hs-orange)" } }, t("followNoKey") + (dl.reason ? "（" + dl.reason + "）" : "")) : null),
         h(Group, { title: t("bank") },
-          cur(["bank", "default_bank"]) ? h(Row, { label: t("defaultBank") }, h("span", { className: "mono" }, cur(["bank", "default_bank"])), h("button", { className: "btn ghost small", title: t("legacyShared"), onClick: () => set(["bank", "default_bank"])("") }, t("clear"))) : null,
-          cur(["bank", "default_bank"]) ? h("div", { className: "row sub" }, t("legacyShared")) : null,
           null),
-        h(Workspaces, { t, api, mapping, setMapping: set(["bank", "workspace_bank_mapping"]), bankOptions, askNewBank, remoteBanks, remoteNames, legacyShared: cur(["bank", "default_bank"]) || "" }),
+        h(Workspaces, { t, api, mapping, setMapping: set(["bank", "workspace_bank_mapping"]), bankOptions, askNewBank, remoteBanks, remoteNames }),
         h(Group, { title: t("rcTitle"), foot: t("rcFoot") },
           [["include_user", true, "rcUser", "rcUserH"], ["retain_assistant", true, "rcAsst", "rcAsstH"], ["include_tool_calls", false, "rcTool", "rcToolH"],
             ["include_reasoning", false, "rcReason", "rcReasonH"], ["include_system", false, "rcSys", "rcSysH"], ["include_archived", false, "rcArch", "rcArchH"], ["include_subagents", false, "rcSub", "rcSubH"]].map(([k, def, lk, hk]) => {
@@ -894,12 +911,37 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         h("div", { style: { display: "flex", gap: 10 } }, h("button", { className: "btn small", onClick: props.onOpenDetails }, t("openDetails")), h("button", { className: "btn ghost small", onClick: props.onDismiss }, t("later")))));
     }
 
+    /**
+     * Legacy bank.default_bank: the server already routes by the explicit mapping it migrated
+     * into (lib/bankmigrate.js). Persist that mapping into dsh's config and unset default_bank,
+     * once, as soon as the settings form is ready. Idempotent: nothing to do once it is gone.
+     */
+    function migrateLegacyBank(form, api) {
+      if (!form || !form.subscribe || !form.getSnapshot) return () => {};
+      let busy = false, done = false;
+      const check = () => {
+        if (busy || done) return;
+        const sn = form.getSnapshot() || {};
+        if (sn.status !== "ready") return;
+        const legacy = get(sn.value || {}, ["bank", "default_bank"]);
+        if (!legacy) { done = true; return; }
+        busy = true;
+        Promise.resolve(api("bankMigration", {})).then((m) => {
+          if (!m || !m.pending || !m.complete) return false;
+          return form.mutate([{ op: "set", path: ["bank", "workspace_bank_mapping"], value: m.mapping || {} }, { op: "unset", path: ["bank", "default_bank"] }]);
+        }).then((ok) => { if (ok) done = true; }, () => {}).finally(() => { busy = false; });
+      };
+      const off = form.subscribe(check);
+      check();
+      return () => { done = true; if (typeof off === "function") off(); };
+    }
     const inject = ["slots", "locale", "configForms"];
     function apply(ctx) {
       ctx.effect(() => ctx.locale.register(NS, { zh, en }), "dsh-hindsight: dictionaries");
       const form = ctx.configForms.get(NS_FORM);
       ctx.effect(() => () => { try { form.dispose && form.dispose(); } catch (_) {} }, "dsh-hindsight: form");
       const hsApi = makeApi(null);
+      ctx.effect(() => migrateLegacyBank(form, hsApi), "dsh-hindsight: default_bank migration");
       ctx.slots.inject("plugins.bundle.config", () => ctx.slots.register({
         name: "plugins.bundle.config", key: PKG, locale: NS, inject: () => ({ hsForm: form, hsApi })
       }, Panel));

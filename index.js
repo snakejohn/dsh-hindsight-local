@@ -26,7 +26,7 @@ import { buildConfigSchema, loadSchemastery, plainConfig } from './lib/schema.js
 import { ROUTE_PATH, createRpcHandler, serveRpc } from './lib/rpc.js'
 import { resolveDshDefaultLlm } from './lib/host.js'
 import { requestReinstall } from './lib/lifecycle.js'
-import { retainEnv } from './lib/config.js'
+import { retainEnv, setupEnv } from './lib/config.js'
 import { syncDotenv, writeDotenvKeys, inlineKeys } from './lib/dotenv.js'
 
 export const name = 'dsh-hindsight-memory'
@@ -85,7 +85,7 @@ function startGeneration(ctx, rawConfig, reason) {
   if (migrated.written.length) logger.info(`moved API keys from plugin config into .env: ${migrated.written.join(', ')}`)
   // Every setting lives in the plugin-root .env too: mirror 「记住哪些内容」 on each generation.
   try {
-    const r = syncDotenv(retainEnv(config))
+    const r = syncDotenv({ ...retainEnv(config), ...setupEnv(config) })
     if (r.error) logger.warn(`could not write .env: ${r.error}`)
   } catch (e) { logger.warn(`could not write .env: ${errorMessage(e)}`) }
   logger.info(
