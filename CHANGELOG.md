@@ -1,6 +1,6 @@
 # 更新日志
 
-## 未发布
+## v0.1.7 (2026-10-28)
 - 修复：改过任意设置（设置页保存或手改 `cordis.patch.yml`，例如 `embedding.dimensions`）并重启后，侧栏会掉回「需要设置」，要重新「一键开始」才恢复。根因是 `setup` 只写在易失的 `cordis.patch.yml` 里，表单保存会整段重写覆盖层，可能把 `setup: local` 丢掉；没有正在跑的记忆服务时就会被当成未配置。现在会把 `DSH_HINDSIGHT_SETUP` 持久化到插件 `.env`，启动时若补丁里丢了 `setup` 就从 `.env`（或已有的本地 venv + 密钥）自动恢复，设置页保存也会重新写入 `setup`；需要重启记忆服务时照常自动重启，不再掉回「需要设置」，已有记忆不动。
 - 修复：dsh 主进程从 `~/.dsh/.env` 带进来的旧 `HINDSIGHT_API_*`（例如以前守护进程留下的 `HINDSIGHT_API_EMBEDDINGS_OPENAI_DIMENSIONS=1024`）会传给本地记忆服务子进程；Hindsight 把 `dimensions` 写进 /embeddings 请求后，硅基流动 BAAI/bge-m3 会返回 400/20015，导致记住和回忆全失败，侧栏却仍显示「记忆正常」。现在启动子进程前会丢掉所有继承来的 `HINDSIGHT_*` / `DSH_HINDSIGHT_*`（只保留插件自己配置和 .env 里的值），并在日志里列出被丢掉的变量名（不写值）；插件/.env 和运行目录的 .env 也会清掉未在面板显式设置的 DIMENSIONS 行。`DSH_HINDSIGHT_EMBEDDING_DIM` 本地维度校验照常。
 - 修复：侧栏状态不再只看记忆服务是否在线。启动后会缓存一次廉价的向量模型探测，并结合近 10 分钟日志与失败操作，在向量模型报错时显示「向量模型报错」和简短原因（如参数错误 / 401 密钥错误），避免误报「记忆正常」。
