@@ -748,7 +748,15 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         const r = await api("saveKeys", { keys }).catch(() => null);
         if (!r || !r.ok) return false;
       }
-      const rest = ops.filter((o) => !isKey(o)).concat(keyUnsets(form));
+      let rest = ops.filter((o) => !isKey(o)).concat(keyUnsets(form));
+      // Config is fully volatile: form.mutate replaces the whole user overlay. Re-assert a
+      // completed setup choice so a settings save never drops the user back to 「需要设置」.
+      const sn = form.getSnapshot() || {};
+      const u = (sn.user && typeof sn.user === "object") ? sn.user : (sn.value || {});
+      const setupNow = u.setup;
+      if ((setupNow === "local" || setupNow === "existing") && !rest.some((o) => o.op === "set" && o.path && o.path[0] === "setup")) {
+        rest = [{ op: "set", path: ["setup"], value: setupNow }].concat(rest);
+      }
       if (!rest.length) return true;
       return form.mutate(rest);
     }
@@ -766,6 +774,17 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       // Keys saved by older versions: once the server has copied them into .env, strip them from dsh's config.
       const keysInPatch = !!(ovS && ovS.keysInPatch);
       useEffect(() => { const u = keysInPatch ? keyUnsets(form) : []; if (u.length) Promise.resolve(form.mutate(u)).catch(() => {}); }, [keysInPatch]); // eslint-disable-line
+      // Server may have healed setup from .env / local install evidence while the volatile
+      // overlay still shows unset — write it back so the next save cannot lose it again.
+      useEffect(() => {
+        const healed = ovS && (ovS.setup === "local" || ovS.setup === "existing") ? ovS.setup : "";
+        if (!healed) return;
+        const sn = form.getSnapshot() || {};
+        const u = (sn.user && typeof sn.user === "object") ? sn.user : (sn.value || {});
+        if (u.setup === healed) return;
+        if (u.setup && u.setup !== "unset") return;
+        Promise.resolve(form.mutate([{ op: "set", path: ["setup"], value: healed }])).catch(() => {});
+      }, [ovS && ovS.setup]); // eslint-disable-line
       const [extraBanks, setExtraBanks] = useState([]);
       if (snap.status === "loading") return h("p", null, t("loading"));
       if (snap.status !== "ready") return h("p", null, t("unavailable"));

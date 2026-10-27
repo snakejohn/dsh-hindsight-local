@@ -28,7 +28,7 @@ const files = [
   'test-panel-v2.mjs',
   'test-dotenv-deploy.mjs', 'test-sidebar.mjs',
   'test-v011.mjs', 'test-v012.mjs', 'test-llmprobe.mjs', 'test-v013.mjs', 'test-logfiles.mjs', 'test-banknames.mjs', 'test-retain-content.mjs', 'test-v014.mjs',
-  'test-dimension.mjs', 'test-childenv-embhealth.mjs', 'test-bank-scope-migration.mjs',
+  'test-dimension.mjs', 'test-childenv-embhealth.mjs', 'test-bank-scope-migration.mjs', 'test-setup-durable.mjs',
   'test-integration.mjs',
   'test-e2e-banks.mjs'
 ]
