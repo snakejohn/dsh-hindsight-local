@@ -36,6 +36,27 @@ ok('ASCII-safe ids, Chinese display names, N:1 mapping, old ids preserved')
 }
 
 {
+  // 「接入已有库」 stores the bank id as the mapping value: the sidebar must still show the
+  // bank's Chinese name, not "bk-…".
+  const { sidebarStatus } = await import('../lib/rpc.js')
+  const client = createFakeClient()
+  const names = { 'bk-66955c9b': '团队共享记忆' }
+  client.bankProfile = async (id) => ({ bank_id: id, name: names[id] || id })
+  client.setBankName = async (id, n) => { names[id] = n }
+  const { runtime, config } = buildRuntime({ fakeClient: client })
+  assert.equal(await runtime.nameBank('bk-66955c9b', 'bk-66955c9b'), false, 'a joined bank is never renamed to its id')
+  assert.equal(names['bk-66955c9b'], '团队共享记忆')
+  assert.equal(runtime.bankNames.get('bk-66955c9b'), '团队共享记忆', 'server display name learned')
+  runtime.workspaces.set('/tmp/中文区', { cwd: '/tmp/中文区', bankId: 'bk-66955c9b', rule: 'mapping-exact', displayName: 'bk-66955c9b' })
+  runtime.recent.unshift({ at: new Date().toISOString(), bank: 'bk-66955c9b', turns: 1 })
+  if (typeof sidebarStatus === 'function') {
+    const s = await sidebarStatus({ runtime, config, rawConfig: {} })
+    assert.equal(s.bankName, '团队共享记忆', 'sidebar shows the Chinese bank name for a joined bank')
+  }
+  ok('joined-by-id bank shows its Chinese display name')
+}
+
+{
   const dir = mkdtempSync(join(tmpdir(), 'atomic-'))
   const f = join(dir, 's.json')
   for (let i = 0; i < 50; i++) writeFileAtomic(f, JSON.stringify({ i, pad: 'x'.repeat(1000) }))
