@@ -634,6 +634,9 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       useStyle();
       const on = useSyncExternalStore(p.hsForm && p.hsForm.subscribe ? (l) => p.hsForm.subscribe(l) : NOOP_SUB, () => sidebarCardOn(p.hsForm), () => sidebarCardOn(p.hsForm));
       const st = useSidebarStatus(on ? p.hsApi : null);
+      // Every hook runs before the early return: a hook after it changes the hook count when the
+      // card is toggled and React (#300) kills the slot entry until the page reloads.
+      const dkc = useDark() ? " dk" : "";
       if (!on) return null;
       const s = st || { level: "gray", text: "记忆服务…" };
       const color = LEVEL_COLOR[s.level] || LEVEL_COLOR.gray;
@@ -641,7 +644,6 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const open = () => { const tab = s.setup ? "settings" : "status"; window.__hsOpenTab = tab; window.dispatchEvent(new CustomEvent("hs-open-tab", { detail: tab })); p.openPlugin && p.openPlugin(); };
       const tip = ["记忆服务：" + s.text, s.reason, s.bank ? "记忆库：" + (s.bankName ? s.bankName + "（" + s.bank + "）" : s.bank) : "", "等待记住：" + (s.pending || 0), "上次记住：" + ago(s.lastRetain), "上次回忆：" + ago(s.lastRecall)].filter(Boolean).join("\n");
       const dot = h("span", { className: "hs-dot" + (s.level === "yellow" ? " pulse" : ""), style: { background: color, boxShadow: "0 0 0 3px color-mix(in srgb, " + color + " 22%, transparent)" } });
-      const dkc = useDark() ? " dk" : "";
       if (!p.wide) return h("button", { className: "hs26 hs-side mini glass" + dkc, title: tip, "aria-label": tip, onClick: open }, dot);
       const pr = s.progress;
       return h("button", { className: "hs26 hs-side glass" + dkc, title: tip, "aria-label": "记忆服务 " + s.text, onClick: open },
