@@ -57,6 +57,25 @@ ok('ASCII-safe ids, Chinese display names, N:1 mapping, old ids preserved')
 }
 
 {
+  // The workspaces RPC (bank selectors) shows the joined bank's name on the very first call,
+  // before any chat turn taught the runtime that name.
+  const { createRpcHandler } = await import('../lib/rpc.js')
+  const client = createFakeClient()
+  client.bankProfile = async (id) => { await new Promise((r) => setTimeout(r, 30)); return { bank_id: id, name: id === 'bk-66955c9b' ? '团队共享记忆' : id } }
+  client.setBankName = async () => {}
+  const { runtime, config } = buildRuntime({ fakeClient: client, rawConfig: { bank: { workspace_bank_mapping: { '/tmp/中文区': 'bk-66955c9b' } } } })
+  runtime.service.ready = true
+  const ctx = { get: (n) => n === 'workspaceRegistry' ? { list: () => [{ id: 'w1', path: '/tmp/中文区', title: '中文区', sessionIds: [] }] } : undefined }
+  const handler = createRpcHandler({ ctx, current: () => ({ runtime, config, rawConfig: {} }) })
+  void runtime.nameBank('bk-66955c9b', 'bk-66955c9b') // a concurrent lookup (sidebar/route) already in flight
+  const r = await handler('workspaces', {}, undefined, { principal: { kind: 'owner' } })
+  assert.equal(r.ok, true, JSON.stringify(r))
+  const w = r.value.workspaces[0]
+  assert.equal(w.bank, 'bk-66955c9b'); assert.equal(w.bankName, '团队共享记忆', 'first workspaces call already shows the Chinese name')
+  ok('workspaces RPC shows a joined bank by its Chinese name on first open')
+}
+
+{
   const dir = mkdtempSync(join(tmpdir(), 'atomic-'))
   const f = join(dir, 's.json')
   for (let i = 0; i < 50; i++) writeFileAtomic(f, JSON.stringify({ i, pad: 'x'.repeat(1000) }))
