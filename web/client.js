@@ -35,7 +35,7 @@ window.__ModuleLoader__.load({
       preset: "服务商", provider: "接口类型", model: "模型", fetchModels: "获取模型", modelsN: "个模型", modelsErr: "获取模型失败",
       follow: "和 dsh 用同一个", custom: "自己指定", none: "不整理",
       followOk: "使用 dsh 默认模型", followNoKey: "dsh 的模型还没有密钥，所以暂时只保存原话、不做整理。", followInfo: "密钥来自", followOnlyLocal: "只对装在本机的记忆服务有效。", noneFoot: "不整理，只原样保存对话。",
-      bank: "记忆库", ownBank: "新建库", ownAuto: "新建库（自动命名）", ownNamed: "新建库，自己起名…", joinBank: "接入已有库", usedBy: "已被使用：", newBank: "新建记忆库…", newBankPrompt: "给新记忆库起个名字（中文也可以）",
+      bank: "记忆库", ownBank: "新建库", ownAuto: "新建库（自动命名）", ownNamed: "新建库，自己起名…", joinBank: "接入已有库", usedBy: "已被使用：", bankEmpty: "还没有记忆", newBank: "新建记忆库…", newBankPrompt: "给新记忆库起个名字（中文也可以）",
       ws: "工作区", wsFoot: "对话数不含已归档的对话；归档的对话不会被记住。", sessions: "个对话", archivedN: "个已归档", unmapped: "（默认路由）", addPath: "手动添加路径", path: "工作区文件夹", bankId: "记忆库名字", remove: "删除", noWs: "dsh 未提供工作区服务，可手动添加路径。",
       importQ: "要导入以前的对话吗？", importText: "装好后只会自动记住新的聊天。以前的对话可以在下面「现在就记住」里选一个工作区或单个对话导入：会一段一段慢慢整理，已经记过的不会重复。", importGo: "去选择", importNo: "不用了", pickOne: "选择单个对话", pickHide: "收起", retainPicked: "记住选中的对话", recorded: "已记过", noSessions: "没有找到对话", retainNow: "现在就记住", retainSel: "记住这个工作区的对话", retainAll: "记住全部对话（不含已归档）", retainHint: "已经记住过的内容不会重复记。", running: "进行中", done: "完成",
       other: "其他", sideCard: "侧栏显示状态卡片", sideCardH: "左下角的记忆状态卡片；关掉后不显示，记忆照常工作。", rcTitle: "记住哪些内容", rcFoot: "只影响以后新记的内容，已经记住的不会改。设置同时保存在插件目录的 .env 里。", rcUser: "我说的话", rcUserH: "你发给 AI 的消息。", rcAsst: "AI 的回复", rcAsstH: "AI 回给你的正文。", rcTool: "工具调用内容", rcToolH: "AI 读文件、搜网页等工具的输入和结果，通常又长又杂，默认不记。", rcToolMax: "每条工具内容最多保留几个字", rcReason: "AI 的思考过程", rcReasonH: "模型的推理草稿，会截断后再记，默认不记。", rcSys: "系统提示", rcSysH: "角色设定等系统提示，只在它变化时记一次，默认不记。", rcArch: "已归档的对话", rcArchH: "打开后，归档的对话也会被记住和导入。", rcSub: "子代理的对话", rcSubH: "AI 自己派出去干活的子任务对话，默认不记。", rcMin: "最短字数", rcMinH: "一轮对话太短就不记（默认 24，中文一个字算 2）。", rcInj: "插件自己插入的记忆", rcInjH: "回忆时插进对话的记忆块永远不会再被记一遍，否则会越记越多、自己重复自己。", rcAlwaysOff: "永远不记", recall: "聊天时自动回忆", retain: "自动记住对话", backfill: "启动时把以前的对话也记住", timezone: "时区", topN: "每次最多回忆几条",
@@ -352,6 +352,42 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
         chan === "embedding" ? h(Row, { label: t("dim") }, h(Text, { type: "number", label: "embedding expected_dim", value: cur(["embedding", "expected_dim"]), placeholder: "1024", onChange: set(["embedding", "expected_dim"]) })) : null);
     }
 
+    /**
+     * Banks a workspace can join: the server's list (incl. banks named in the saved mapping that
+     * have no memory yet, flagged pending by the server) plus names just created or typed into
+     * the unsaved mapping. Deduped by id and by display name.
+     */
+    function joinableBanks(remoteList, extraNames) {
+      const out = (remoteList || []).map((b) => ({ id: b.id, name: b.name && b.name !== b.id ? b.name : "", pending: !!b.pending }));
+      const ids = new Set(out.map((e) => e.id)); const names = new Set(out.map((e) => e.name).filter(Boolean));
+      (extraNames || []).forEach((v0) => {
+        const v = String(v0 || "").trim();
+        if (!v || ids.has(v) || names.has(v)) return;
+        names.add(v); out.push({ id: "", name: v, value: v, pending: true });
+      });
+      return out;
+    }
+
+    /** Options of one workspace's bank selector (「新建库」 / 「接入已有库 · 名字 · 已被使用：…」). */
+    function bankChoices(o) {
+      const { t, path, auto, mapping, list, manual, remote, joinable } = o;
+      const matches = (e, v) => !!v && (v === e.id || v === e.name || v === e.value);
+      const labelOf = (k) => { const w = (list || []).find((x) => x.path === k); return (w && w.title) || String(k).split(/[\\/]/).pop(); };
+      const usersOf = (e) => (list || []).filter((w) => mapping[w.path] ? matches(e, mapping[w.path]) : (!!e.id && w.bank === e.id)).map((w) => labelOf(w.path))
+        .concat((manual || []).filter((k) => matches(e, mapping[k])).map(labelOf));
+      const cur0 = mapping[path] || "";
+      const opts = [{ value: "", label: t("ownAuto") + (auto ? " · " + auto : "") }];
+      const ownLine = !!cur0 && !(remote || []).includes(cur0);
+      if (ownLine) opts.push({ value: cur0, label: t("ownBank") + " · " + cur0 });
+      opts.push({ value: "__named", label: t("ownNamed") });
+      (joinable || []).forEach((e) => {
+        if (ownLine && matches(e, cur0)) return;
+        const u = usersOf(e).filter((x, i, a) => a.indexOf(x) === i);
+        opts.push({ value: e.id || e.value || e.name, label: t("joinBank") + " · " + (e.name || e.id), sub: [e.name && e.id ? e.id : "", e.pending ? t("bankEmpty") : "", u.length ? t("usedBy") + u.join("、") : ""].filter(Boolean).join(" · ") });
+      });
+      return opts;
+    }
+
     // ---- workspace mapping + manual retain ----
     function Workspaces(p) {
       const { t, api, mapping, setMapping, bankOptions, askNewBank } = p;
@@ -373,13 +409,12 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const known = new Set(list.map((w) => w.path));
       const manual = Object.keys(mapping).filter((k) => !known.has(k));
       const remote = p.remoteBanks || [];
-      const usersOf = (bank) => list.filter((w) => w.bank === bank).map((w) => w.title || w.path.split(/[\\/]/).pop());
+      // Banks to join: the server's list plus banks just created / named in the (unsaved) mapping,
+      // so a new bank shows up here before its first memory exists.
+      const joinable = p.joinable || remote.map((b) => ({ id: b, name: (p.remoteNames || {})[b] || "" }));
       const bankSel = (path, auto) => {
         const cur0 = mapping[path] || "";
-        const opts = [{ value: "", label: t("ownAuto") + (auto ? " · " + auto : "") }];
-        if (cur0 && !remote.includes(cur0)) opts.push({ value: cur0, label: t("ownBank") + " · " + cur0 });
-        opts.push({ value: "__named", label: t("ownNamed") });
-        remote.forEach((b) => { const u = usersOf(b); const nm = (p.remoteNames || {})[b]; opts.push({ value: b, label: t("joinBank") + " · " + (nm || b), sub: [nm ? b : "", u.length ? t("usedBy") + u.join("、") : ""].filter(Boolean).join(" · ") }); });
+        const opts = bankChoices({ t, path, auto, mapping, list, manual, remote, joinable });
         return h(Select, { label: "bank for " + path, search: true, minWidth: 380, value: cur0, options: opts,
           onChange: (v) => { if (v === "__named") { const id = askNewBank(); if (id) setMapping(Object.assign({}, mapping, { [path]: id })); return; } const n = Object.assign({}, mapping); if (v) n[path] = v; else delete n[path]; setMapping(n); } });
       };
@@ -769,7 +804,8 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const [wizard, setWizard] = useState(false);
       const [msg, setMsg] = useState("");
       const presets = useRpc(api, "presets", {}, []).value;
-      const banksR = useRpc(api, "banks", {}, []);
+      const [banksTick, setBanksTick] = useState(0);
+      const banksR = useRpc(api, "banks", {}, [banksTick]);
       const dshLlm = useRpc(api, "dshLlm", {}, []);
       // The redacted settings snapshot hides secrets; overview reports which keys are saved (booleans only).
       const ovS = useRpc(api, "overview", {}, [], 5000).value;
@@ -825,9 +861,18 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
       const remoteList = (banksR.value && banksR.value.banks) || [];
       const remoteBanks = remoteList.map((b) => b.id);
       const remoteNames = {}; remoteList.forEach((b) => { if (b.name && b.name !== b.id) remoteNames[b.id] = b.name; });
+      const joinable = joinableBanks(remoteList, extraBanks.concat(Object.values(cur(["bank", "workspace_bank_mapping"]) || {})));
       const allBanks = Array.from(new Set(remoteBanks.concat(extraBanks).concat(Object.values(cur(["bank", "workspace_bank_mapping"]) || {})).filter(Boolean)));
       const bankOptions = () => allBanks.map((b) => ({ value: b, label: b + (remoteBanks.includes(b) ? "" : " ✦") }));
-      const askNewBank = () => { const id = (window.prompt(t("newBankPrompt")) || "").trim().slice(0, 60); if (id) setExtraBanks(extraBanks.concat([id])); return id; };
+      // Created on Hindsight right away (empty bank with its Chinese name), then the list is refreshed.
+      const askNewBank = () => {
+        const id = (window.prompt(t("newBankPrompt")) || "").trim().slice(0, 60);
+        if (id) {
+          setExtraBanks(extraBanks.concat([id]));
+          Promise.resolve(api("createBank", { name: id })).then((r) => { if (r && r.ok && !r.pending) setBanksTick((n) => n + 1); }, () => {});
+        }
+        return id;
+      };
       const mapping = cur(["bank", "workspace_bank_mapping"]) || {};
       const llmMode = cur(["llm", "mode"]) || "follow";
       const dl = dshLlm.value;
@@ -870,7 +915,7 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
             llmMode === "follow" && dl && !dl.ok ? h("div", { className: "row sub", style: { color: "var(--hs-orange)" } }, t("followNoKey") + (dl.reason ? "（" + dl.reason + "）" : "")) : null),
         h(Group, { title: t("bank") },
           null),
-        h(Workspaces, { t, api, mapping, setMapping: set(["bank", "workspace_bank_mapping"]), bankOptions, askNewBank, remoteBanks, remoteNames }),
+        h(Workspaces, { t, api, mapping, setMapping: set(["bank", "workspace_bank_mapping"]), bankOptions, askNewBank, remoteBanks, remoteNames, joinable }),
         h(Group, { title: t("rcTitle"), foot: t("rcFoot") },
           [["include_user", true, "rcUser", "rcUserH"], ["retain_assistant", true, "rcAsst", "rcAsstH"], ["include_tool_calls", false, "rcTool", "rcToolH"],
             ["include_reasoning", false, "rcReason", "rcReasonH"], ["include_system", false, "rcSys", "rcSysH"], ["include_archived", false, "rcArch", "rcArchH"], ["include_subagents", false, "rcSub", "rcSubH"]].map(([k, def, lk, hk]) => {
@@ -962,6 +1007,8 @@ background:radial-gradient(120% 80% at 0% 0%,rgba(10,132,255,.14),transparent 60
     exports.Panel = Panel;
     exports.SidebarStatus = SidebarStatus;
     exports.makeApi = makeApi;
+    exports.joinableBanks = joinableBanks;
+    exports.bankChoices = bankChoices;
     return module.exports;
   }
 });
