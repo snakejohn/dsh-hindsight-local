@@ -5,6 +5,10 @@
 - 修复：「新建库，自己起名…」建的库要等记下第一条记忆后才出现在别的工作区的「接入已有库」里。现在起名时就在记忆服务里建好这个（空）库并写上中文名，记忆服务连上时也会把映射里所有库建好；设置页还会列出映射里已有但服务里还没有的库。选项显示中文名、库 ID、「已被使用：」哪些工作区，还没记过东西的写「还没有记忆」。
 - 修复：开了 `keep_alive_on_exit`（退出后保留服务）时，「重启服务」只是重新接上正在运行的记忆服务，改过的模型设置不生效。现在「重启服务」/「重新部署」会真正停掉它（包括上次 dsh 留下的那个），再用新设置启动：只停插件自己启动的进程（按插件的 pid 文件）或容器，先正常关闭并等 30 秒再强制结束；停之前照常把待提交的对话先提交，记忆都在数据库里，不会丢。普通退出和保存设置仍然保留服务；「已经配置好了」（别人的服务）从不停。
 
+- 修复（[#4](https://github.com/snakejohn/dsh-hindsight-local/issues/4)）：电脑上的 Python 安装损坏（`DLL load failed while importing _ctypes`，退出码 3221225477 / 0xC0000005，常见于便携版或拷贝来的 Python）时，记忆服务一启动就崩，而且一直用这份坏 Python。现在找 Python 时会检查 `ctypes`、`ssl`、`sqlite3` 能否正常导入，坏的会被跳过（日志写明跳过了哪个、为什么），改用下一个或插件自己下载的 Python 3.12；插件自己下载 Python 时只用 uv 下载的那份，不会再找回 PATH 里的坏 Python。已有的依赖环境（venv）每次启动前也会检查，里面的 Python 坏了就自动删掉并优先用自带 Python 重建（只删 venv 目录，记忆数据不动）。出现这类报错时，状态页会给出中文提示（Python 安装已损坏 → 重装 / 让插件用自带 Python / 重新部署）。
+- 变更：DeepSeek 已停用 `deepseek-chat` / `deepseek-reasoner`（2026-07-24），预设的默认模型改为 `deepseek-flash`。整理记忆的模型还设成这两个旧名字（服务商 DeepSeek 或地址是 api.deepseek.com，且不是「跟随 dsh」）时自动改用 `deepseek-flash`，日志里会提示，在设置页保存一次即可。
+- 改进：「导出日志」的文件开头写上 dsh 版本，提问题时不用再手动填。
+
 ## v0.1.7 (2026-10-28)
 - 修复：改过任意设置（设置页保存或手改 `cordis.patch.yml`，例如 `embedding.dimensions`）并重启后，侧栏会掉回「需要设置」，要重新「一键开始」才恢复。根因是 `setup` 只写在易失的 `cordis.patch.yml` 里，表单保存会整段重写覆盖层，可能把 `setup: local` 丢掉；没有正在跑的记忆服务时就会被当成未配置。现在会把 `DSH_HINDSIGHT_SETUP` 持久化到插件 `.env`，启动时若补丁里丢了 `setup` 就从 `.env`（或已有的本地 venv + 密钥）自动恢复，设置页保存也会重新写入 `setup`；需要重启记忆服务时照常自动重启，不再掉回「需要设置」，已有记忆不动。
 - 修复：dsh 主进程从 `~/.dsh/.env` 带进来的旧 `HINDSIGHT_API_*`（例如以前守护进程留下的 `HINDSIGHT_API_EMBEDDINGS_OPENAI_DIMENSIONS=1024`）会传给本地记忆服务子进程；Hindsight 把 `dimensions` 写进 /embeddings 请求后，硅基流动 BAAI/bge-m3 会返回 400/20015，导致记住和回忆全失败，侧栏却仍显示「记忆正常」。现在启动子进程前会丢掉所有继承来的 `HINDSIGHT_*` / `DSH_HINDSIGHT_*`（只保留插件自己配置和 .env 里的值），并在日志里列出被丢掉的变量名（不写值）；插件/.env 和运行目录的 .env 也会清掉未在面板显式设置的 DIMENSIONS 行。`DSH_HINDSIGHT_EMBEDDING_DIM` 本地维度校验照常。

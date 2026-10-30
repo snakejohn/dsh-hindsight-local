@@ -162,6 +162,11 @@ https://github.com/snakejohn/dsh-hindsight-local
 整理记忆用的本机模型地址（例如 `127.0.0.1:3425`）没有响应，请确认对应的程序已启动。插件这期间暂停写入，连上后自动继续，并重新整理之前失败的部分。
 </details>
 
+<details><summary><b>日志里有「DLL load failed while importing _ctypes」/ 退出码 3221225477？</b></summary>
+
+你电脑上的 Python 安装已损坏（便携版或拷来的 Python 常见），和密钥、模型无关。新版插件会自动跳过坏的 Python、改用自带的 Python 并重建依赖环境，点「重新部署」即可；也可以重装 Python 3.12（python.org）。详见[使用文档「常见问题」](docs/使用文档.md#常见问题)。
+</details>
+
 <details><summary><b>怎么反馈问题？</b></summary>
 
 插件「状态」页最下面点「导出日志」（密钥会自动隐藏），再点「去提问题」，把导出的文件拖进 GitHub 问题表单即可。日志会自动清理（单个 5 MB、保留 14 天），不会越积越大。
