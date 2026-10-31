@@ -28,6 +28,18 @@ if (React && Server && mod.SidebarStatus) {
   assert.match(on, /hs-side/); assert.equal(off, '')
   console.log('ok - SidebarStatus renders nothing when off')
 }
+{
+  // Toggling the card must not change the hook count (React #300 crashed the slot until reload).
+  let n = 0
+  const R = { createElement: () => ({}), useState: (v) => { n++; return [typeof v === 'function' ? v() : v, () => {}] }, useEffect: () => { n++ }, useLayoutEffect: () => { n++ }, useMemo: (f) => { n++; return f() }, useCallback: (f) => { n++; return f }, useRef: (v) => { n++; return { current: v } }, useSyncExternalStore: (s, g) => { n++; return g() } }
+  let m2; new Function('window', src)({ __ModuleLoader__: { load: (m) => { m2 = m } } })
+  const M = m2.factory(() => R)
+  const count = (v) => { n = 0; M.SidebarStatus({ hsApi: async () => ({}), hsForm: form(v), wide: true }); return n }
+  const hooksOn = count({}), hooksOff = count({ ui: { sidebar_card: false } })
+  assert.ok(hooksOn > 0)
+  assert.equal(hooksOff, hooksOn, 'SidebarStatus calls the same hooks whether the card is on or off')
+  console.log('ok - sidebar card toggles without changing hook order')
+}
 // 高级设置 shows Chinese names for option ids; raw English labels are gone.
 for (const bad of ['baseUrl: "Base URL"', 'apiKey: "API Key"', 'label: "Control Plane"']) assert.ok(!src.includes(bad), bad)
 for (const good of ['硅基流动（siliconflow）', '不用模型（rrf）', '精简版（slim', 'Python 虚拟环境（venv）', '正常运行（ready）']) assert.ok(src.includes(good), good)

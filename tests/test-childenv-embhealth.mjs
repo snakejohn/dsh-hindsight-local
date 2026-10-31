@@ -224,3 +224,16 @@ delete process.env.HINDSIGHT_API_SHOULD_NOT_LEAK
 ok('spawned child does not inherit DIMENSIONS; drop is logged without values; run .env scrubbed')
 
 console.log(`${pass} pass`)
+
+// Startup exit caused by embedding 400/20015: headline says 向量模型报错 (not only 出问题了).
+{
+  const { sidebarStatus } = await import('../lib/rpc.js')
+  const st = await sidebarStatus({
+    runtime: { service: { ready: false, state: 'failed', deploy: {}, lastError: 'Hindsight 进程已退出 (code=3)：向量模型参数错误（例如误传了 dimensions，硅基流动 bge-m3 会返回 400/20015）' } },
+    config: { enabled: true, setup: 'local', embedding: { api_key: 'x' }, llm: { api_key: 'x' } }
+  })
+  assert.equal(st.level, 'red')
+  assert.equal(st.text, '向量模型报错')
+  assert.match(st.reason, /20015/)
+  ok('startup exit on 400/20015 → sidebar headline 向量模型报错')
+}

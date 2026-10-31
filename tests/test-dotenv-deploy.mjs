@@ -91,7 +91,7 @@ await ok('panel config (Volatile) → .env → child env: EMBEDDINGS_*/LLM_*/RER
   assert.equal(d.env.HINDSIGHT_API_RERANKER_PROVIDER, 'rrf')
   assert.equal(d.env.HINDSIGHT_API_LLM_PROVIDER, 'deepseek')
   assert.equal(d.env.HINDSIGHT_API_LLM_API_KEY, 'sk-llm-456')
-  assert.equal(d.env.HINDSIGHT_API_LLM_MODEL, 'deepseek-chat')
+  assert.equal(d.env.HINDSIGHT_API_LLM_MODEL, 'deepseek-flash') // retired deepseek-chat migrated
   assert.equal(d.env.PYTHONUTF8, '1')
   // Not the plugin install dir (Windows would lock it and block plugin updates); the run dir holds
   // a copy of our .env so hindsight-api's find_dotenv(usecwd) still finds OUR settings first.

@@ -110,9 +110,9 @@ function startGeneration(ctx, rawConfig, reason) {
     runtime,
     config,
     rawConfig,
-    async stop() {
+    async stop(opts) {
       scope.dispose()
-      await runtime.shutdown()
+      await runtime.shutdown(opts)
     }
   }
 }
@@ -187,10 +187,13 @@ export function apply(ctx, rawConfig = {}) {
   let chain = Promise.resolve()
 
   // Settings-panel edits arrive as volatile updates (no remount): swap the runtime.
-  const reload = () => {
+  // `restart: true` (panel 「重启服务」): the running server is stopped even with
+  // keep_alive_on_exit, so the fresh generation starts it with the new settings.
+  const reload = (opts) => {
+    const restart = !!opts?.restart
     chain = chain.then(async () => {
       const previous = current
-      await previous.stop().catch(() => {})
+      await previous.stop(restart ? { restart: true } : undefined).catch(() => {})
       current = startGeneration(ctx, read(), 'settings-updated')
     }).catch((error) => current?.runtime?.logger?.warn?.(`reload failed: ${errorMessage(error)}`))
     return chain
