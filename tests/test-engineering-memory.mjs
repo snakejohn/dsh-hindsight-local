@@ -92,14 +92,16 @@ const chunks = { 'c-old': { id: 'c-old', text: OLD, chunk_index: 0 }, 'c-new': {
   assert.match(block, /⚠ 此条中的 idle-19m、031_reed\.sql 已被较新的记录 \[1\] 取代/)
   assert.match(block, /要点 \[world\] \(0\.31\)（已被取代） 用户确认接收.*idle-19m/)
   assert.ok(!block.includes('commitReedBatch'), 'below-floor source without a term match stays out')
-  ok('injection: verbatim 原文 excerpt, newest first, older values marked 已被取代')
+  assert.ok(!/来源|session|s:c-/.test(block), 'no source/session id the model could echo as an answer value')
+  assert.match(block, /不是当前工作目录（cwd）下的路径/)
+  ok('injection: verbatim 原文 excerpt, newest first, older values marked 已被取代, no source ids, cwd note')
 
   const sym = formatRecallBlock(results, cfg(), 'bank-a', { now, tz: 'Asia/Shanghai', chunks, query: 'commitReedBatch 在哪个文件？' })
   assert.ok(sym.includes('packages/ledger/src/commitReed.ts'), `identifier in the question pulls the below-floor source in:\n${sym}`)
   ok('exact-term pass: an identifier in the question rescues a source the reranker scored low')
 
-  const tight = formatRecallBlock(results, cfg({ max_chars: 600 }), 'bank-a', { now, tz: 'Asia/Shanghai', chunks, query: '当前会话空闲过期标识？' })
-  assert.ok(tight.length <= 600, `budget respected (${tight.length})`)
+  const tight = formatRecallBlock(results, cfg({ max_chars: 800 }), 'bank-a', { now, tz: 'Asia/Shanghai', chunks, query: '当前会话空闲过期标识？' })
+  assert.ok(tight.length <= 800, `budget respected (${tight.length})`)
   assert.ok(tight.includes('idle-43m'), 'the newest source survives a tight budget')
   const noChunks = formatRecallBlock(results, cfg(), 'bank-a', { now, tz: 'Asia/Shanghai', query: '当前会话空闲过期标识？' })
   assert.ok(noChunks.includes('- [world] (0.31)') && !noChunks.includes('原文：'), 'older servers without chunks: facts as before')
@@ -120,7 +122,8 @@ const chunks = { 'c-old': { id: 'c-old', text: OLD, chunk_index: 0 }, 'c-new': {
   assert.ok(retry.includes('jitter-cap-11') && retry.includes('herd-break-4'), `unreferenced chunk found by exact terms:\n${retry}`)
   const task = formatRecallBlock(rr, cfg(), 'b', { now, tz: 'Asia/Shanghai', chunks: more, query: '断电重放任务现在状态与验收码？' })
   assert.ok(task.indexOf('task-hazel-31 已完成') > 0 && task.indexOf('task-hazel-31 已完成') < task.indexOf('仍未完成 task-hazel-31'), `newer completion shown first:\n${task}`)
-  assert.match(task, /⚠ 此条中的 task-hazel-31 已被较新的记录 \[1\]/)
+  assert.match(task, /⚠ 较新的记录 \[1\] 写明 task-hazel-31 已完成；此条里它的「未完成\/待办\/下一步」状态已过时/)
+  assert.ok(!/task-hazel-31 已被较新的记录/.test(task), 'a completed task is reported as done, not as replaced')
   ok('lexical pass over unreferenced chunks; a below-floor newer record that retires a value is pulled in')
 
   // Long chunk: excerpt keeps the sentences with the asked-about terms.
