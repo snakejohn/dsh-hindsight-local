@@ -105,6 +105,24 @@ const chunks = { 'c-old': { id: 'c-old', text: OLD, chunk_index: 0 }, 'c-new': {
   assert.ok(noChunks.includes('- [world] (0.31)') && !noChunks.includes('原文：'), 'older servers without chunks: facts as before')
   ok('budget: max_chars honoured; no chunks -> fact list fallback')
 
+  // A chunk no returned fact points to (its facts fell under Hindsight's token cut) is still
+  // found by exact terms; a below-floor newer record that retires a selected value is pulled in.
+  const RETRY = '[2026-11-09 周一 10:26 (Asia/Shanghai)] USER（用户本人）: 重试策略 jitter-cap-11，原因码 herd-break-4。'
+  const TASK_OLD = '[2026-11-09 周一 10:25 (Asia/Shanghai)] USER（用户本人）: 仍未完成 task-hazel-31（验证断电重放）；验收条件 replay-zero-gap-5。'
+  const TASK_NEW = '[2026-11-09 周一 10:32 (Asia/Shanghai)] USER（用户本人）: 收尾更新：task-hazel-31 已完成，通过 replay-zero-gap-5。'
+  const more = { ...chunks, 'c-retry': { text: RETRY }, 'c-told': { text: TASK_OLD }, 'c-tnew': { text: TASK_NEW } }
+  const rr = [
+    ...results,
+    fact('t1', '未完成 task-hazel-31（验证断电重放），验收条件 replay-zero-gap-5。', 0.8, 'c-told', '2026-11-09T10:25:00+08:00'),
+    fact('t2', '用户完成了 task-hazel-31。', 0.05, 'c-tnew', '2026-11-09T10:32:00+08:00')
+  ]
+  const retry = formatRecallBlock(rr, cfg(), 'b', { now, tz: 'Asia/Shanghai', chunks: more, query: '重试策略和原因码？' })
+  assert.ok(retry.includes('jitter-cap-11') && retry.includes('herd-break-4'), `unreferenced chunk found by exact terms:\n${retry}`)
+  const task = formatRecallBlock(rr, cfg(), 'b', { now, tz: 'Asia/Shanghai', chunks: more, query: '断电重放任务现在状态与验收码？' })
+  assert.ok(task.indexOf('task-hazel-31 已完成') > 0 && task.indexOf('task-hazel-31 已完成') < task.indexOf('仍未完成 task-hazel-31'), `newer completion shown first:\n${task}`)
+  assert.match(task, /⚠ 此条中的 task-hazel-31 已被较新的记录 \[1\]/)
+  ok('lexical pass over unreferenced chunks; a below-floor newer record that retires a value is pulled in')
+
   // Long chunk: excerpt keeps the sentences with the asked-about terms.
   const long = 'USER: ' + '无关的闲聊内容。'.repeat(120) + '回滚触发器 lag-over-37s，执行 playbook/rollback-elm.md 的 rollbackElm。' + '更多闲聊。'.repeat(80)
   const lr = formatRecallBlock([fact('x', '用户聊了很多。', 0.5, 'c-long', '2026-11-09T10:20:00+08:00')], cfg(), 'b', { now, tz: 'Asia/Shanghai', chunks: { 'c-long': { text: long } }, query: '回滚触发器是什么？' })
