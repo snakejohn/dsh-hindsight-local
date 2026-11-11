@@ -232,7 +232,7 @@ export function createFakeAgent({ session, status = 'running', options = { provi
 }
 
 /** A Hindsight stand-in that records traffic instead of making it. */
-export function createFakeClient({ results = [], failRecall = null, failRetain = null } = {}) {
+export function createFakeClient({ results = [], chunks = null, failRecall = null, failRetain = null } = {}) {
   const calls = { ensureBank: [], recall: [], retain: [], health: [] }
   return {
     calls,
@@ -252,7 +252,7 @@ export function createFakeClient({ results = [], failRecall = null, failRetain =
     async recall(bankId, body, options) {
       calls.recall.push({ bankId, body, options })
       if (failRecall) throw failRecall
-      return { results }
+      return chunks ? { results, chunks } : { results }
     },
     async retain(bankId, items, options) {
       calls.retain.push({ bankId, items, options })

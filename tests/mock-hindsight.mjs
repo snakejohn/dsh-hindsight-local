@@ -73,7 +73,13 @@ export function createMock() {
         })
         .filter((r) => r.s > 0)
         .sort((a, b) => b.s - a.s)
-        .map(({ x, s }) => ({ id: x.id, text: x.content.slice(0, 300), type: 'world', document_id: x.document_id, tags: x.tags, metadata: x.metadata, mentioned_at: x.timestamp, scores: { final: s } }))
+        .map(({ x, s }) => ({ id: x.id, text: x.content.slice(0, 300), type: 'world', document_id: x.document_id, chunk_id: `chunk-${x.id}`, tags: x.tags, metadata: x.metadata, mentioned_at: x.timestamp, scores: { final: s } }))
+      // include.chunks (RecallResponse.chunks keyed by chunk_id): the verbatim retained text.
+      if (body.include && body.include.chunks) {
+        const chunks = {}
+        for (const r of results) chunks[r.chunk_id] = { id: r.chunk_id, text: bank.mem.find((x) => x.id === r.id).content, chunk_index: 0 }
+        return send({ results, chunks })
+      }
       return send({ results })
     }
     return send({ detail: 'method' }, 405)
